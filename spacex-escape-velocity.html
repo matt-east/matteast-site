@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escape Velocity — The SpaceX Growth Frontier</title>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:#000; color:#f5f5f7;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:#ff4d3d; text-transform:uppercase; letter-spacing:.26em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-mega{font-size:clamp(1.7rem,2.9vw,2.9rem); font-weight:700; letter-spacing:-.035em; line-height:1.06; margin:0}
+  .h-big{font-size:clamp(1.45rem,2.2vw,2.2rem); font-weight:700; letter-spacing:-.03em; line-height:1.12; margin:0}
+  p.body{font-size:clamp(.95rem,1.0vw,1.05rem); color:#d6d6da; margin:1em 0 0; line-height:1.5}
+  .accent{color:#ff4d3d}
+
+  .hero{height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .hero .dot{width:10px;height:10px;border-radius:50%;background:#ff4d3d;
+    box-shadow:0 0 22px 6px rgba(255,77,61,.16),0 0 60px 16px rgba(255,77,61,.16);
+    margin-bottom:38px; animation:pulse 3.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+  .hero h1{font-size:clamp(3rem,11vw,9rem); font-weight:700; letter-spacing:-.045em; margin:0; line-height:.96}
+  .hero .sub{max-width:660px; color:#86868b; font-size:clamp(1.05rem,1.7vw,1.4rem); margin-top:26px}
+  .scrollcue{position:absolute; bottom:34px; left:50%; transform:translateX(-50%); color:#5b5b60;
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+
+  .scrolly{display:grid; grid-template-columns:2fr 1fr; column-gap:3.5vw; position:relative}
+  .col-text{position:relative; z-index:2}
+  .col-graphic{position:sticky; top:0; align-self:start; height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:0 0 0 2vw}
+  .col-graphic svg{width:100%; height:auto; max-height:90vh; display:block}
+  .step{min-height:100vh; display:flex; align-items:center; padding:0 4.5vw 0 1vw}
+  .copy{max-width:430px}
+  .copy .body, .copy h2, .copy .kicker{opacity:.22; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body, .step.is-active .copy h2, .step.is-active .copy .kicker{opacity:1; transform:none}
+
+  .layer{opacity:0; transition:opacity .75s ease; pointer-events:none}
+  .layer.on{opacity:1}
+  .spart{opacity:0; transition:opacity .7s ease}
+  .spart.on{opacity:1}
+  .pt{opacity:0; transition:opacity .45s ease}
+  .growbar{transform-box:fill-box; transform-origin:bottom; transition:transform .12s linear}
+  .growbarx{transform-box:fill-box; transform-origin:left; transition:transform .12s linear}
+  .sq{transition:opacity .25s ease, fill .4s ease, fill-opacity .4s ease}
+  #spacexG{transition:opacity .5s ease}
+  #machineNode{transform-box:fill-box; transform-origin:center; transition:transform .15s linear}
+  .fdot{transition:opacity .2s linear}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+
+  .coda{min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12vh 7vw}
+  .coda h2{font-size:clamp(2rem,5vw,4rem); font-weight:700; letter-spacing:-.04em; margin:0}
+  footer{border-top:1px solid #2b2b2e; padding:46px 7vw 70px; color:#5b5b60; font-size:.82rem; max-width:900px; margin:0 auto}
+  footer a{color:#86868b}
+
+  @media (max-width:760px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; z-index:6; background:#000; border-bottom:1px solid #2b2b2e; padding:0}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; align-items:flex-start; padding:8vh 7vw 0}
+    .copy{max-width:none; background:rgba(8,8,10,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.07); border-radius:16px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important} .layer,.spart,.pt,.sq,.copy *{transition:opacity .2s linear !important} }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="dot"></div>
+    <p class="kicker">An essay in scrolls</p>
+    <h1>Escape<br>Velocity</h1>
+    <div class="sub">SpaceX's IPO prepares to defy gravity — physical and financial.</div>
+    <div class="scrollcue">Scroll</div>
+  </section>
+
+  <section class="scrolly">
+    <div class="col-graphic">
+      <svg id="viz" viewBox="0 0 1000 640" role="img" aria-label="SpaceX growth-frontier visualization"></svg>
+    </div>
+
+    <div class="col-text" id="steps">
+      <div class="step" data-step="0"><div class="copy">
+        <p class="kicker">The Offering</p>
+        <h2 class="h-big">The Largest IPO Ever.</h2>
+        <p class="body">SpaceX priced its debut at a <span class="accent">$1.77&nbsp;trillion</span> valuation — edging Saudi Aramco's $1.7T for the largest in history. Each block is $25&nbsp;billion. Aramco was the only company that ever came close; the famous tech IPOs barely register.</p>
+      </div></div>
+
+      <div class="step" data-step="1"><div class="copy">
+        <p class="kicker">The Offering</p>
+        <h2 class="h-big">But You Can't Buy Much.</h2>
+        <p class="body">Of that $1.77&nbsp;trillion, only about <span class="accent">4%</span> — roughly $75&nbsp;billion — is sold to the public. The other 96% stays locked with insiders. Hold that thought; it matters later.</p>
+      </div></div>
+
+      <div class="step" data-step="2"><div class="copy">
+        <p class="kicker">The Claim</p>
+        <h2 class="h-big">Real, Fast Growth.</h2>
+        <p class="body">SpaceX's revenue is climbing fast: $4.6B in 2022, $8.7B in 2023, $14.0B in 2024, $18.7B in 2025 — roughly quadrupling in three years, even as the growth rate cools.</p>
+      </div></div>
+
+      <div class="step" data-step="3"><div class="copy">
+        <p class="kicker">The Claim</p>
+        <h2 class="h-mega">Then This.</h2>
+        <p class="body">To justify the $1.77&nbsp;trillion price, Morgan Stanley — a co-lead underwriter — points at 2040: <span class="accent">$3.4&nbsp;trillion</span>. Zoom both axes out to fit it, and the last four years collapse to a sliver. It's 182× what SpaceX sold last year.</p>
+      </div></div>
+
+      <div class="step" data-step="4"><div class="copy">
+        <p class="kicker">The Naive Read</p>
+        <h2 class="h-big">41.5% a Year. For Fifteen Years.</h2>
+        <p class="body">Compounded, that's the rate that turns $18.7&nbsp;billion into $3.4&nbsp;trillion. Aggressive — but is it actually unprecedented?</p>
+      </div></div>
+
+      <div class="step" data-step="5"><div class="copy">
+        <p class="kicker">The Naive Read</p>
+        <h2 class="h-big">Tesla Climbed Steeper.</h2>
+        <p class="body">Plot the rates as curves and Tesla's is the steeper one — 62% a year versus the 41.5% SpaceX needs. By rate alone, SpaceX is the tamer story. So the rate is not the tell.</p>
+      </div></div>
+
+      <div class="step" data-step="6"><div class="copy">
+        <p class="kicker">The Reframe</p>
+        <h2 class="h-big">A Lower Bar.</h2>
+        <p class="body">Drop each climb to a single point — its fifteen-year growth rate. SpaceX's lands <span class="accent">below</span> Tesla's: 41.5% against 62%. On rate, SpaceX is the lower bar, not the higher one. So how does it sit against the field?</p>
+      </div></div>
+
+      <div class="step" data-step="7"><div class="copy">
+        <p class="kicker">The Reframe</p>
+        <h2 class="h-big">Against the Field.</h2>
+        <p class="body">Stack the other great compounders by the same measure — fifteen-year growth, every point still at the same starting line. A handful cleared SpaceX's rate: early Tesla, Amazon, Cisco. Most never did. By rate alone, 41.5% is high — not impossible.</p>
+      </div></div>
+
+      <div class="step" data-step="8"><div class="copy">
+        <p class="kicker">The Reframe</p>
+        <h2 class="h-big">From 160× the Base.</h2>
+        <p class="body">But not every rate is earned from the same place. Give the points a second axis — starting size — and they fan out. The ones that out-grew SpaceX were all small; Tesla ran 62% from $117&nbsp;million. SpaceX needs 41.5% from <span class="accent">160 times that base</span>.</p>
+      </div></div>
+
+      <div class="step" data-step="9"><div class="copy">
+        <p class="kicker">The Frontier</p>
+        <h2 class="h-big">Growth Has a Speed Limit.</h2>
+        <p class="body">Plotted against size, a shape appears. It bends down: the bigger you start, the slower you're allowed to grow. It holds whether you measure the 1980s or the 2020s.</p>
+      </div></div>
+
+      <div class="step" data-step="10"><div class="copy">
+        <p class="kicker">The Shape</p>
+        <h2 class="h-big">The Growth Frontier.</h2>
+        <p class="body">Fit a curve and it's blunt — starting size explains about half of who grows fast (R²&nbsp;≈&nbsp;0.53). Not a hard law, a stubborn trend. Big companies decelerate the way large bodies do.</p>
+      </div></div>
+
+      <div class="step" data-step="11"><div class="copy">
+        <p class="kicker">The Outlier</p>
+        <h2 class="h-big">Measure the Gaps.</h2>
+        <p class="body">Score every company by how far it beats the frontier — actual growth ÷ what the trend predicts — and rank them. Most land near 1.0×.</p>
+      </div></div>
+
+      <div class="step" data-step="12"><div class="copy">
+        <p class="kicker">The Outlier</p>
+        <h2 class="h-mega">Off the Manifold.</h2>
+        <p class="body">Collapse those scores into a distribution. Tesla's 1.49× is the record — just inside the outlier fence. SpaceX's required <span class="accent">2.15×</span> falls beyond it: a statistical outlier, ~44% past the best the data has ever produced.</p>
+      </div></div>
+
+      <div class="step" data-step="13"><div class="copy">
+        <p class="kicker">The Tell</p>
+        <h2 class="h-big">79% Margins. At $3.4 Trillion.</h2>
+        <p class="body">The forecast also assumes a 79% EBITDA margin. Aramco, pumping the cheapest oil on Earth, manages 55%. Software tops out near 45%. And $3.4&nbsp;trillion would be <span class="accent">five times Walmart</span> — the most revenue any company has ever booked. One firm. Building rockets.</p>
+      </div></div>
+
+      <div class="step" data-step="14"><div class="copy">
+        <p class="kicker">The Scale</p>
+        <h2 class="h-big">Six Percent of Everything.</h2>
+        <p class="body">Run the headline forward: SpaceX at 41.5% while the U.S. economy grows at its consensus ~3.7% nominal. By 2040 a single company's revenue would equal <span class="accent">~6% of U.S. GDP</span> — beyond the share Walmart commands today. A hundredfold rise in fifteen years.</p>
+      </div></div>
+
+      <div class="step" data-step="15"><div class="copy">
+        <p class="kicker">The Machine</p>
+        <h2 class="h-big">Forced to Buy.</h2>
+        <p class="body">Nasdaq deleted its float minimum and built a 15-day fast track for the 40 largest firms. SpaceX floats under 5%. Funds tracking QQQ, IWM and FTSE are forced to buy it — <span class="accent">~$60&nbsp;billion</span>, Goldman estimates — squeezed through a tiny float, setting a price before the market finds one.</p>
+      </div></div>
+
+      <div class="step" data-step="16"><div class="copy">
+        <p class="kicker">The Machine</p>
+        <h2 class="h-mega">Someone Sells Into It.</h2>
+        <p class="body">That forced bid needs a seller. When the lock-ups expire 90–180 days later, insiders sell into the demand the index created. The cash flows out to them. The public is left holding the position — bought at a price set for it.</p>
+      </div></div>
+
+      <div class="step" data-step="17"><div class="copy">
+        <p class="kicker">The Thesis</p>
+        <h2 class="h-mega">Coherence Isn't Truth.</h2>
+        <p class="body">Coherence is cheap — a roadshow is built to manufacture it. Real businesses, a vast market, a growth rate with precedent, arranged until the story stops feeling like a forecast and starts feeling like a fact. But a coherent story isn't a true one, and this one doesn't have to be. It only has to hold long enough for the index to buy and the lock-ups to lift. The value was never in 2040. It was always in the rebalance.</p>
+      </div></div>
+
+      <div class="step" data-step="18"><div class="copy">
+        <p class="kicker">The Twist</p>
+        <h2 class="h-mega">The Elon Frontier.</h2>
+        <p class="body">Two companies sit far above everyone else's frontier — both Musk's. Tesla earned its place with revenue it delivered; SpaceX has only been priced to match. Connect them and a line of their own appears. Two points don't make a law — but it's the line the market has drawn. So the question stands: is Elon Musk on a frontier of his own — or is the market extrapolating one proven outlier onto an unproven one?</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="coda">
+    <h2>A line is not a law.</h2>
+  </section>
+
+  <footer>
+    Every figure is sourced and computed in the companion file <a href="SpaceX_ScrollyTelling_Sources.md">SpaceX_ScrollyTelling_Sources.md</a>. Forecasts are Morgan Stanley's (a co-lead underwriter); historical CAGRs and residuals are computed from public filings. <strong>First draft — June 5, 2026.</strong>
+  </footer>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+  var WHITE="#f5f5f7", GRAY="#9a9aa0", RED="#ff4d3d", GREEN="#5fcf8a", DIM="#5b5b60", GRID="#1c1c1f", MUT="#86868b", LOCK="#3a3a40";
+  function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+  function clamp(x){return x<0?0:x>1?1:x;}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function len(p){try{return p.getTotalLength();}catch(e){return 0;}}
+  function setDraw(p,prog){var L=p.__L||(p.__L=len(p));p.style.strokeDasharray=L;p.style.strokeDashoffset=(L*(1-clamp(prog))).toFixed(1);}
+  function gridB(parent,n,x0,base,cols,sz,gap,fill){var a=[];for(var i=0;i<n;i++){var c=i%cols,r=Math.floor(i/cols);a.push(E("rect",{x:x0+c*(sz+gap),y:base-sz-r*(sz+gap),width:sz,height:sz,rx:1.5,fill:fill,"class":"sq"},parent));}return a;}
+
+  var COMPS=[
+    {b:0.070,c:0.479,t:"CSCO",y:"90",lp:"l"},{b:0.117,c:0.617,t:"TSLA",y:"10",lp:"t",el:1},
+    {b:0.117,c:0.354,t:"AAPL",y:"80",lp:"l"},{b:0.148,c:0.494,t:"AMZN",y:"97",lp:"t"},
+    {b:0.151,c:0.336,t:"NFLX",y:"02",lp:"b"},{b:0.176,c:0.357,t:"CRM",y:"05",lp:"r"},
+    {b:0.197,c:0.382,t:"MSFT",y:"86",lp:"t"},{b:0.814,c:0.214,t:"QCOM",y:"96",lp:"r"},
+    {b:2.97,c:0.158,t:"ORCL",y:"95",lp:"l"},{b:3.19,c:0.299,t:"GOOGL",y:"04",lp:"t"},
+    {b:3.33,c:0.277,t:"NVDA",y:"10",lp:"b"},{b:3.92,c:0.165,t:"INTC",y:"90",lp:"r"},
+    {b:5.09,c:0.336,t:"META",y:"12",lp:"t"},{b:6.92,c:0.280,t:"AMZN",y:"04",lp:"r"},
+    {b:24.6,c:0.203,t:"AAPL",y:"07",lp:"t"}
+  ];
+  var TESLA={b:0.117,c:0.617}, SPACEX={b:18.67,c:0.415};
+  var FIT={a:0.2994,k:-0.1501};
+  var fit=function(b){return FIT.a*Math.pow(b,FIT.k);};
+
+  var PX={l:140,r:912,t:118,b:540};
+  var XD=[Math.log10(0.05),Math.log10(32)], YMAX=0.66;
+  function sx(b){return PX.l+(Math.log10(b)-XD[0])/(XD[1]-XD[0])*(PX.r-PX.l);}
+  function sy(c){return PX.b-(c/YMAX)*(PX.b-PX.t);}
+
+  var defs=E("defs",null,svg);
+  function marker(id,f){var m=E("marker",{id:id,viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);E("path",{d:"M0 0L10 5L0 10z",fill:f},m);}
+  marker("arr","#6f6f76"); marker("arrG",GREEN);
+
+  var FX={pts:[],ptLbls:[],dx1D:[],baseX:[],mbars:[],inDots:[],outDots:[],claimBars:[],cmpSquares:[],floatSquares:[],lockedSquares:[],outResid:[],outBars:[],odots:[],teslaIdx:1};
+  function layer(id){return E("g",{id:id,"class":"layer"},svg);}
+  function spart(id,p){return E("g",{id:id,"class":"spart"},p);}
+
+  /* ===== Loffer : THE OFFERING (grid grows into frame) ===== */
+  (function(){
+    var g=layer("Loffer");
+    var go=E("g",null,g); FX.gOthers=go;
+    T(500,150,"IPO valuation · each block = $25B",{fill:MUT,"font-size":"15","text-anchor":"middle"},go);
+    var base=372;
+    [["Aramco ’19","$1.7T",68,330],["Alibaba ’14","$0.17T",7,545],["Facebook ’12","$0.10T",4,690]].forEach(function(s){
+      FX.cmpSquares=FX.cmpSquares.concat(gridB(go,s[2],s[3],base,8,11,3,GRAY));
+      T(s[3],base+24,s[0],{fill:WHITE,"font-size":"13","font-weight":"600"},go);
+      T(s[3],base+42,s[1],{fill:MUT,"font-size":"12"},go);});
+    T(120,base+24,"SpaceX",{fill:WHITE,"font-size":"13","font-weight":"600"},go);
+    T(120,base+42,"$1.77T",{fill:RED,"font-size":"12"},go);
+    var gsx=E("g",null,g); FX.gSX=gsx;
+    var sxsq=gridB(gsx,71,120,base,8,11,3,RED);
+    FX.cmpSquares=FX.cmpSquares.concat(sxsq);
+    FX.floatSquares=sxsq.slice(0,3); FX.lockedSquares=sxsq.slice(3);
+    FX.floatLbl=E("g",null,g);
+    T(500,500,"~$75B (≈4%) sold to the public",{fill:RED,"font-size":"16","text-anchor":"middle","font-weight":"700"},FX.floatLbl);
+    T(500,522,"the other 96% stays locked with insiders",{fill:MUT,"font-size":"13","text-anchor":"middle"},FX.floatLbl);
+    FX.floatLbl.style.opacity=0;
+  })();
+
+  /* ===== L0 : THE CLAIM (bars; both axes zoom out to add 2040) ===== */
+  (function(){
+    var g=layer("L0"); var baseY=500;
+    var hist=[["2022",4.6,200,140],["2023",8.7,380,182],["2024",14.0,560,224],["2025",18.7,740,266],["2040",3400,980,900]];
+    hist.forEach(function(d){var bg=E("g",null,g);
+      var rect=E("rect",{x:0,y:0,width:40,height:10,rx:3,fill:(d[1]>1000?RED:"#5a5a60"),"class":"growbar"},bg);
+      var yl=T(0,baseY+24,d[0],{fill:(d[1]>1000?RED:MUT),"font-size":"14","text-anchor":"middle","font-weight":(d[1]>1000?"700":"400")},bg);
+      var vl=T(0,0,(d[1]>1000?"$3.4T":"$"+d[1]+"B"),{fill:(d[1]>1000?RED:MUT),"font-size":"13","text-anchor":"middle","font-weight":(d[1]>1000?"700":"400")},bg);
+      FX.claimBars.push({val:d[1],xA:d[2],xB:d[3],big:(d[1]>1000),rect:rect,yLbl:yl,vLbl:vl});});
+    FX.claim182=T(500,150,"182× the 2025 revenue",{fill:WHITE,"font-size":"24","text-anchor":"middle","font-weight":"700"},g);
+    FX.claim182.style.opacity=0;
+    // collapse target (step 4): the 2025 & 2040 bars contract into these two points,
+    // which become the endpoints of the 41.5% compounding curve.
+    var x25=266,x40=900; function ty(v){return baseY-v/3400*300;}
+    var cd="M "+x25+" "+ty(18.7).toFixed(1),CN=50;
+    for(var ci=1;ci<=CN;ci++){var ct=ci/CN,cv=18.7*Math.pow(3400/18.7,ct);cd+=" L "+lerp(x25,x40,ct).toFixed(1)+" "+ty(cv).toFixed(1);}
+    FX.naiveCurve=E("path",{d:cd,fill:"none",stroke:RED,"stroke-width":"3.5","stroke-linecap":"round"},g);
+    FX.pt2025=E("circle",{cx:x25,cy:ty(18.7),r:6,fill:"#9a9aa0"},g);FX.pt2025.style.opacity=0;
+    FX.pt2040=E("circle",{cx:x40,cy:ty(3400),r:7,fill:RED},g);FX.pt2040.style.opacity=0;
+    FX.naiveLbl=E("g",null,g);
+    T(x25,ty(18.7)-16,"$18.7B · 2025",{fill:MUT,"font-size":"13","text-anchor":"middle"},FX.naiveLbl);
+    T(x40-10,ty(3400)-12,"$3.4T · 2040",{fill:RED,"font-size":"14","text-anchor":"end","font-weight":"700"},FX.naiveLbl);
+    T(470,300,"41.5% a year",{fill:WHITE,"font-size":"28","text-anchor":"middle","font-weight":"700"},FX.naiveLbl);
+    T(470,326,"every year, without missing",{fill:MUT,"font-size":"15","text-anchor":"middle"},FX.naiveLbl);
+    FX.naiveLbl.style.opacity=0;
+  })();
+
+  /* ===== L1 : (Naive A merged into L0 collapse) ===== */
+
+  /* ===== L1b : NAIVE B (CAGR labels at curve ends) ===== */
+  (function(){
+    var g=layer("L1b"); var PB={l:170,r:806,t:150,b:498}, lyMax=Math.log10(2000);
+    function bx(yr){return PB.l+(yr/15)*(PB.r-PB.l);} function by(m){return PB.b-(Math.log10(m)/lyMax)*(PB.b-PB.t);}
+    [1,10,100,1000].forEach(function(m){E("line",{x1:PB.l,y1:by(m),x2:PB.r,y2:by(m),stroke:GRID},g);T(PB.l-10,by(m)+4,m+"×",{fill:DIM,"font-size":"13","text-anchor":"end"},g);});
+    [0,5,10,15].forEach(function(yr){T(bx(yr),PB.b+26,"yr "+yr,{fill:DIM,"font-size":"13","text-anchor":"middle"},g);});
+    T(PB.l-10,PB.t-20,"revenue multiple (log scale)",{fill:MUT,"font-size":"15","font-weight":"600"},g);
+    var ds="",dt="";for(var i=0;i<=60;i++){var yr=i/60*15;ds+=(i?" L ":"M ")+bx(yr).toFixed(1)+" "+by(Math.pow(1.415,yr)).toFixed(1);dt+=(i?" L ":"M ")+bx(yr).toFixed(1)+" "+by(Math.pow(1.617,yr)).toFixed(1);}
+    FX.teslaLine=E("path",{d:dt,fill:"none",stroke:GRAY,"stroke-width":"3","stroke-linecap":"round"},g);
+    FX.sxLine=E("path",{d:ds,fill:"none",stroke:RED,"stroke-width":"3","stroke-linecap":"round"},g);
+    T(PB.r+12,by(Math.pow(1.617,15))+4,"Tesla · 62%/yr",{fill:GRAY,"font-size":"14","font-weight":"700"},g);
+    T(PB.r+12,by(Math.pow(1.415,15))+4,"SpaceX · 41.5%/yr",{fill:RED,"font-size":"14","font-weight":"700"},g);
+    // endpoint dots at year 15 — these become the column points in the next scene
+    FX.teslaEnd=E("circle",{cx:PB.r,cy:by(Math.pow(1.617,15)),r:6,fill:GRAY},g);FX.teslaEnd.style.opacity=0;
+    FX.sxEnd=E("circle",{cx:PB.r,cy:by(Math.pow(1.415,15)),r:6,fill:RED},g);FX.sxEnd.style.opacity=0;
+  })();
+
+  /* ===== L2 : SHARED SCATTER (1D collapse -> unfold -> frontier) ===== */
+  var SXx, SXy;
+  (function(){
+    var g=layer("L2"); SXx=sx(SPACEX.b); SXy=sy(SPACEX.c);
+    var ya=spart("p-yaxis",g);
+    [0,0.2,0.4,0.6].forEach(function(c){E("line",{x1:PX.l,y1:sy(c),x2:PX.r,y2:sy(c),stroke:GRID},ya);T(PX.l-12,sy(c)+5,(c*100)+"%",{fill:DIM,"font-size":"15","text-anchor":"end"},ya);});
+    T(PX.l-12,PX.t-30,"15-year revenue CAGR",{fill:MUT,"font-size":"16","font-weight":"600"},ya);
+    var xa=spart("p-xaxis",g);
+    [[0.1,"$100M"],[1,"$1B"],[10,"$10B"]].forEach(function(p){E("line",{x1:sx(p[0]),y1:PX.t,x2:sx(p[0]),y2:PX.b,stroke:GRID},xa);T(sx(p[0]),PX.b+30,p[1],{fill:DIM,"font-size":"15","text-anchor":"middle"},xa);});
+    T(PX.r,PX.b+60,"starting revenue  (log scale)  →",{fill:MUT,"font-size":"15","text-anchor":"end"},xa);
+
+    // ±3 SD band ("growth's speed limit") — behind the points; persists wherever the scatter appears
+    FX.band=E("g",null,g); FX.band.style.opacity=0;
+    (function(b2){var N2=50,up="",lo="",ue="",le="";
+      for(var i=0;i<=N2;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N2),yu=Math.max(PX.t,sy(fit(b)*2.18)),yl=Math.min(PX.b,sy(fit(b)*0.459));
+        up+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+yu.toFixed(1);ue+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+yu.toFixed(1);le+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+yl.toFixed(1);}
+      for(var i=N2;i>=0;i--){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N2);lo+=" L "+sx(b).toFixed(1)+" "+Math.min(PX.b,sy(fit(b)*0.459)).toFixed(1);}
+      E("path",{d:up+lo+" Z",fill:"rgba(150,165,210,.13)",stroke:"none"},b2);
+      E("path",{d:ue,fill:"none",stroke:"rgba(150,165,210,.55)","stroke-width":"1","stroke-dasharray":"4 4"},b2);
+      E("path",{d:le,fill:"none",stroke:"rgba(150,165,210,.55)","stroke-width":"1","stroke-dasharray":"4 4"},b2);
+      T(PX.r-4,300,"±3 SD band",{fill:"#aab4d8","font-size":"13","text-anchor":"end","font-weight":"700"},b2);
+      T(PX.r-4,318,"growth's speed limit",{fill:"#8a93b5","font-size":"12","text-anchor":"end"},b2);})(FX.band);
+
+    var cloud=spart("p-cloud",g);
+    COMPS.forEach(function(d,i){var pg=E("g",{"class":"pt"},cloud);
+      var c=E("circle",{cx:sx(d.b),cy:sy(d.c),r:6,fill:GRAY,"fill-opacity":".95"},pg);
+      var lt; var x=sx(d.b),yy=sy(d.c),s=d.t+" ("+d.y+")";
+      if(d.lp==="l"){lt=T(x-10,yy+4,s,{fill:GRAY,"font-size":"12","text-anchor":"end"},pg);}
+      else if(d.lp==="r"){lt=T(x+10,yy+4,s,{fill:GRAY,"font-size":"12"},pg);}
+      else if(d.lp==="t"){lt=T(x,yy-11,s,{fill:GRAY,"font-size":"12","text-anchor":"middle"},pg);}
+      else{lt=T(x,yy+17,s,{fill:GRAY,"font-size":"12","text-anchor":"middle"},pg);}
+      FX.pts.push(pg); FX.ptLbls.push(lt); FX.baseX.push(sx(d.b));
+      FX.dx1D.push((498+((i%5)-2)*7) - sx(d.b));   // column target = x of $1B (sx(1)=498), light jitter
+      if(d.el){FX.teslaCircle=c;FX.teslaLbl=lt;}});
+
+    // step-6 "lower bar" cue — level lines at Tesla's and SpaceX's rate (SpaceX sits lower)
+    FX.lowerBar=E("g",null,g); FX.lowerBar.style.opacity=0;
+    E("line",{x1:430,y1:sy(TESLA.c),x2:566,y2:sy(TESLA.c),stroke:GRAY,"stroke-width":"1.5","stroke-dasharray":"5 4"},FX.lowerBar);
+    T(424,sy(TESLA.c)+4,"Tesla 62%",{fill:GRAY,"font-size":"12.5","text-anchor":"end","font-weight":"700"},FX.lowerBar);
+    E("line",{x1:430,y1:sy(SPACEX.c),x2:566,y2:sy(SPACEX.c),stroke:RED,"stroke-width":"1.5","stroke-dasharray":"5 4"},FX.lowerBar);
+    T(424,sy(SPACEX.c)+4,"SpaceX 41.5%",{fill:RED,"font-size":"12.5","text-anchor":"end","font-weight":"700"},FX.lowerBar);
+    E("line",{x1:452,y1:sy(SPACEX.c),x2:452,y2:sy(TESLA.c),stroke:MUT,"stroke-width":"1"},FX.lowerBar);
+    T(460,(sy(SPACEX.c)+sy(TESLA.c))/2+4,"lower",{fill:MUT,"font-size":"12","font-style":"italic"},FX.lowerBar);
+    // step-7 base-gap bracket: Tesla's base -> SpaceX's base = 160×
+    FX.baseGap=E("g",null,g); FX.baseGap.style.opacity=0;
+    (function(gg){var yb=510,xT=sx(TESLA.b),xS=sx(SPACEX.b);
+      E("line",{x1:xT,y1:yb,x2:xS,y2:yb,stroke:RED,"stroke-width":"1.5"},gg);
+      E("line",{x1:xT,y1:yb-6,x2:xT,y2:yb+6,stroke:RED,"stroke-width":"1.5"},gg);
+      E("line",{x1:xS,y1:yb-6,x2:xS,y2:yb+6,stroke:RED,"stroke-width":"1.5"},gg);
+      T((xT+xS)/2,yb-10,"160× the base",{fill:RED,"font-size":"15","text-anchor":"middle","font-weight":"700"},gg);})(FX.baseGap);
+
+    var fl=spart("p-fit",g);
+    var d="",N=50;for(var i=0;i<=N;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N);d+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+sy(fit(b)).toFixed(1);}
+    FX.fitPath=E("path",{d:d,fill:"none",stroke:WHITE,"stroke-width":"2.5","stroke-linecap":"round"},fl);
+    var flb=spart("p-flbl",g);
+    T(905,452,"The Growth Frontier",{fill:WHITE,"font-size":"15","text-anchor":"end","font-weight":"700"},flb);
+
+    var eq=spart("p-eq",g);
+    E("rect",{x:556,y:150,width:340,height:74,rx:12,fill:"rgba(255,255,255,.05)",stroke:"#2b2b2e"},eq);
+    T(574,186,"CAGR ≈ 30% × base⁻⁰·¹⁵",{fill:WHITE,"font-size":"22","font-weight":"700"},eq);
+    T(574,212,"R² ≈ 0.53 — a trend, not a law",{fill:MUT,"font-size":"15"},eq);
+
+    var ann=spart("p-ann",g);
+    FX.annPath=E("path",{d:"M "+(SXx-14)+" "+(SXy-6)+" L "+(SXx-140)+" "+(SXy-58),fill:"none",stroke:MUT,"stroke-width":"1"},ann);
+    T(SXx-148,SXy-62,"held up by the forced bid —",{fill:WHITE,"font-size":"15","text-anchor":"end"},ann);
+    T(SXx-148,SXy-42,"not by escape velocity",{fill:WHITE,"font-size":"15","text-anchor":"end"},ann);
+
+    var elon=spart("p-elon",g);
+    var em=(SXy-sy(TESLA.c))/(SXx-sx(TESLA.b));
+    FX.elonLine=E("path",{d:"M "+PX.l+" "+(sy(TESLA.c)+em*(PX.l-sx(TESLA.b))).toFixed(1)+" L "+PX.r+" "+(sy(TESLA.c)+em*(PX.r-sx(TESLA.b))).toFixed(1),fill:"none",stroke:RED,"stroke-width":"2.5","stroke-dasharray":"7 5"},elon);
+    T(430,158,"The Elon Frontier",{fill:RED,"font-size":"18","text-anchor":"middle","font-weight":"700"},elon);
+
+    var sxg=E("g",{id:"spacexG"},g);
+    E("circle",{cx:SXx,cy:SXy,r:18,fill:RED,"fill-opacity":".18"},sxg);
+    E("circle",{cx:SXx,cy:SXy,r:9,fill:RED},sxg);
+    T(SXx,SXy-26,"SPACEX (25)",{fill:RED,"font-size":"16","text-anchor":"middle","font-weight":"700"},sxg);
+    T(SXx,SXy-9,"41.5% required",{fill:RED,"font-size":"12","text-anchor":"middle"},sxg);
+    FX.spacex=sxg; FX.dx1Dsx=498-SXx; FX.baseXsx=SXx;
+    FX.sp={yaxis:ya,xaxis:xa,cloud:cloud,fit:fl,flbl:flb,eq:eq,ann:ann,elon:elon};
+  })();
+
+  /* ===== Lout : THE OUTLIER (scatter+bars -> dots fly down into box plot) ===== */
+  (function(){
+    var g=layer("Lout");
+    var gs=E("g",null,g); FX.gScatter=gs;
+    [0,0.2,0.4,0.6].forEach(function(c){E("line",{x1:PX.l,y1:sy(c),x2:PX.r,y2:sy(c),stroke:GRID},gs);});
+    var d="",N=50;for(var i=0;i<=N;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N);d+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+sy(fit(b)).toFixed(1);}
+    E("path",{d:d,fill:"none",stroke:WHITE,"stroke-width":"2","stroke-linecap":"round"},gs);
+    T(PX.l,PX.t-22,"each company's distance from the frontier",{fill:MUT,"font-size":"15","font-weight":"600"},gs);
+    function resid(b,c,col,big){FX.outResid.push(E("path",{d:"M "+sx(b)+" "+sy(fit(b))+" L "+sx(b)+" "+sy(c),fill:"none",stroke:col,"stroke-width":(big?3:1.6),"stroke-opacity":(big?1:.7)},gs));}
+    COMPS.forEach(function(o){resid(o.b,o.c,(o.c>=fit(o.b)?"#d98b6a":GRAY),0);});
+    resid(SPACEX.b,SPACEX.c,RED,1);
+
+    // ranked bars (right)
+    var gb=E("g",null,g); FX.gBars=gb; gb.style.opacity=0;
+    var RES=[]; COMPS.forEach(function(o){RES.push({t:o.t,y:o.y,b:o.b,c:o.c,rf:o.c/fit(o.b),sp:0});});
+    RES.push({t:"SPACEX",y:"25",b:SPACEX.b,c:SPACEX.c,rf:SPACEX.c/fit(SPACEX.b),sp:1}); RES.sort(function(a,b){return b.rf-a.rf;});
+    var BL=600,BR=950,top=104,rowH=27,XM=2.3;
+    T(BL-2,86,"residual factor, ranked",{fill:MUT,"font-size":"14","font-weight":"600"},gb);
+    RES.forEach(function(r,i){var yy=top+i*rowH,w=(r.rf/XM)*(BR-BL),col=r.sp?RED:(r.rf>=1?"#cf8a6a":"#6a6a70");
+      T(BL-8,yy+11,r.t+" ("+r.y+")",{fill:r.sp?RED:GRAY,"font-size":"11.5","text-anchor":"end","font-weight":r.sp?"700":"400"},gb);
+      FX.outBars.push(E("rect",{x:BL,y:yy,width:w,height:14,rx:2,fill:col,"class":"growbarx"},gb));
+      T(BL+w+5,yy+11,r.rf.toFixed(2)+"×",{fill:r.sp?RED:MUT,"font-size":"11","font-weight":r.sp?"700":"400"},gb);});
+    var refX=BL+(1/XM)*(BR-BL);
+    E("line",{x1:refX,y1:top-6,x2:refX,y2:top+RES.length*rowH-8,stroke:WHITE,"stroke-width":"1.5","stroke-dasharray":"5 4"},gb);
+    T(refX,top+RES.length*rowH+8,"1.0×",{fill:WHITE,"font-size":"11","text-anchor":"middle"},gb);
+
+    // VERTICAL box plot (right side — the scatter persists on the left)
+    var gx2=E("g",null,g); FX.gBox=gx2; gx2.style.opacity=0;
+    var VBX=782,VBW=42,FM=2.45; function fyB(f){return 500-(f/FM)*350;}
+    [0,0.5,1,1.5,2].forEach(function(v){E("line",{x1:VBX-VBW-8,y1:fyB(v),x2:VBX+VBW+8,y2:fyB(v),stroke:GRID},gx2);T(VBX-VBW-14,fyB(v)+4,v+"×",{fill:DIM,"font-size":"13","text-anchor":"end"},gx2);});
+    T(VBX,132,"residual factor — the 15 historical companies",{fill:MUT,"font-size":"14","text-anchor":"middle","font-weight":"600"},gx2);
+    E("line",{x1:VBX,y1:fyB(0.62),x2:VBX,y2:fyB(0.84),stroke:GRAY,"stroke-width":"1.5"},gx2);
+    E("line",{x1:VBX,y1:fyB(1.24),x2:VBX,y2:fyB(1.49),stroke:GRAY,"stroke-width":"1.5"},gx2);
+    E("line",{x1:VBX-11,y1:fyB(0.62),x2:VBX+11,y2:fyB(0.62),stroke:GRAY,"stroke-width":"1.5"},gx2);
+    E("line",{x1:VBX-11,y1:fyB(1.49),x2:VBX+11,y2:fyB(1.49),stroke:GRAY,"stroke-width":"1.5"},gx2);
+    E("rect",{x:VBX-VBW,y:fyB(1.24).toFixed(1),width:VBW*2,height:(fyB(0.84)-fyB(1.24)).toFixed(1),rx:3,fill:"rgba(154,154,160,.16)",stroke:GRAY,"stroke-width":"1.5"},gx2);
+    E("line",{x1:VBX-VBW,y1:fyB(1.07),x2:VBX+VBW,y2:fyB(1.07),stroke:WHITE,"stroke-width":"2"},gx2);
+    T(VBX+VBW+8,fyB(1.07)+4,"median 1.07×",{fill:MUT,"font-size":"12"},gx2);
+    E("line",{x1:VBX-VBW-14,y1:fyB(1.84),x2:VBX+VBW+14,y2:fyB(1.84),stroke:"#7a5a3a","stroke-dasharray":"3 3"},gx2);
+    T(VBX+VBW+8,fyB(1.84)+4,"outlier fence 1.84×",{fill:"#b08a5a","font-size":"11"},gx2);
+    var bs=E("g",null,gx2); FX.boxSpace=bs;
+    E("line",{x1:VBX-VBW-14,y1:fyB(2.15),x2:VBX+VBW+14,y2:fyB(2.15),stroke:RED,"stroke-width":"1.5"},bs);
+    T(VBX+VBW+8,fyB(2.15)-4,"SPACEX 2.15×",{fill:RED,"font-size":"14","font-weight":"700"},bs);
+    T(VBX+VBW+8,fyB(2.15)+13,"beyond the fence",{fill:RED,"font-size":"11"},bs);
+    bs.style.opacity=0;
+
+    // ghost dots: shrunk-scatter positions -> vertical box positions
+    var jit=[-16,12,-8,18,-20,6,16,-12,20,-6,10,-18,8,14,-14,0];
+    RES.forEach(function(r,i){
+      var dot=E("circle",{cx:0,cy:0,r:(r.sp?8:5),fill:(r.sp?RED:(r.rf>=1?"#d98b6a":GRAY))},g);dot.style.opacity=0;
+      FX.odots.push({el:dot,sX:0.56*sx(r.b)-58,sY:0.56*sy(r.c)+84,bX:VBX+(r.sp?0:jit[i%jit.length]),bY:fyB(r.rf),sp:r.sp});});
+  })();
+
+  /* ===== L6 : THE TELL ===== */
+  (function(){
+    var g=layer("L6"); var aX=120,baseY=470,bw=70,gap=96,maxV=3400,sH=300;
+    var rev=[["Walmart",680],["Apple",391],["Nvidia",130],["SpaceX 2040",3400,1]];
+    T(aX,150,"Revenue — 2040 vs. today ($B)",{fill:MUT,"font-size":"16","font-weight":"600"},g);
+    rev.forEach(function(r,i){var h=r[1]/maxV*sH,x=aX+i*gap;FX.mbars.push(E("rect",{x:x,y:baseY-h,width:bw,height:h,rx:3,fill:r[2]?RED:"#5a5a60","class":"growbar"},g));
+      T(x+bw/2,baseY+22,r[0],{fill:MUT,"font-size":"13","text-anchor":"middle"},g);
+      T(x+bw/2,baseY-h-10,"$"+(r[1]>=1000?(r[1]/1000)+"T":r[1]+"B"),{fill:r[2]?RED:MUT,"font-size":"13","text-anchor":"middle","font-weight":r[2]?"700":"400"},g);});
+    var bX=600,bbw=80,bgap=120; var mg=[["Aramco",55],["Software",45],["SpaceX 2040",79,1]];
+    T(bX,150,"Implied EBITDA margin (%)",{fill:MUT,"font-size":"16","font-weight":"600"},g);
+    mg.forEach(function(r,i){var h=r[1]/100*sH,x=bX+i*bgap;FX.mbars.push(E("rect",{x:x,y:baseY-h,width:bbw,height:h,rx:3,fill:r[2]?RED:"#5a5a60","class":"growbar"},g));
+      T(x+bbw/2,baseY+22,r[0],{fill:MUT,"font-size":"13","text-anchor":"middle"},g);
+      T(x+bbw/2,baseY-h-10,r[1]+"%",{fill:r[2]?RED:MUT,"font-size":"13","text-anchor":"middle","font-weight":r[2]?"700":"400"},g);});
+    T(500,560,"$3.4T ≈ 5× Walmart · ~6% of projected 2040 U.S. GDP",{fill:WHITE,"font-size":"17","text-anchor":"middle","font-weight":"600"},g);
+  })();
+
+  /* ===== Lgdp : THE SCALE (Walmart line white) ===== */
+  (function(){
+    var g=layer("Lgdp"); var PB={l:175,r:880,t:160,b:498}, yMax=7;
+    function gx(yr){return PB.l+((yr-2025)/15)*(PB.r-PB.l);} function gy(v){return PB.b-(v/yMax)*(PB.b-PB.t);}
+    [0,2,4,6].forEach(function(v){E("line",{x1:PB.l,y1:gy(v),x2:PB.r,y2:gy(v),stroke:GRID},g);T(PB.l-10,gy(v)+4,v+"%",{fill:DIM,"font-size":"13","text-anchor":"end"},g);});
+    [2025,2030,2035,2040].forEach(function(yr){T(gx(yr),PB.b+26,yr,{fill:DIM,"font-size":"13","text-anchor":"middle"},g);});
+    T(PB.l-10,135,"SpaceX revenue ÷ U.S. GDP",{fill:MUT,"font-size":"15","font-weight":"600"},g);
+    T(PB.l-10,PB.t+8,"a ~100× rise in fifteen years",{fill:MUT,"font-size":"13"},g);
+    E("line",{x1:PB.l,y1:gy(2.21),x2:PB.r,y2:gy(2.21),stroke:WHITE,"stroke-dasharray":"4 4"},g);
+    T(PB.l+6,gy(2.21)-7,"Walmart today ≈ 2.2%",{fill:WHITE,"font-size":"12.5"},g);
+    var d="",N=60;for(var i=0;i<=N;i++){var t=i/N*15,rev=18.7*Math.pow(1.415,t),gdp=30760*Math.pow(1.037,t),pct=rev/gdp*100;d+=(i?" L ":"M ")+gx(2025+t).toFixed(1)+" "+gy(pct).toFixed(1);}
+    FX.gdpLine=E("path",{d:d,fill:"none",stroke:RED,"stroke-width":"3.5","stroke-linecap":"round"},g);
+    E("circle",{cx:gx(2025),cy:gy(0.061),r:5,fill:"#7a7a80"},g);
+    T(gx(2025)+8,gy(0.061)-26,"2025",{fill:MUT,"font-size":"12","text-anchor":"middle"},g);
+    T(gx(2025)+8,gy(0.061)-12,"0.06%",{fill:MUT,"font-size":"12","text-anchor":"middle"},g);
+    FX.gdpEndLbl=E("g",null,g); E("circle",{cx:gx(2040),cy:gy(6.4),r:7,fill:RED},FX.gdpEndLbl);
+    T(gx(2040),gy(6.4)-30,"2040: ~6.4%",{fill:RED,"font-size":"15","text-anchor":"end","font-weight":"700"},FX.gdpEndLbl);
+    T(gx(2040),gy(6.4)-14,"≈ one-sixteenth of the economy",{fill:MUT,"font-size":"12","text-anchor":"end"},FX.gdpEndLbl);
+    FX.gdpEndLbl.style.opacity=0;
+  })();
+
+  /* ===== L8 : THE MACHINE ===== */
+  (function(){
+    var g=layer("L8");
+    T(500,80,"Nasdaq & Russell opened the gate.   S&P refused.",{fill:MUT,"font-size":"15","text-anchor":"middle"},g);
+    E("path",{d:"M70 240 L450 312 L450 348 L70 420 Z",fill:"rgba(255,255,255,.04)",stroke:"#2b2b2e","stroke-width":"1.5"},g);
+    T(76,224,"passive index funds",{fill:GRAY,"font-size":"14"},g);
+    T(76,442,"QQQ · IWM · FTSE",{fill:DIM,"font-size":"12"},g);
+    T(450,300,"the float gate",{fill:MUT,"font-size":"11","text-anchor":"middle"},g);
+    T(450,374,"< 5% float",{fill:RED,"font-size":"17","text-anchor":"middle","font-weight":"700"},g);
+    var N=8;for(var i=0;i<N;i++){var y0=250+i*((410-250)/(N-1));var dot=E("circle",{cx:80,cy:y0,r:5,fill:GRAY,"class":"fdot"},g);dot.style.opacity=0;FX.inDots.push({el:dot,ph:i/N,y0:y0});}
+    E("line",{x1:450,y1:330,x2:524,y2:330,stroke:"#6f6f76","stroke-width":"2","marker-end":"url(#arr)"},g);
+    FX.sxNode=E("g",{id:"machineNode"},g);
+    E("circle",{cx:560,cy:330,r:32,fill:"rgba(255,77,61,.18)"},FX.sxNode);E("circle",{cx:560,cy:330,r:15,fill:RED},FX.sxNode);
+    T(560,300,"price ↑ forced",{fill:RED,"font-size":"12","text-anchor":"middle","font-weight":"700"},g);
+    T(560,376,"SPACEX",{fill:RED,"font-size":"14","text-anchor":"middle","font-weight":"700"},g);
+    FX.dollar60=E("g",null,g);
+    T(265,150,"~$60B",{fill:RED,"font-size":"36","text-anchor":"middle","font-weight":"700"},FX.dollar60);
+    T(265,176,"forced passive buying",{fill:WHITE,"font-size":"14","text-anchor":"middle"},FX.dollar60);
+    FX.dollar60.style.opacity=0;
+    FX.exitGroup=E("g",null,g);
+    E("line",{x1:594,y1:330,x2:822,y2:330,stroke:"#3f6f55","stroke-width":"2","marker-end":"url(#arrG)"},FX.exitGroup);
+    for(var j=0;j<6;j++){var d2=E("circle",{cx:610,cy:330,r:5,fill:GREEN,"class":"fdot"},FX.exitGroup);d2.style.opacity=0;FX.outDots.push({el:d2,ph:j/6});}
+    E("circle",{cx:865,cy:330,r:26,fill:"rgba(95,207,138,.16)",stroke:GREEN,"stroke-width":"1.5"},FX.exitGroup);
+    T(865,335,"$",{fill:GREEN,"font-size":"24","text-anchor":"middle","font-weight":"700"},FX.exitGroup);
+    T(865,378,"INSIDERS",{fill:GREEN,"font-size":"13","text-anchor":"middle","font-weight":"700"},FX.exitGroup);
+    T(710,250,"90–180 days: lock-ups expire →",{fill:GREEN,"font-size":"13","text-anchor":"middle"},FX.exitGroup);
+    FX.exitGroup.style.opacity=0;
+    FX.machineBottom=E("g",null,g);
+    T(500,500,"The public is forced in at the top; insiders cash out into the bid.",{fill:WHITE,"font-size":"16","text-anchor":"middle"},FX.machineBottom);
+    T(500,522,"The retail buyer is the exit liquidity.",{fill:RED,"font-size":"16","text-anchor":"middle","font-weight":"600"},FX.machineBottom);
+    FX.machineBottom.style.opacity=0;
+  })();
+
+  /* ===================== SCENE CONTROL ===================== */
+  var STEP_LAYER=["Loffer","Loffer","L0","L0","L0","L1b","L2","L2","L2","L2","L2","Lout","Lout","L6","Lgdp","L8","L8","L2","L2"];
+  var STEP_PARTS={6:["yaxis","cloud"],7:["yaxis","cloud"],8:["yaxis","xaxis","cloud"],9:["yaxis","xaxis","cloud"],10:["yaxis","xaxis","cloud","fit","flbl","eq"],17:["yaxis","xaxis","cloud","fit","flbl","ann"],18:["yaxis","xaxis","cloud","fit","flbl","elon"]};
+  var ALLPARTS=["yaxis","xaxis","cloud","fit","flbl","eq","ann","elon"];
+  var LAY=["Loffer","L0","L1b","L2","Lout","L6","Lgdp","L8"];
+
+  function setScene(step){
+    var want=STEP_LAYER[step];
+    LAY.forEach(function(id){document.getElementById(id).classList.toggle("on",id===want);});
+    var parts=STEP_PARTS[step]||[];
+    ALLPARTS.forEach(function(p){FX.sp[p].classList.toggle("on",parts.indexOf(p)>=0);});
+  }
+
+  function applyOffer(step,p){
+    if(step===0){FX.gOthers.style.opacity=1;FX.gSX.setAttribute("transform","translate(0,0) scale(1)");FX.floatLbl.style.opacity=0;
+      var n=Math.ceil(p*FX.cmpSquares.length);FX.cmpSquares.forEach(function(s,i){s.style.opacity=i<n?1:0;});
+      FX.lockedSquares.forEach(function(s){s.setAttribute("fill",RED);s.style.fillOpacity=1;});}
+    else if(step===1){var q=clamp(p/0.55);
+      FX.gOthers.style.opacity=1-clamp(p/0.3);
+      FX.gSX.setAttribute("transform","translate("+(78*q).toFixed(1)+","+(-422*q).toFixed(1)+") scale("+(1+1.4*q).toFixed(3)+")");
+      var hi=p>0.55;FX.lockedSquares.forEach(function(s){s.setAttribute("fill",hi?LOCK:RED);s.style.fillOpacity=hi?0.5:1;});
+      FX.floatLbl.style.opacity=clamp((p-0.6)/0.3);}
+    else{FX.gOthers.style.opacity=0;FX.gSX.setAttribute("transform","translate(0,0) scale(1)");FX.floatLbl.style.opacity=0;}
+  }
+  function applyClaim(step,p){
+    var baseY=500,sH=300;
+    if(step===4){
+      // collapse: hold the zoomed-out (yMax=3400, time-x) positions, fade bars into the
+      // 2025 & 2040 points, then draw the 41.5% compounding curve through them.
+      var yM=3400;
+      FX.claimBars.forEach(function(b){var w=(b.big?34:26),h=Math.min(b.val/yM*sH,900),yy=baseY-h,x=b.xB;
+        b.rect.setAttribute("x",(x-w/2).toFixed(1));b.rect.setAttribute("width",w);b.rect.setAttribute("y",yy.toFixed(1));b.rect.setAttribute("height",h.toFixed(1));b.rect.style.transform="scaleY(1)";
+        b.rect.style.opacity=1-clamp(p/0.3);b.yLbl.style.opacity=1-clamp(p/0.3);b.vLbl.style.opacity=0;});
+      FX.pt2025.style.opacity=clamp((p-0.05)/0.2);FX.pt2040.style.opacity=clamp((p-0.05)/0.2);
+      setDraw(FX.naiveCurve,clamp((p-0.35)/0.55));FX.naiveLbl.style.opacity=clamp((p-0.55)/0.3);
+      FX.claim182.style.opacity=0;
+      return;
+    }
+    var ph=step===3?clamp(p/0.7):0;                 // zoom-out progress
+    var yMax=20*Math.pow(170,ph);                    // 20B -> 3400B (log)
+    var grow=step===2?clamp(p):1;
+    FX.claimBars.forEach(function(b){
+      var x=lerp(b.xA,b.xB,ph), w=lerp(110,(b.big?34:26),ph), h=Math.min(b.val/yMax*sH,900), yy=baseY-h;
+      var vis = b.big? (step===3?1:0) : 1;
+      b.rect.style.opacity=vis; b.yLbl.style.opacity=vis;
+      b.rect.setAttribute("x",(x-w/2).toFixed(1));b.rect.setAttribute("width",w.toFixed(1));b.rect.setAttribute("y",yy.toFixed(1));b.rect.setAttribute("height",h.toFixed(1));
+      b.rect.style.transform="scaleY("+grow+")";
+      b.yLbl.setAttribute("x",x.toFixed(1));
+      b.vLbl.setAttribute("x",x.toFixed(1));b.vLbl.setAttribute("y",(yy-8).toFixed(1));
+      b.vLbl.style.opacity=(b.big?(step===3?clamp((p-0.5)/0.3):0):(step===3?(1-clamp(p/0.4)):1));});
+    FX.claim182.style.opacity=(step===3?clamp((p-0.6)/0.3):0);
+    FX.pt2025.style.opacity=0;FX.pt2040.style.opacity=0;FX.naiveLbl.style.opacity=0;setDraw(FX.naiveCurve,0);
+  }
+  function applyOutlier(step,p){
+    if(step===11){
+      // residuals draw on the FULL frontier, then it shrinks aside as the ranked bars grow (residuals held as ghosts)
+      var shrink=clamp((p-0.40)/0.35),sc=lerp(1,0.56,shrink),tx=lerp(0,-58,shrink),tyy=lerp(0,84,shrink);
+      FX.gScatter.setAttribute("transform","translate("+tx.toFixed(1)+","+tyy.toFixed(1)+") scale("+sc.toFixed(3)+")");FX.gScatter.style.opacity=1;
+      var rd=clamp(p/0.42);FX.outResid.forEach(function(l){setDraw(l,rd);l.style.opacity=lerp(1,0.32,shrink);});
+      FX.gBars.setAttribute("transform","translate(0,0)");FX.gBars.style.opacity=clamp((p-0.60)/0.30);
+      var bg=clamp((p-0.66)/0.34);FX.outBars.forEach(function(b){b.style.transform="scaleX("+bg+")";});
+      FX.odots.forEach(function(o){o.el.style.opacity=0;});
+      FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;}
+    else if(step===12){
+      // scatter persists (shrunk, ghost residuals); bars fade; vertical box forms; ghost dots fly across into it
+      FX.gScatter.setAttribute("transform","translate(-58,84) scale(0.56)");FX.gScatter.style.opacity=1;
+      FX.outResid.forEach(function(l){setDraw(l,1);l.style.opacity=0.30;});
+      FX.gBars.setAttribute("transform","translate(0,0)");FX.gBars.style.opacity=1-clamp(p/0.28);
+      FX.outBars.forEach(function(b){b.style.transform="scaleX(1)";});
+      FX.gBox.style.opacity=clamp((p-0.15)/0.30);
+      var f=clamp((p-0.25)/0.55);
+      FX.odots.forEach(function(o){o.el.setAttribute("cx",lerp(o.sX,o.bX,f).toFixed(1));o.el.setAttribute("cy",lerp(o.sY,o.bY,f).toFixed(1));o.el.style.opacity=clamp((p-0.10)/0.20);});
+      FX.boxSpace.style.opacity=clamp((p-0.70)/0.25);}
+    else{FX.gScatter.style.opacity=0;FX.gBars.style.opacity=0;FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;
+      FX.outResid.forEach(function(l){l.style.opacity=1;});FX.odots.forEach(function(o){o.el.style.opacity=0;});}
+  }
+  function applyMachine(step,p){
+    var on=(step===15||step===16),i;
+    for(i=0;i<FX.inDots.length;i++){var dt=FX.inDots[i];if(!on){dt.el.style.opacity=0;continue;}
+      var fr=((p*1.05)+dt.ph)%1,x=80+fr*460,conv=clamp(fr/0.80),y=dt.y0+(330-dt.y0)*conv;dt.el.setAttribute("cx",x.toFixed(1));dt.el.setAttribute("cy",y.toFixed(1));
+      var o=fr<0.06?fr/0.06:(fr>0.9?(1-fr)/0.1:1);dt.el.style.opacity=(o*clamp(p*1.6)).toFixed(2);}
+    FX.sxNode.style.transform=on?"scale("+(0.55+0.55*(step===15?clamp((p-0.2)/0.6):1)).toFixed(3)+")":"scale(0.55)";
+    FX.dollar60.style.opacity=(step===15?clamp((p-0.4)/0.3):(step===16?1:0));
+    var ex=(step===16)?clamp((p-0.1)/0.3):0; FX.exitGroup.style.opacity=ex;
+    for(i=0;i<FX.outDots.length;i++){var o2=FX.outDots[i];if(step!==16){o2.el.style.opacity=0;continue;}
+      var f2=((p*0.9)+o2.ph)%1,x2=610+f2*250;o2.el.setAttribute("cx",x2.toFixed(1));var oo=f2<0.06?f2/0.06:(f2>0.9?(1-f2)/0.1:1);o2.el.style.opacity=(oo*ex).toFixed(2);}
+    FX.machineBottom.style.opacity=(step===16?clamp((p-0.5)/0.3):0);
+  }
+
+  function applyFX(step,p){
+    p=clamp(p);
+    applyOffer(step,p); applyClaim(step,p);
+    setDraw(FX.teslaLine, step===5?clamp(p/0.40):1);
+    setDraw(FX.sxLine, step===5?clamp((p-0.12)/0.40):1);
+    var endO=(step===5?clamp((p-0.80)/0.18):0); FX.teslaEnd.style.opacity=endO; FX.sxEnd.style.opacity=endO;
+    // scatter: slide curve-ends into x=1 column (6) -> add the field (7) -> unfold x to base (8) -> frontier (>=9)
+    var slideP=(step===6?clamp(p/0.60):0);
+    var unf=step===7?1:(step===8?(1-clamp((p-0.05)/0.80)):0);
+    var cloudVis=((step>=6&&step<=10)||step===17||step===18);
+    var nOth=(step===7?Math.ceil(clamp(p/0.70)*FX.pts.length):FX.pts.length);
+    FX.pts.forEach(function(g,i){
+      var on=cloudVis&&(step===6?(i===FX.teslaIdx):(step===7?(i===FX.teslaIdx||i<nOth):true));
+      g.style.opacity=on?1:0;
+      var tx=step===6?lerp(806-FX.baseX[i],FX.dx1D[i],slideP):(FX.dx1D[i]*unf);
+      g.style.transform="translateX("+tx.toFixed(1)+"px)";
+      FX.ptLbls[i].style.opacity=(on&&(step>=8||i===FX.teslaIdx))?1:0;});
+    FX.spacex.style.opacity=cloudVis?1:0;
+    var txs=step===6?lerp(806-FX.baseXsx,FX.dx1Dsx,slideP):(FX.dx1Dsx*unf);
+    FX.spacex.style.transform="translateX("+txs.toFixed(1)+"px)";
+    FX.lowerBar.style.opacity=(step===6?clamp((p-0.55)/0.25):0);                              // "lower bar" cue
+    FX.baseGap.style.opacity=(step===8?clamp((p-0.55)/0.30):0);                               // base-gap bracket on unfold
+    FX.band.style.opacity=(step===9?clamp(p/0.5):((step===10||step===17||step===18)?1:0));    // ±3 SD band persists
+    setDraw(FX.fitPath, step<10?0:(step===10?clamp(p):1));
+    applyOutlier(step,p);
+    FX.mbars.forEach(function(b){b.style.transform="scaleY("+(step===13?p:1)+")";});
+    setDraw(FX.gdpLine, step===14?clamp(p/0.82):(step>14?1:0));
+    FX.gdpEndLbl.style.opacity=(step===14?clamp((p-0.68)/0.25):0);
+    setDraw(FX.annPath, step===17?clamp((p-0.1)/0.7):0);
+    setDraw(FX.elonLine, step===18?clamp((p-0.15)/0.6):0);
+    var elOn=(step===18);FX.teslaCircle.style.fill=elOn?RED:"";FX.teslaLbl.style.fill=elOn?RED:"";
+    applyMachine(step,p);
+  }
+
+  var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var copies=steps.map(function(s){return s.querySelector(".copy");});
+  var activeStep=0, ticking=false;
+  function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+  function frame(){ticking=false;applyFX(activeStep,progressOf(activeStep));}
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+  function activate(i){if(i===activeStep && steps[i].classList.contains("is-active"))return;activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});setScene(i);frame();}
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+  steps.forEach(function(s){io.observe(s);});
+  window.addEventListener("scroll",onScroll,{passive:true});
+  window.addEventListener("resize",onScroll);
+  setScene(0); steps[0].classList.add("is-active"); applyFX(0,0);
+})();
+</script>
+</body>
+</html>
