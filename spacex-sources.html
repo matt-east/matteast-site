@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escape Velocity — Sources & Data</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#000;color:#d6d6da;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.62}
+  .wrap{max-width:880px;margin:0 auto;padding:54px 28px 120px}
+  .topnav{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:42px}
+  .topnav a{color:#ff4d3d;text-decoration:none}
+  .topnav a:hover{opacity:.78}
+  h1{font-size:clamp(1.9rem,4.4vw,2.7rem);font-weight:700;letter-spacing:-.038em;line-height:1.06;color:#f5f5f7;margin:0 0 18px}
+  h2{font-size:1.42rem;font-weight:700;letter-spacing:-.02em;color:#f5f5f7;margin:62px 0 6px;padding-top:30px;border-top:1px solid #2b2b2e}
+  h3{font-size:1.08rem;font-weight:700;color:#f5f5f7;margin:30px 0 4px}
+  p{margin:13px 0}
+  a{color:#ff4d3d;text-decoration:none;border-bottom:1px solid rgba(255,77,61,.32);overflow-wrap:anywhere}
+  a:hover{border-bottom-color:#ff4d3d}
+  strong{color:#f5f5f7;font-weight:700}
+  em{color:#c8c8cd}
+  hr{border:none;border-top:1px solid #2b2b2e;margin:4px 0}
+  ul,ol{padding-left:22px;margin:13px 0}
+  li{margin:7px 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85em;background:rgba(255,255,255,.07);padding:.12em .42em;border-radius:4px;color:#e8e8ec}
+  pre{background:rgba(255,255,255,.04);border:1px solid #2b2b2e;border-radius:10px;padding:15px 18px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;padding:0;color:#cfd3da;font-size:.92em;line-height:1.55}
+  blockquote{margin:18px 0;padding:4px 18px;border-left:3px solid #ff4d3d;color:#9a9aa0}
+  blockquote p{margin:6px 0}
+  table{border-collapse:collapse;width:100%;margin:18px 0;font-size:.9rem}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #1c1c1f;vertical-align:top}
+  th{color:#86868b;font-weight:600;border-bottom:1px solid #3a3a40;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  table strong{color:#ff4d3d}
+  @media (max-width:680px){ .wrap{padding:36px 16px 90px} table{font-size:.78rem} th,td{padding:7px 8px} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav"><a href="spacex-escape-velocity.html">&larr; Escape Velocity</a></div>
+<h1>Escape Velocity — Sources &amp; Supporting Data</h1>
+<p>Companion data/citations file for the SpaceX growth-frontier scrollytelling (<code>spacex-escape-velocity.html</code>).
+<strong>Compiled:</strong> June 5, 2026. Companion data and citations for the published essay.</p>
+<p>Two tiers of data here:
+1. <strong>Post-cutoff facts</strong> (SpaceX IPO, financials, Morgan Stanley forecast, index rule changes). Each is cited to a specific, dated source URL below. These are the load-bearing claims and should be re-checked the week of publication — several are days old and still moving (S&amp;P's decision is dated June 4–5).
+2. <strong>Historical comparables</strong> (15-yr revenue CAGRs of public companies). Revenue figures are drawn from company SEC filings (10-Ks) and standard aggregators (Macrotrends, StockAnalysis.com). They are aggregator-level and flagged for primary-filing confirmation in §6.</p>
+<p>All CAGR, margin, and scale figures are computed by us from the cited inputs (see <code>calc.py</code>); they need no external citation, but the <strong>inputs</strong> do.</p>
+<hr />
+<h2>0. Scene structure (as published)</h2>
+<p>Twenty-one scroll panes; the figures below map to these scenes.</p>
+<table>
+<thead>
+<tr>
+<th>Act</th>
+<th>Panes</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The Offering</td>
+<td>The Largest IPO Ever · But You Can't Buy Much</td>
+<td>§1, §1b</td>
+</tr>
+<tr>
+<td>The Claim</td>
+<td>Real, Fast Growth · Then This</td>
+<td>§2, §3</td>
+</tr>
+<tr>
+<td>The Naive Read</td>
+<td>41.5% a Year · Tesla Climbed Steeper</td>
+<td>§4, §6</td>
+</tr>
+<tr>
+<td>The Reframe</td>
+<td>A Lower Bar · Against the Field · From 160× the Base</td>
+<td>§6</td>
+</tr>
+<tr>
+<td>The Frontier</td>
+<td>Growth Has a Speed Limit · The Growth Frontier</td>
+<td>§7</td>
+</tr>
+<tr>
+<td>The Outlier</td>
+<td>Measure the Gaps · Rank Them · Most Sit Near 1.0× · Off the Manifold</td>
+<td>§6, §7</td>
+</tr>
+<tr>
+<td>The Tell / Scale</td>
+<td>79% Margins · Six Percent of Everything</td>
+<td>§5, §5b</td>
+</tr>
+<tr>
+<td>The Machine</td>
+<td>Forced to Buy · Someone Sells Into It</td>
+<td>§8, §9</td>
+</tr>
+<tr>
+<td>The Close</td>
+<td>Coherence Isn't Truth · The Elon Frontier</td>
+<td>§6, §7</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. The IPO</h2>
+<table>
+<thead>
+<tr>
+<th>Figure</th>
+<th>Value</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Offer price</td>
+<td>$135 / share</td>
+<td>CNBC [1], Fortune [2]</td>
+</tr>
+<tr>
+<td>Shares offered</td>
+<td>555.6 million</td>
+<td>Fortune [2]</td>
+</tr>
+<tr>
+<td>Valuation</td>
+<td>$1.77 trillion (largest IPO debut ever)</td>
+<td>CNBC [1], Fortune [2]</td>
+</tr>
+<tr>
+<td>Capital raised</td>
+<td>~$75 billion (largest IPO in history; all-primary)</td>
+<td>CNBC [1], Fortune [2]</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>&lt;5% of shares public</td>
+<td>Fortune [2], Axios [13]</td>
+</tr>
+<tr>
+<td>Musk voting control</td>
+<td>&gt;82% (dual-class)</td>
+<td>Yahoo/Benzinga [3]</td>
+</tr>
+<tr>
+<td>Listing</td>
+<td>Nasdaq, ticker SPCX, ~June 12, 2026</td>
+<td>CNBC [1], SpotGamma [10]</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note for accuracy:</strong> the IPO itself is an <em>all-primary</em> offering (proceeds to SpaceX's treasury, not an insider cash-out). The "exit liquidity" critique (§9) refers to the <strong>lock-up expiry 90–180 days later</strong>, when insiders can sell into index-driven passive demand — not to the IPO day itself. Keep this distinction precise in the copy.</p>
+<h2>1b. Largest IPOs in history (the money-grid comparison)</h2>
+<p>Each block in "The Offering" = $25B of IPO valuation.</p>
+<table>
+<thead>
+<tr>
+<th>IPO</th>
+<th>Year</th>
+<th>Valuation at debut</th>
+<th>Raised</th>
+<th>Blocks (÷$25B)</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SpaceX</strong></td>
+<td>2026</td>
+<td><strong>$1.77T</strong></td>
+<td>$75B</td>
+<td>71</td>
+<td>[1][2]</td>
+</tr>
+<tr>
+<td>Saudi Aramco</td>
+<td>2019</td>
+<td>$1.7T</td>
+<td>$25.6B</td>
+<td>68</td>
+<td>Bloomberg/CNN/Al Jazeera [28]</td>
+</tr>
+<tr>
+<td>Alibaba</td>
+<td>2014</td>
+<td>~$0.17T ($168B)</td>
+<td>$25B</td>
+<td>7</td>
+<td>[28]</td>
+</tr>
+<tr>
+<td>Facebook</td>
+<td>2012</td>
+<td>~$0.10T ($104B)</td>
+<td>$16B</td>
+<td>4</td>
+<td>[28]</td>
+</tr>
+</tbody>
+</table>
+<p>SpaceX edges Aramco for the largest debut valuation ever, and raises ~3× Aramco's prior record $25.6B. <strong>Float view:</strong> only ~$75B (≈4.2% ≈ 3 of 71 blocks) is sold to the public; ~96% stays locked with insiders — the setup for the lock-up / exit-liquidity mechanic in §8–§9.</p>
+<h2>2. SpaceX financials</h2>
+<table>
+<thead>
+<tr>
+<th>Figure</th>
+<th>Value</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Revenue history (drives "The Claim" bars)</td>
+<td>2022 $4.6B · 2023 $8.7B · 2024 $14.0B · 2025 $18.7B</td>
+<td>Sacra [6], Payload [29]</td>
+</tr>
+<tr>
+<td>2025 revenue</td>
+<td>$18.7B (≈ +30–33% YoY)</td>
+<td>Fortune [4], Morningstar [5], Sacra [6]</td>
+</tr>
+<tr>
+<td>2024 revenue</td>
+<td>~$14.0B (some sources $14.2B)</td>
+<td>Fortune [4], Morningstar [5], Payload [29]</td>
+</tr>
+<tr>
+<td>2025 net result</td>
+<td>–$4.94B loss (vs +$791M profit in 2024)</td>
+<td>Fortune [4], Sacra [6]</td>
+</tr>
+<tr>
+<td>Loss driver</td>
+<td>xAI/AI segment (~$6.35B operating loss in 2025)</td>
+<td>Sacra [6]</td>
+</tr>
+<tr>
+<td>Starlink (2025)</td>
+<td>$11.4B revenue, $4.42B operating income; 10M+ subs / 160 countries (Feb 2026)</td>
+<td>Sacra [6]</td>
+</tr>
+<tr>
+<td>2025 capex</td>
+<td>~$20–21B</td>
+<td>Morningstar [5]</td>
+</tr>
+</tbody>
+</table>
+<h2>3. Morgan Stanley / Goldman forecast (roadshow, shared June 4, 2026)</h2>
+<table>
+<thead>
+<tr>
+<th>Figure</th>
+<th>Value</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2040 revenue</td>
+<td>$3.4 trillion (182× 2025)</td>
+<td>Stocktwits [7], Yahoo/Reuters [8]</td>
+</tr>
+<tr>
+<td>2040 adjusted EBITDA</td>
+<td>$2.7 trillion</td>
+<td>ZeroHedge [9]</td>
+</tr>
+<tr>
+<td>2028 revenue</td>
+<td>~$160B (≈ 8.5× 2025)</td>
+<td>basenor [11]</td>
+</tr>
+<tr>
+<td>2030 revenue</td>
+<td>~$330B (MS); Goldman ~$470B+</td>
+<td>basenor [11]</td>
+</tr>
+<tr>
+<td>2030 adjusted EBITDA</td>
+<td>~$230B (MS)</td>
+<td>basenor [11]</td>
+</tr>
+<tr>
+<td>AI revenue 2030</td>
+<td>~$190B (from $3.2B in 2025)</td>
+<td>basenor [11]</td>
+</tr>
+<tr>
+<td>Conflict</td>
+<td>Morgan Stanley &amp; Goldman are <strong>co-lead underwriters</strong></td>
+<td>Benzinga [12]</td>
+</tr>
+</tbody>
+</table>
+<h2>4. Required-growth math (computed — see <code>calc.py</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2025→2040 required CAGR (18.67 → 3,400, 15y)</td>
+<td><strong>41.5%</strong></td>
+</tr>
+<tr>
+<td>2025→2028 implied CAGR (→160)</td>
+<td><strong>104.6%</strong></td>
+</tr>
+<tr>
+<td>2025→2030 implied CAGR (→330)</td>
+<td><strong>77.6%</strong></td>
+</tr>
+<tr>
+<td>2030→2040 implied CAGR (330→3,400)</td>
+<td>26.3%</td>
+</tr>
+<tr>
+<td>AI line 2025→2030 (3.2 → 190)</td>
+<td>126.3%</td>
+</tr>
+</tbody>
+</table>
+<p>The implausibility is <strong>front-loaded</strong>: near-annual doublings off a ~$19B base for the first four years, then a comparatively ordinary 26% back half. The bet is decided by ~2030, which makes it checkable soon.</p>
+<h2>5. Terminal-value reality checks (computed)</h2>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Value</th>
+<th>Reference point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Implied 2040 EBITDA margin</td>
+<td><strong>79.4%</strong> ($2.7T / $3.4T)</td>
+<td>Aramco ~50–55%; software ~40–50%</td>
+</tr>
+<tr>
+<td>Revenue vs largest company ever</td>
+<td><strong>5.0×</strong> Walmart (~$680B)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Share of projected 2040 US GDP</td>
+<td><strong>~6.4%</strong></td>
+<td>2040 GDP ≈ $53T (2025 $30.76T @ 3.7% nominal × 15y)</td>
+</tr>
+</tbody>
+</table>
+<h2>5b. SpaceX revenue as a share of U.S. GDP (2025 → 2040)</h2>
+<p>Drives the "Six Percent of Everything" scene. If SpaceX compounds at the headline 41.5% and the economy grows at consensus, one company's revenue goes from a rounding error to ~1/16 of national output.</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Value</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U.S. nominal GDP, 2025</td>
+<td><strong>$30.76T</strong> (2024: $29.30T)</td>
+<td>BEA [26]</td>
+</tr>
+<tr>
+<td>Consensus long-run growth</td>
+<td><strong>~3.7% nominal</strong> (CBO real ~1.7% + ~2% inflation)</td>
+<td>CBO [27]</td>
+</tr>
+<tr>
+<td>Projected U.S. nominal GDP, 2040</td>
+<td>~$53T ( = $30.76T × 1.037¹⁵ )</td>
+<td>computed</td>
+</tr>
+<tr>
+<td>SpaceX revenue, 2025 → 2040</td>
+<td>$18.7B → $3.4T (41.5% CAGR)</td>
+<td>§2–§4</td>
+</tr>
+<tr>
+<td><strong>SpaceX ÷ GDP, 2025</strong></td>
+<td><strong>0.06%</strong></td>
+<td>computed</td>
+</tr>
+<tr>
+<td><strong>SpaceX ÷ GDP, 2040</strong></td>
+<td><strong>~6.4%</strong> (≈ one-sixteenth of the economy)</td>
+<td>computed</td>
+</tr>
+<tr>
+<td>Reference: Walmart ÷ GDP today</td>
+<td>~2.2% ( $680B ÷ $30.76T ) — largest firm's current share</td>
+<td>computed</td>
+</tr>
+</tbody>
+</table>
+<p>Share rises ~100-fold in fifteen years and passes today's largest-company share (~2.2%) around <strong>2037</strong>. Sensitivity: a 3.5–4.5% nominal-growth band puts the 2040 share at ~5.9–6.9%.</p>
+<h2>6. Comparables — 15-year revenue CAGR by starting base</h2>
+<p>Rule: revenue in the company's fiscal year at/near IPO (the "base") vs. 15 fiscal years later (14 for Tesla, 12 for Meta — noted). GAAP revenue. <strong>First-draft figures — confirm against 10-Ks before publishing.</strong></p>
+<p><strong>Residual ×</strong> = actual 15-yr CAGR ÷ the frontier-predicted CAGR at that base (§7 fit). &gt;1 beat the trend; &lt;1 fell short. Drives the Outlier act — the residual lollipops ("Measure the Gaps"), the ranked bars ("Rank Them" / "Most Sit Near 1.0×"), and the distribution ("Off the Manifold").</p>
+<table>
+<thead>
+<tr>
+<th>Company</th>
+<th>Window</th>
+<th>Base rev ($B)</th>
+<th>End rev ($B)</th>
+<th>Yrs</th>
+<th>15-yr CAGR</th>
+<th>Residual ×</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco</td>
+<td>1990→2005</td>
+<td>0.070</td>
+<td>24.80</td>
+<td>15</td>
+<td>47.9%</td>
+<td>1.07</td>
+</tr>
+<tr>
+<td>Tesla</td>
+<td>2010→2024</td>
+<td>0.117</td>
+<td>97.69</td>
+<td>14</td>
+<td>61.7%</td>
+<td>1.49</td>
+</tr>
+<tr>
+<td>Apple</td>
+<td>1980→1995</td>
+<td>0.117</td>
+<td>11.06</td>
+<td>15</td>
+<td>35.4%</td>
+<td>0.86</td>
+</tr>
+<tr>
+<td>Netflix</td>
+<td>2002→2017</td>
+<td>0.151</td>
+<td>11.69</td>
+<td>15</td>
+<td>33.6%</td>
+<td>0.85</td>
+</tr>
+<tr>
+<td>Amazon</td>
+<td>1997→2012</td>
+<td>0.148</td>
+<td>61.09</td>
+<td>15</td>
+<td>49.4%</td>
+<td>1.24</td>
+</tr>
+<tr>
+<td>Salesforce</td>
+<td>FY05→FY20</td>
+<td>0.176</td>
+<td>17.10</td>
+<td>15</td>
+<td>35.7%</td>
+<td>0.92</td>
+</tr>
+<tr>
+<td>Microsoft</td>
+<td>1986→2001</td>
+<td>0.197</td>
+<td>25.30</td>
+<td>15</td>
+<td>38.2%</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>Qualcomm</td>
+<td>1996→2011</td>
+<td>0.814</td>
+<td>14.96</td>
+<td>15</td>
+<td>21.4%</td>
+<td>0.69</td>
+</tr>
+<tr>
+<td>Oracle</td>
+<td>FY95→FY10</td>
+<td>2.970</td>
+<td>26.82</td>
+<td>15</td>
+<td>15.8%</td>
+<td>0.62</td>
+</tr>
+<tr>
+<td>Google</td>
+<td>2004→2019</td>
+<td>3.190</td>
+<td>161.86</td>
+<td>15</td>
+<td>29.9%</td>
+<td>1.19</td>
+</tr>
+<tr>
+<td>Nvidia</td>
+<td>FY10→FY25</td>
+<td>3.330</td>
+<td>130.50</td>
+<td>15</td>
+<td>27.7%</td>
+<td>1.11</td>
+</tr>
+<tr>
+<td>Intel</td>
+<td>1990→2005</td>
+<td>3.920</td>
+<td>38.83</td>
+<td>15</td>
+<td>16.5%</td>
+<td>0.68</td>
+</tr>
+<tr>
+<td>Meta</td>
+<td>2012→2024</td>
+<td>5.090</td>
+<td>164.50</td>
+<td>12</td>
+<td>33.6%</td>
+<td>1.43</td>
+</tr>
+<tr>
+<td>Amazon</td>
+<td>2004→2019</td>
+<td>6.920</td>
+<td>280.52</td>
+<td>15</td>
+<td>28.0%</td>
+<td>1.25</td>
+</tr>
+<tr>
+<td>Apple (iPhone era)</td>
+<td>2007→2022</td>
+<td>24.600</td>
+<td>394.33</td>
+<td>15</td>
+<td>20.3%</td>
+<td>1.10</td>
+</tr>
+<tr>
+<td><strong>SpaceX (required)</strong></td>
+<td><strong>2025→2040</strong></td>
+<td><strong>18.670</strong></td>
+<td><strong>3,400.00</strong></td>
+<td><strong>15</strong></td>
+<td><strong>41.5%</strong></td>
+<td><strong>2.15</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Ranked residual factor (largest → smallest): <strong>SpaceX 2.15</strong> · Tesla 1.49 · Meta 1.43 · Amazon ’04 1.25 · Amazon ’97 1.24 · Google 1.19 · Nvidia 1.11 · Apple ’07 1.10 · Cisco 1.07 · Microsoft 1.00 · Salesforce 0.92 · Apple ’80 0.86 · Netflix 0.85 · Qualcomm 0.69 · Intel 0.68 · Oracle 0.62. <strong>Tesla's 1.49× is the historical record; SpaceX's required 2.15× exceeds it by ~44%.</strong></p>
+<p><strong>Intellectual-honesty note:</strong> Meta (~34% from a $5B base) and Amazon's second window (~28% from a $6.9B base) are the strongest "high base AND fast" points — they soften the frontier and should be shown, not hidden. Even so, the <strong>best 15-yr CAGR ever achieved from a base ≥ $15B is Apple's iPhone decade at 20.3%.</strong> SpaceX requires ~2× that.</p>
+<p><strong>Distribution (drives "Off the Manifold"):</strong> across the 15 historical residual factors, Q1 ≈ 0.84, median <strong>1.07</strong>, Q3 1.24, IQR 0.40. Tukey upper fence = Q3 + 1.5·IQR = <strong>1.84×</strong>. Tesla's 1.49× sits just inside it; SpaceX's required <strong>2.15×</strong> falls beyond, a statistical outlier ~44% past the record.</p>
+<p><strong>By rate alone (drives "Against the Field"):</strong> only <strong>3 of 15</strong> comps ever exceeded SpaceX's required 41.5% 15-yr CAGR — Tesla (61.7%), Amazon '97 (49.4%), Cisco (47.9%). The rate is high but not unprecedented; the base is what makes it an outlier.</p>
+<p><strong>Base &amp; rate ratios (drives "From 160× the Base"):</strong> SpaceX's $18.67B base ÷ Tesla's $0.117B base = <strong>159.6× ≈ 160×</strong>; rate ratio 41.5% ÷ 62% = <strong>0.67 ≈ ⅔</strong>. The framing: ⅔ the rate, from 160× the base.</p>
+<h2>7. Frontier fit + methodology</h2>
+<p>Log-log OLS regression of CAGR on starting base across the 15 historical points:</p>
+<pre><code>CAGR ≈ 0.30 × base^(−0.15)      (base in $B)
+R² = 0.533
+</code></pre>
+<ul>
+<li>Predicted CAGR at SpaceX's $18.67B base: <strong>19.3%</strong>. Required: <strong>41.5%</strong> → <strong>2.15× the trend.</strong></li>
+<li><strong>±1 SD band (the shaded region on the scatter).</strong> The standard deviation of ln(residual factor) across the 15 points is <strong>≈0.26</strong> (mean ≈ 0, so the fit is unbiased in log space), so the shaded ±1 SD band spans <strong>×0.77 to ×1.30</strong> of the predicted CAGR. SpaceX's required 2.15× sits ~2.9 SD above the trend; the Elon-frontier line rises above the band to the right of SpaceX. The band persists on every scene where the scatter appears.</li>
+<li><strong>A trend, not a law — and a metaphor, not a mechanism.</strong> Size explains ~53% of the variance in 15-yr CAGR here: real and directional, not deterministic. The published piece uses a gravity / escape-velocity image ("size becomes a rate-limiting factor to sustained velocity") as intuition for <em>why</em> a larger base grows slower, while keeping the on-screen claim honest ("a stubborn trend," R² ≈ 0.53). Note the forms differ: our empirical relationship is a <strong>power law</strong> (CAGR ∝ base^−0.15, a gentle decline), whereas the rocket equation's fuel-vs-velocity cost is <strong>exponential</strong>. The metaphor conveys direction, not functional form. (The −0.15 exponent rhymes with firm-growth literature on Gibrat's-law violations; we are not claiming a causal metabolic law.)</li>
+<li><strong>Selection bias, stated plainly:</strong> these are survivors — the most successful companies in history. The frontier is therefore a <em>best-case</em> envelope. That cuts toward the bear case (even the winners couldn't do it from this base) but means the curve is an upper bound on observed outcomes, not a hard ceiling on what is possible.</li>
+<li><strong>Window sensitivity:</strong> CAGR depends on the chosen window (Apple appears at 35% and 20% for different eras). Windows here are rule-based (from ~IPO). A critic using different windows will get a different exponent; robustness should be checked before publishing.</li>
+</ul>
+<h2>8. Index rule changes — the split decision</h2>
+<p><strong>Nasdaq — bent.</strong> "Fast Entry" rule approved March 30, effective <strong>May 1, 2026</strong>: any newly listed company ranked top-40 by market cap joins the Nasdaq-100 after just <strong>15 trading days</strong>. The prior <strong>10% minimum public-float requirement was eliminated</strong>; low-float names instead receive an <strong>adjusted weighting multiplier (up to ~3× float)</strong> that <em>inflates</em> effective index weight above what tradable shares imply. Goldman estimated the change could force <strong>up to ~$60B of buying</strong> across the Nasdaq-100. — SpotGamma [10], Ashurst [14], Fortune [15]</p>
+<blockquote>
+<p>This is the key technical point. Naive float-adjusted weighting would <em>shrink</em> a &lt;5%-float name's index weight (and the forced bid with it). Nasdaq's multiplier was specifically designed to override that — which is why the squeeze is large despite the tiny float. The mechanism, not the headline cap, is the story.</p>
+</blockquote>
+<p><strong>FTSE Russell — bent.</strong> Fast-entry after the <strong>5th trading day</strong> for IPOs above the Russell Top 500 cutoff; SpaceX's ~$70B investable cap clears the thresholds. Eligible for Russell Top 50/200/1000 and FTSE GEIS series. — Bloomberg [16], Benzinga [17]</p>
+<p><strong>S&amp;P Dow Jones — held the line (June 4–5, 2026).</strong> Consultation considered cutting seasoning 12→6 months, waiving the profitability requirement, and waiving the 10% float minimum for megacaps — then <strong>declined</strong>, stating exceptions "should not be granted solely based on market capitalization." SpaceX gets only the less-watched S&amp;P Total Market / DJ US Total Stock Market indexes, not the S&amp;P 500. The benchmark with ~$20T tracking it (~$13T passive) refused. — CNBC [18], Axios [13], Bloomberg [19]</p>
+<h2>9. The criticism (attributed opinion)</h2>
+<ul>
+<li><strong>George Noble</strong> (ex-Fidelity, 40+ yrs): called the Fast Entry change "the most SHAMELESS structural manipulation of a major index I've ever seen" (Substack, March 2026); "your 401(k) is the exit liquidity." — AOL [20], Yahoo [21]</li>
+<li><strong>Michael Burry</strong>: amplified Noble's critique to his followers, calling it a "must read." — AOL [20]</li>
+<li><strong>Mechanism alleged:</strong> index inclusion forces passive funds to buy at elevated prices → at lock-up expiry (90–180 days), insiders sell into that artificial demand.</li>
+<li><strong>Academic:</strong> Harvard's Murray &amp; Sammon found prices around a comparable fast-track inclusion surged, then fell up to ~10 percentage points in following weeks. — Yahoo [21]</li>
+</ul>
+<p><strong>Framing guardrail:</strong> keep the line between <em>"this is what the structure produces"</em> (defensible, supported) and <em>"this was orchestrated"</em> (intent — unprovable; leave the sharpest accusations attributed to Noble/Burry).</p>
+<h2>10. Steelman assets (real, contracted — for the bull case in V8)</h2>
+<ul>
+<li><strong>xAI merger</strong> — Feb 2, 2026, all-stock; valued SpaceX $1T + xAI $250B; xAI folding into a SpaceX AI unit. — Sentisight [22]</li>
+<li><strong>Anthropic–Colossus 1 lease</strong> — May 6, 2026: Anthropic to use <em>all</em> compute at SpaceX's Colossus 1 (Memphis): <strong>220,000+ Nvidia GPUs, 300+ MW</strong>; interest in orbital data centers. — CNBC [23], DCD [24], Tom's Hardware [25]</li>
+<li><strong>Starlink</strong> — real recurring-revenue utility: $11.4B 2025 revenue, 10M+ subscribers / 160 countries. — Sacra [6]</li>
+</ul>
+<blockquote>
+<p>Do <strong>not</strong> assert an unverified annual lease dollar figure (earlier drafts floated "$1.25B/month" / "$15B/yr" — not confirmed in sourcing). Describe the lease by its verified specs (all compute, 220k GPUs, 300MW) instead.</p>
+</blockquote>
+<h2>11. Limitations &amp; open items</h2>
+<ol>
+<li><strong>Re-pull all §1–§3 and §8 facts the week of publication</strong> — post-cutoff and moving. Confirm SpaceX actually begins trading (~June 12) and that no figure repriced.</li>
+<li><strong>Confirm every historical revenue figure in §6 against 10-Ks</strong> — currently aggregator-level.</li>
+<li><strong>Robustness-check the frontier</strong> — re-run §7 with alternative windows; report whether the exponent and SpaceX's 2.15× multiple hold.</li>
+<li><strong>WSJ screenshot provenance</strong> — the original prompt referenced a WSJ image; confirm the exact figures shown match the cited reporting.</li>
+<li>Decide whether to present the fit as "trend/envelope" (recommended) vs. "law" (rhetorically stronger, epistemically weaker — and ironic given the piece's own "coherence ≠ truth" thesis).</li>
+<li><strong>GDP-share (§5b) uses a single 3.7% nominal-growth path.</strong> State the assumption on-chart; refresh the BEA 2025 GDP print and CBO growth figure at publication. The 41.5%-CAGR path is the headline rate, not Morgan Stanley's front-loaded path (which is higher mid-decade), so the share curve is the conservative read of their own forecast.</li>
+</ol>
+<hr />
+<h2>References</h2>
+<p>[1] CNBC — <em>SpaceX targets $135 IPO price at valuation of $1.77 trillion</em> — <a href="https://www.cnbc.com/2026/06/03/spacex-ipo-stock-price-roadshow-musk.html">https://www.cnbc.com/2026/06/03/spacex-ipo-stock-price-roadshow-musk.html</a></p>
+<p>[2] Fortune — <em>SpaceX reveals share price and record valuation</em> — <a href="https://fortune.com/2026/06/03/spacex-ipo-share-price-index-funds-valuation-public/">https://fortune.com/2026/06/03/spacex-ipo-share-price-index-funds-valuation-public/</a></p>
+<p>[3] Yahoo Finance — <em>SpaceX IPO Pricing… Musk To Keep Ironclad Control</em> — <a href="https://finance.yahoo.com/markets/stocks/articles/spacex-ipo-pricing-135-per-221653587.html">https://finance.yahoo.com/markets/stocks/articles/spacex-ipo-pricing-135-per-221653587.html</a></p>
+<p>[4] Fortune — <em>SpaceX finally files IPO prospectus… revenue is up, but losses are too</em> — <a href="https://fortune.com/2026/05/20/spacex-finally-files-ipo-prospectus-reveals-revenue-is-up-but-losses-are-too/">https://fortune.com/2026/05/20/spacex-finally-files-ipo-prospectus-reveals-revenue-is-up-but-losses-are-too/</a></p>
+<p>[5] Morningstar — <em>6 Charts on SpaceX's Pre-IPO Financials</em> — <a href="https://www.morningstar.com/stocks/6-charts-spacexs-s-1-financials">https://www.morningstar.com/stocks/6-charts-spacexs-s-1-financials</a></p>
+<p>[6] Sacra — <em>SpaceX revenue, valuation &amp; funding</em> — <a href="https://sacra.com/c/spacex/">https://sacra.com/c/spacex/</a></p>
+<p>[7] Stocktwits — <em>Morgan Stanley Sees SpaceX Revenue Soar 182-Fold To $3.4 Trillion By 2040</em> — <a href="https://stocktwits.com/news-articles/markets/equity/spacex-revenue-soar-182-fold-3-4-trillion-2040-morgan-stanley-spcx-ipo/cZ0FkkIReCJ">https://stocktwits.com/news-articles/markets/equity/spacex-revenue-soar-182-fold-3-4-trillion-2040-morgan-stanley-spcx-ipo/cZ0FkkIReCJ</a></p>
+<p>[8] Yahoo Finance / Reuters — <em>Morgan Stanley expects SpaceX revenue to hit $3.4 trillion in 2040, WSJ reports</em> — <a href="https://finance.yahoo.com/markets/stocks/articles/morgan-stanley-expects-spacex-revenue-121652635.html">https://finance.yahoo.com/markets/stocks/articles/morgan-stanley-expects-spacex-revenue-121652635.html</a></p>
+<p>[9] ZeroHedge — <em>…$3.4 Trillion 2040 revenue, $2.7 Trillion EBITDA</em> — <a href="https://www.zerohedge.com/markets/morgan-stanley-projects-spacex-revenue-hitting-stratospheric-34-trillion-2040-27-trillion">https://www.zerohedge.com/markets/morgan-stanley-projects-spacex-revenue-hitting-stratospheric-34-trillion-2040-27-trillion</a></p>
+<p>[10] SpotGamma — <em>SpaceX IPO Index Inclusion: How Rule Changes for SPY, QQQ, IWM Force Index Funds to Sell</em> — <a href="https://spotgamma.com/spacex-ipo-index-changes-spotgamma/">https://spotgamma.com/spacex-ipo-index-changes-spotgamma/</a></p>
+<p>[11] basenor — <em>Morgan Stanley Projects SpaceX at $3.4T Revenue by 2040</em> (2028/2030 path) — <a href="https://www.basenor.com/blogs/news/morgan-stanley-projects-spacex-at-3-4t-revenue-by-2040">https://www.basenor.com/blogs/news/morgan-stanley-projects-spacex-at-3-4t-revenue-by-2040</a></p>
+<p>[12] Benzinga — <em>SpaceX Revenue Could Hit $3.4 Trillion By 2040, Co-Lead Underwriter Morgan Stanley Predicts</em> — <a href="https://www.benzinga.com/markets/prediction-markets/26/06/53027273/spacex-revenue-could-hit-3-4-trillion-by-2040-co-lead-underwriter-morgan-stanley-predicts">https://www.benzinga.com/markets/prediction-markets/26/06/53027273/spacex-revenue-could-hit-3-4-trillion-by-2040-co-lead-underwriter-morgan-stanley-predicts</a></p>
+<p>[13] Axios — <em>S&amp;P will not change the rules to allow SpaceX into its benchmark index early</em> — <a href="https://www.axios.com/2026/06/04/musk-spacex-ipo-sp-investors">https://www.axios.com/2026/06/04/musk-spacex-ipo-sp-investors</a></p>
+<p>[14] Ashurst — <em>Nasdaq Proposes New "Fast Entry" Rule for the Nasdaq-100 Index</em> — <a href="https://www.ashurst.com/en/insights/nasdaq-proposes-new-fast-entry-rule-for-the-nasdaq-100-index/">https://www.ashurst.com/en/insights/nasdaq-proposes-new-fast-entry-rule-for-the-nasdaq-100-index/</a></p>
+<p>[15] Fortune — <em>If S&amp;P Dow Jones rewrites its listing rules SpaceX and Anthropic will benefit—investors won't</em> — <a href="https://fortune.com/2026/06/02/spacex-index-funds-new-listing-rules/">https://fortune.com/2026/06/02/spacex-index-funds-new-listing-rules/</a></p>
+<p>[16] Bloomberg — <em>SpaceX IPO Gets a Route for Faster FTSE Russell Index Inclusion</em> — <a href="https://www.bloomberg.com/news/articles/2026-05-26/spacex-ipo-gets-another-greenlight-toward-faster-index-inclusion">https://www.bloomberg.com/news/articles/2026-05-26/spacex-ipo-gets-another-greenlight-toward-faster-index-inclusion</a></p>
+<p>[17] Benzinga — <em>SpaceX Stock Could Get Fast-Tracked To Russell, FTSE Indexes</em> — <a href="https://www.benzinga.com/news/space/26/05/52798615/spacex-stock-fast-track-russell-ftse-indexes-ipo">https://www.benzinga.com/news/space/26/05/52798615/spacex-stock-fast-track-russell-ftse-indexes-ipo</a></p>
+<p>[18] CNBC — <em>SpaceX blocked from early U.S. benchmark index entry as S&amp;P reaffirms existing rules</em> — <a href="https://www.cnbc.com/2026/06/05/spacex-blocked-from-early-us-benchmark-index-entry-as-sp-reaffirms-existing-rules.html">https://www.cnbc.com/2026/06/05/spacex-blocked-from-early-us-benchmark-index-entry-as-sp-reaffirms-existing-rules.html</a></p>
+<p>[19] Bloomberg — <em>S&amp;P Dow Jones Keeps Megacap IPO Rules As-Is After Consultation</em> — <a href="https://www.bloomberg.com/news/articles/2026-06-04/s-p-dow-jones-keeps-megacap-ipo-rules-as-is-after-consultation">https://www.bloomberg.com/news/articles/2026-06-04/s-p-dow-jones-keeps-megacap-ipo-rules-as-is-after-consultation</a></p>
+<p>[20] AOL — <em>'Big Short' investor Michael Burry flags criticism of proposed rule change to fast-track SpaceX joining the Nasdaq</em> — <a href="https://www.aol.com/articles/big-short-investor-michael-burry-214209485.html">https://www.aol.com/articles/big-short-investor-michael-burry-214209485.html</a></p>
+<p>[21] Yahoo Finance — <em>SpaceX to land in your 401(k)… Burry flags retirement savings are 'exit liquidity'</em> — <a href="https://finance.yahoo.com/markets/stocks/articles/spacex-land-401-k-no-163000833.html">https://finance.yahoo.com/markets/stocks/articles/spacex-land-401-k-no-163000833.html</a></p>
+<p>[22] Sentisight — <em>SpaceX–xAI Merger: What It Means for Grok and AI Output</em> — <a href="https://www.sentisight.ai/spacex-xai-merger-grok-ai-output/">https://www.sentisight.ai/spacex-xai-merger-grok-ai-output/</a></p>
+<p>[23] CNBC — <em>Anthropic, SpaceX announce compute deal that includes space development</em> — <a href="https://www.cnbc.com/2026/05/06/anthropic-spacex-data-center-capacity.html">https://www.cnbc.com/2026/05/06/anthropic-spacex-data-center-capacity.html</a></p>
+<p>[24] Data Center Dynamics — <em>Anthropic to use all of SpaceX-xAI's Colossus 1 data center compute</em> — <a href="https://www.datacenterdynamics.com/en/news/anthropic-to-use-all-of-spacex-xais-colossus-1-data-center-compute/">https://www.datacenterdynamics.com/en/news/anthropic-to-use-all-of-spacex-xais-colossus-1-data-center-compute/</a></p>
+<p>[25] Tom's Hardware — <em>Musk's SpaceX has rented out access to its supercomputer's 220,000 Nvidia GPUs and 300 MW…</em> — <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/musks-spacex-has-rented-out-access-to-its-supercomputers-220-000-nvidia-gpus-and-300-megawatts-of-ai-compute-power-to-rival-anthropic-musk-says-no-one-set-off-my-evil-detector-antrhropic-also-interested-in-orbital-data-centers">https://www.tomshardware.com/tech-industry/artificial-intelligence/musks-spacex-has-rented-out-access-to-its-supercomputers-220-000-nvidia-gpus-and-300-megawatts-of-ai-compute-power-to-rival-anthropic-musk-says-no-one-set-off-my-evil-detector-antrhropic-also-interested-in-orbital-data-centers</a></p>
+<p>[26] U.S. Bureau of Economic Analysis — <em>Gross Domestic Product</em> (2025 nominal GDP $30.76T; 2024 $29.30T) — <a href="https://www.bea.gov/data/gdp/gross-domestic-product">https://www.bea.gov/data/gdp/gross-domestic-product</a></p>
+<p>[27] Congressional Budget Office — <em>The Long-Term Budget Outlook: 2025 to 2055</em> (real GDP ~1.7%/yr long-run; ~2% inflation → ~3.7% nominal) — <a href="https://www.cbo.gov/publication/61270">https://www.cbo.gov/publication/61270</a></p>
+<p>[28] CNN / Bloomberg / Al Jazeera — <em>Saudi Aramco's $25.6B IPO at $1.7T valuation; beat Alibaba's $25B (2014)</em> — <a href="https://www.cnn.com/2019/12/05/investing/saudi-aramco-ipo-price">https://www.cnn.com/2019/12/05/investing/saudi-aramco-ipo-price</a> ; <a href="https://www.bloomberg.com/news/articles/2019-12-05/saudi-aramco-raises-25-6-billion-in-world-s-biggest-ipo">https://www.bloomberg.com/news/articles/2019-12-05/saudi-aramco-raises-25-6-billion-in-world-s-biggest-ipo</a></p>
+<p>[29] Payload / Sacra — <em>SpaceX revenue history: 2022 $4.6B · 2023 $8.7B · 2024 $14.2B</em> — <a href="https://payloadspace.com/predicting-spacexs-2024-revenue/">https://payloadspace.com/predicting-spacexs-2024-revenue/</a> ; <a href="https://sacra.com/c/spacex/">https://sacra.com/c/spacex/</a></p>
+  </div>
+</body>
+</html>
