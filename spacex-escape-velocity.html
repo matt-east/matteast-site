@@ -150,46 +150,58 @@
       <div class="step" data-step="11"><div class="copy">
         <p class="kicker">The Outlier</p>
         <h2 class="h-big">Measure the Gaps.</h2>
-        <p class="body">Score every company by how far it beats the frontier — actual growth ÷ what the trend predicts — and rank them. Most land near 1.0×.</p>
+        <p class="body">Measure how far each company sits from the frontier — its actual growth ÷ what the trend predicts. That gap is its residual: how much it beat the speed limit, or fell short.</p>
       </div></div>
 
       <div class="step" data-step="12"><div class="copy">
+        <p class="kicker">The Outlier</p>
+        <h2 class="h-big">Rank Them.</h2>
+        <p class="body">Lift the gaps off the cloud and set them aside — then line every company up, largest overshoot to smallest.</p>
+      </div></div>
+
+      <div class="step" data-step="13"><div class="copy">
+        <p class="kicker">The Outlier</p>
+        <h2 class="h-big">Most Sit Near 1.0×.</h2>
+        <p class="body">Ranked, almost every company lands close to 1.0× — it grew about as fast as its size predicted. A handful clear the bar; one sits in a class of its own.</p>
+      </div></div>
+
+      <div class="step" data-step="14"><div class="copy">
         <p class="kicker">The Outlier</p>
         <h2 class="h-mega">Off the Manifold.</h2>
         <p class="body">Collapse those scores into a distribution. Tesla's 1.49× is the record — just inside the outlier fence. SpaceX's required <span class="accent">2.15×</span> falls beyond it: a statistical outlier, ~44% past the best the data has ever produced.</p>
       </div></div>
 
-      <div class="step" data-step="13"><div class="copy">
+      <div class="step" data-step="15"><div class="copy">
         <p class="kicker">The Tell</p>
         <h2 class="h-big">79% Margins. At $3.4 Trillion.</h2>
         <p class="body">The forecast also assumes a 79% EBITDA margin. Aramco, pumping the cheapest oil on Earth, manages 55%. Software tops out near 45%. And $3.4&nbsp;trillion would be <span class="accent">five times Walmart</span> — the most revenue any company has ever booked. One firm. Building rockets.</p>
       </div></div>
 
-      <div class="step" data-step="14"><div class="copy">
+      <div class="step" data-step="16"><div class="copy">
         <p class="kicker">The Scale</p>
         <h2 class="h-big">Six Percent of Everything.</h2>
         <p class="body">Run the headline forward: SpaceX at 41.5% while the U.S. economy grows at its consensus ~3.7% nominal. By 2040 a single company's revenue would equal <span class="accent">~6% of U.S. GDP</span> — beyond the share Walmart commands today. A hundredfold rise in fifteen years.</p>
       </div></div>
 
-      <div class="step" data-step="15"><div class="copy">
+      <div class="step" data-step="17"><div class="copy">
         <p class="kicker">The Machine</p>
         <h2 class="h-big">Forced to Buy.</h2>
         <p class="body">Nasdaq deleted its float minimum and built a 15-day fast track for the 40 largest firms. SpaceX floats under 5%. Funds tracking QQQ, IWM and FTSE are forced to buy it — <span class="accent">~$60&nbsp;billion</span>, Goldman estimates — squeezed through a tiny float, setting a price before the market finds one.</p>
       </div></div>
 
-      <div class="step" data-step="16"><div class="copy">
+      <div class="step" data-step="18"><div class="copy">
         <p class="kicker">The Machine</p>
         <h2 class="h-mega">Someone Sells Into It.</h2>
         <p class="body">That forced bid needs a seller. When the lock-ups expire 90–180 days later, insiders sell into the demand the index created. The cash flows out to them. The public is left holding the position — bought at a price set for it.</p>
       </div></div>
 
-      <div class="step" data-step="17"><div class="copy">
+      <div class="step" data-step="19"><div class="copy">
         <p class="kicker">The Thesis</p>
         <h2 class="h-mega">Coherence Isn't Truth.</h2>
         <p class="body">Coherence is cheap — a roadshow is built to manufacture it. Real businesses, a vast market, a growth rate with precedent, arranged until the story stops feeling like a forecast and starts feeling like a fact. But a coherent story isn't a true one, and this one doesn't have to be. It only has to hold long enough for the index to buy and the lock-ups to lift. The value was never in 2040. It was always in the rebalance.</p>
       </div></div>
 
-      <div class="step" data-step="18"><div class="copy">
+      <div class="step" data-step="20"><div class="copy">
         <p class="kicker">The Twist</p>
         <h2 class="h-mega">The Elon Frontier.</h2>
         <p class="body">Two companies sit far above everyone else's frontier — both Musk's. Tesla earned its place with revenue it delivered; SpaceX has only been priced to match. Connect them and a line of their own appears. Two points don't make a law — but it's the line the market has drawn. So the question stands: is Elon Musk on a frontier of his own — or is the market extrapolating one proven outlier onto an unproven one?</p>
@@ -202,7 +214,7 @@
   </section>
 
   <footer>
-    Every figure is sourced and computed in the companion file <a href="SpaceX_ScrollyTelling_Sources.md">SpaceX_ScrollyTelling_Sources.md</a>. Forecasts are Morgan Stanley's (a co-lead underwriter); historical CAGRs and residuals are computed from public filings. <strong>First draft — June 5, 2026.</strong>
+    Every figure is sourced and computed in the companion file <a href="SpaceX_ScrollyTelling_Sources.md">SpaceX_ScrollyTelling_Sources.md</a>. Forecasts are Morgan Stanley's (a co-lead underwriter); historical CAGRs and residuals are computed from public filings.
   </footer>
 
 <script>
@@ -332,6 +344,11 @@
       for(var i=N2;i>=0;i--){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N2);lo+=" L "+sx(b).toFixed(1)+" "+Math.min(PX.b,sy(fit(b)*0.771)).toFixed(1);}
       E("path",{d:up+lo+" Z",fill:"rgba(150,165,210,.15)",stroke:"none"},b2);})(FX.band);
 
+    // residual lines for the finale — Coherence shows them, Elon drops them (band stays)
+    FX.finaleResid=E("g",null,g); FX.finaleResid.style.opacity=0;
+    COMPS.forEach(function(o){E("line",{x1:sx(o.b),y1:sy(fit(o.b)),x2:sx(o.b),y2:sy(o.c),stroke:(o.c>=fit(o.b)?"#d98b6a":GRAY),"stroke-width":"2","stroke-opacity":".7","stroke-linecap":"round"},FX.finaleResid);});
+    E("line",{x1:sx(SPACEX.b),y1:sy(fit(SPACEX.b)),x2:sx(SPACEX.b),y2:sy(SPACEX.c),stroke:RED,"stroke-width":"3","stroke-linecap":"round"},FX.finaleResid);
+
     var cloud=spart("p-cloud",g);
     COMPS.forEach(function(d,i){var pg=E("g",{"class":"pt"},cloud);
       var c=E("circle",{cx:sx(d.b),cy:sy(d.c),r:6,fill:GRAY,"fill-opacity":".95"},pg);
@@ -453,11 +470,22 @@
     T(VBX+VBW+8,fyB(2.15)+13,"beyond the fence",{fill:RED,"font-size":"11"},bs);
     bs.style.opacity=0;
 
-    // ghost dots: shrunk-scatter positions -> vertical box positions
+    // "all the way left" resting transform for the scatter during the ranking + box beats
+    var SL=0.46,TX=-49,TY=178; FX.outLeft={s:SL,tx:TX,ty:TY};
+
+    // ghost residual lines — copies that fly from the (left-parked) scatter to populate the ranked bars
+    FX.ghostResid=[];
+    RES.forEach(function(r,i){
+      var gx0=SL*sx(r.b)+TX, gyT=SL*sy(fit(r.b))+TY, gyB=SL*sy(r.c)+TY;
+      var ln=E("line",{x1:gx0,y1:Math.min(gyT,gyB).toFixed(1),x2:gx0,y2:Math.max(gyT,gyB).toFixed(1),stroke:(r.sp?RED:(r.rf>=1?"#d98b6a":GRAY)),"stroke-width":"2.5","stroke-linecap":"round"},g);
+      ln.style.opacity=0;
+      FX.ghostResid.push({el:ln,x0:gx0,cy:(gyT+gyB)/2,bX:BL+4,bY:top+i*rowH+7,bar:FX.outBars[i]});});
+
+    // box dots: left-parked scatter positions -> vertical box positions
     var jit=[-16,12,-8,18,-20,6,16,-12,20,-6,10,-18,8,14,-14,0];
     RES.forEach(function(r,i){
       var dot=E("circle",{cx:0,cy:0,r:(r.sp?8:5),fill:(r.sp?RED:(r.rf>=1?"#d98b6a":GRAY))},g);dot.style.opacity=0;
-      FX.odots.push({el:dot,sX:0.56*sx(r.b)-58,sY:0.56*sy(r.c)+84,bX:VBX+(r.sp?0:jit[i%jit.length]),bY:fyB(r.rf),sp:r.sp});});
+      FX.odots.push({el:dot,sX:SL*sx(r.b)+TX,sY:SL*sy(r.c)+TY,bX:VBX+(r.sp?0:jit[i%jit.length]),bY:fyB(r.rf),sp:r.sp});});
   })();
 
   /* ===== L6 : THE TELL ===== */
@@ -531,8 +559,8 @@
   })();
 
   /* ===================== SCENE CONTROL ===================== */
-  var STEP_LAYER=["Loffer","Loffer","L0","L0","L0","L1b","L2","L2","L2","L2","L2","Lout","Lout","L6","Lgdp","L8","L8","L2","L2"];
-  var STEP_PARTS={6:["yaxis","cloud"],7:["yaxis","cloud"],8:["yaxis","xaxis","cloud"],9:["yaxis","xaxis","cloud"],10:["yaxis","xaxis","cloud","fit","flbl","eq"],17:["yaxis","xaxis","cloud","fit","flbl","ann"],18:["yaxis","xaxis","cloud","fit","flbl","elon"]};
+  var STEP_LAYER=["Loffer","Loffer","L0","L0","L0","L1b","L2","L2","L2","L2","L2","Lout","Lout","Lout","Lout","L6","Lgdp","L8","L8","L2","L2"];
+  var STEP_PARTS={6:["yaxis","cloud"],7:["yaxis","cloud"],8:["yaxis","xaxis","cloud"],9:["yaxis","xaxis","cloud"],10:["yaxis","xaxis","cloud","fit","flbl","eq"],19:["yaxis","xaxis","cloud","fit","flbl","ann"],20:["yaxis","xaxis","cloud","fit","flbl","elon"]};
   var ALLPARTS=["yaxis","xaxis","cloud","fit","flbl","eq","ann","elon"];
   var LAY=["Loffer","L0","L1b","L2","Lout","L6","Lgdp","L8"];
 
@@ -584,41 +612,59 @@
     FX.pt2025.style.opacity=0;FX.pt2040.style.opacity=0;FX.naiveLbl.style.opacity=0;setDraw(FX.naiveCurve,0);
   }
   function applyOutlier(step,p){
+    var SL=FX.outLeft.s,TX=FX.outLeft.tx,TY=FX.outLeft.ty;
+    function park(s,tx,ty){FX.gScatter.setAttribute("transform","translate("+tx+","+ty+") scale("+s+")");FX.gScatter.style.opacity=1;}
+    function ptsOn(o){FX.loutPts.forEach(function(d){d.style.opacity=o;});FX.loutPtsSx.style.opacity=o;}
+    function residFull(){FX.outResid.forEach(function(l){setDraw(l,1);l.style.opacity=1;});}
     if(step===11){
-      // residuals (thick lollipops) draw on the full frontier, then it shrinks left as the ranked bars grow — points kept visible
-      var shrink=clamp((p-0.40)/0.35),sc=lerp(1,0.56,shrink),tx=lerp(0,-58,shrink),tyy=lerp(0,84,shrink);
-      FX.gScatter.setAttribute("transform","translate("+tx.toFixed(1)+","+tyy.toFixed(1)+") scale("+sc.toFixed(3)+")");FX.gScatter.style.opacity=1;
-      var rd=clamp(p/0.42);FX.outResid.forEach(function(l){setDraw(l,rd);l.style.opacity=1;});
-      FX.loutPts.forEach(function(d){d.style.opacity=1;});FX.loutPtsSx.style.opacity=1;
-      FX.gBars.setAttribute("transform","translate(0,0)");FX.gBars.style.opacity=clamp((p-0.60)/0.30);
-      var bg=clamp((p-0.66)/0.34);FX.outBars.forEach(function(b){b.style.transform="scaleX("+bg+")";});
-      FX.odots.forEach(function(o){o.el.style.opacity=0;});
-      FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;}
+      // residual lollipops draw on the FULL frontier; points + band held; nothing on the right yet
+      park(1,0,0);
+      var rd=clamp(p/0.85);FX.outResid.forEach(function(l){setDraw(l,rd);l.style.opacity=1;});
+      ptsOn(1);
+      FX.gBars.style.opacity=0;FX.outBars.forEach(function(b){b.style.transform="scaleX(0)";});
+      FX.ghostResid.forEach(function(gr){gr.el.style.opacity=0;});
+      FX.odots.forEach(function(o){o.el.style.opacity=0;});FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;}
     else if(step===12){
-      // scatter + thick residuals persist (shrunk); bars fade; box forms; the points themselves move across into it
-      FX.gScatter.setAttribute("transform","translate(-58,84) scale(0.56)");FX.gScatter.style.opacity=1;
-      FX.outResid.forEach(function(l){setDraw(l,1);l.style.opacity=1;});
-      var ptFade=1-clamp((p-0.10)/0.20);FX.loutPts.forEach(function(d){d.style.opacity=ptFade;});FX.loutPtsSx.style.opacity=ptFade;
-      FX.gBars.setAttribute("transform","translate(0,0)");FX.gBars.style.opacity=1-clamp(p/0.28);
-      FX.outBars.forEach(function(b){b.style.transform="scaleX(1)";});
+      // slide the whole scatter (points + residuals + band) all the way left
+      var f=clamp(p/0.85);park(lerp(1,SL,f),lerp(0,TX,f),lerp(0,TY,f));
+      residFull();ptsOn(1);
+      FX.gBars.style.opacity=0;FX.outBars.forEach(function(b){b.style.transform="scaleX(0)";});
+      FX.ghostResid.forEach(function(gr){gr.el.style.opacity=0;});
+      FX.odots.forEach(function(o){o.el.style.opacity=0;});FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;}
+    else if(step===13){
+      // scatter parked left; ghost residual lines fly right to populate the ranked bars
+      park(SL,TX,TY);residFull();ptsOn(1);
+      FX.gBars.style.opacity=1;
+      FX.ghostResid.forEach(function(gr,i){var f=clamp((p-i*0.012)/0.5);
+        gr.el.style.transform="translate("+((gr.bX-gr.x0)*f).toFixed(1)+"px,"+((gr.bY-gr.cy)*f).toFixed(1)+"px)";
+        gr.el.style.opacity=(f<=0||f>=1)?0:(f<0.2?f/0.2*0.7:(f>0.7?(1-f)/0.3*0.7:0.7));
+        gr.bar.style.transform="scaleX("+clamp((f-0.45)/0.55).toFixed(3)+")";});
+      FX.odots.forEach(function(o){o.el.style.opacity=0;});FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;}
+    else if(step===14){
+      // off the manifold: bars fade; the points themselves fly across into the vertical box
+      park(SL,TX,TY);residFull();
+      FX.ghostResid.forEach(function(gr){gr.el.style.opacity=0;gr.bar.style.transform="scaleX(1)";});
+      FX.gBars.style.opacity=1-clamp(p/0.28);
+      ptsOn(1-clamp((p-0.10)/0.20));
       FX.gBox.style.opacity=clamp((p-0.15)/0.30);
-      var f=clamp((p-0.25)/0.55);
-      FX.odots.forEach(function(o){o.el.setAttribute("cx",lerp(o.sX,o.bX,f).toFixed(1));o.el.setAttribute("cy",lerp(o.sY,o.bY,f).toFixed(1));o.el.style.opacity=clamp((p-0.10)/0.20);});
+      var ff=clamp((p-0.25)/0.55);
+      FX.odots.forEach(function(o){o.el.setAttribute("cx",lerp(o.sX,o.bX,ff).toFixed(1));o.el.setAttribute("cy",lerp(o.sY,o.bY,ff).toFixed(1));o.el.style.opacity=clamp((p-0.10)/0.20);});
       FX.boxSpace.style.opacity=clamp((p-0.70)/0.25);}
     else{FX.gScatter.style.opacity=0;FX.gBars.style.opacity=0;FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;
-      FX.outResid.forEach(function(l){l.style.opacity=1;});FX.loutPts.forEach(function(d){d.style.opacity=1;});FX.loutPtsSx.style.opacity=1;FX.odots.forEach(function(o){o.el.style.opacity=0;});}
+      FX.outResid.forEach(function(l){l.style.opacity=1;});ptsOn(1);
+      FX.ghostResid.forEach(function(gr){gr.el.style.opacity=0;});FX.odots.forEach(function(o){o.el.style.opacity=0;});}
   }
   function applyMachine(step,p){
-    var on=(step===15||step===16),i;
+    var on=(step===17||step===18),i;
     for(i=0;i<FX.inDots.length;i++){var dt=FX.inDots[i];if(!on){dt.el.style.opacity=0;continue;}
       var fr=((p*1.05)+dt.ph)%1,x=80+fr*460,conv=clamp(fr/0.80),y=dt.y0+(330-dt.y0)*conv;dt.el.setAttribute("cx",x.toFixed(1));dt.el.setAttribute("cy",y.toFixed(1));
       var o=fr<0.06?fr/0.06:(fr>0.9?(1-fr)/0.1:1);dt.el.style.opacity=(o*clamp(p*1.6)).toFixed(2);}
-    FX.sxNode.style.transform=on?"scale("+(0.55+0.55*(step===15?clamp((p-0.2)/0.6):1)).toFixed(3)+")":"scale(0.55)";
-    FX.dollar60.style.opacity=(step===15?clamp((p-0.4)/0.3):(step===16?1:0));
-    var ex=(step===16)?clamp((p-0.1)/0.3):0; FX.exitGroup.style.opacity=ex;
-    for(i=0;i<FX.outDots.length;i++){var o2=FX.outDots[i];if(step!==16){o2.el.style.opacity=0;continue;}
+    FX.sxNode.style.transform=on?"scale("+(0.55+0.55*(step===17?clamp((p-0.2)/0.6):1)).toFixed(3)+")":"scale(0.55)";
+    FX.dollar60.style.opacity=(step===17?clamp((p-0.4)/0.3):(step===18?1:0));
+    var ex=(step===18)?clamp((p-0.1)/0.3):0; FX.exitGroup.style.opacity=ex;
+    for(i=0;i<FX.outDots.length;i++){var o2=FX.outDots[i];if(step!==18){o2.el.style.opacity=0;continue;}
       var f2=((p*0.9)+o2.ph)%1,x2=610+f2*250;o2.el.setAttribute("cx",x2.toFixed(1));var oo=f2<0.06?f2/0.06:(f2>0.9?(1-f2)/0.1:1);o2.el.style.opacity=(oo*ex).toFixed(2);}
-    FX.machineBottom.style.opacity=(step===16?clamp((p-0.5)/0.3):0);
+    FX.machineBottom.style.opacity=(step===18?clamp((p-0.5)/0.3):0);
   }
 
   function applyFX(step,p){
@@ -630,7 +676,7 @@
     // scatter: slide curve-ends into x=1 column (6) -> add the field (7) -> unfold x to base (8) -> frontier (>=9)
     var slideP=(step===6?clamp(p/0.60):0);
     var unf=step===7?1:(step===8?(1-clamp((p-0.05)/0.80)):0);
-    var cloudVis=((step>=6&&step<=10)||step===17||step===18);
+    var cloudVis=((step>=6&&step<=10)||step===19||step===20);
     var nOth=(step===7?Math.ceil(clamp(p/0.70)*FX.pts.length):FX.pts.length);
     FX.pts.forEach(function(g,i){
       var on=cloudVis&&(step===6?(i===FX.teslaIdx):(step===7?(i===FX.teslaIdx||i<nOth):true));
@@ -649,15 +695,16 @@
     FX.lowerBar.style.opacity=(step===6?clamp((p-0.55)/0.25):0);                              // "lower bar" cue
     FX.baseGap.style.opacity=(step===8?clamp((p-0.55)/0.30):0);                               // base-gap bracket (x-axis)
     FX.cagrGap.style.opacity=(step===8?clamp((p-0.55)/0.30):0);                               // CAGR-share bracket (right)
-    FX.band.style.opacity=(step===9?clamp(p/0.5):((step===10||step===17||step===18)?1:0));    // ±1 SD band persists
+    FX.band.style.opacity=(step===9?clamp(p/0.5):((step===10||step===19||step===20)?1:0));    // ±1 SD band persists
+    FX.finaleResid.style.opacity=(step===19?clamp((p-0.10)/0.45):0);                          // residuals: Coherence shows, Elon drops
     setDraw(FX.fitPath, step<10?0:(step===10?clamp(p):1));
     applyOutlier(step,p);
-    FX.mbars.forEach(function(b){b.style.transform="scaleY("+(step===13?p:1)+")";});
-    setDraw(FX.gdpLine, step===14?clamp(p/0.82):(step>14?1:0));
-    FX.gdpEndLbl.style.opacity=(step===14?clamp((p-0.68)/0.25):0);
-    setDraw(FX.annPath, step===17?clamp((p-0.1)/0.7):0);
-    setDraw(FX.elonLine, step===18?clamp((p-0.15)/0.6):0);
-    var elOn=(step===18);FX.teslaCircle.style.fill=elOn?RED:"";FX.teslaLbl.style.fill=elOn?RED:"";
+    FX.mbars.forEach(function(b){b.style.transform="scaleY("+(step===15?p:1)+")";});
+    setDraw(FX.gdpLine, step===16?clamp(p/0.82):(step>16?1:0));
+    FX.gdpEndLbl.style.opacity=(step===16?clamp((p-0.68)/0.25):0);
+    setDraw(FX.annPath, step===19?clamp((p-0.1)/0.7):0);
+    setDraw(FX.elonLine, step===20?clamp((p-0.15)/0.6):0);
+    var elOn=(step===20);FX.teslaCircle.style.fill=elOn?RED:"";FX.teslaLbl.style.fill=elOn?RED:"";
     applyMachine(step,p);
   }
 
