@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acquisition Is Over — Sources &amp; Data</title>
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --navy:#0c1f38; --navy2:#102a49; --ink:#eef3fa; --mut:#9fb0c6; --faint:#62748f;
+    --rule:#1d355a; --line:#15294a; --amber:#f2a431; --green:#2aa75e; --blue:#3f88d8; --slate:#5d7290;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0;background:#0c1f38;color:#c4d0e0;font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;line-height:1.62}
+  .wrap{max-width:880px;margin:0 auto;padding:54px 28px 120px}
+  .topnav{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;margin-bottom:40px}
+  .topnav a{color:#f2a431;text-decoration:none}
+  .topnav a:hover{opacity:.8}
+  .kick{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:#f2a431;margin-bottom:6px}
+  h1{font-size:clamp(2rem,4.6vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.06;color:#fff;margin:0 0 18px}
+  h2{font-size:1.4rem;font-weight:800;letter-spacing:-.012em;color:#fff;margin:58px 0 6px;padding-top:28px;border-top:1px solid #1d355a}
+  h3{font-size:1.02rem;font-weight:700;color:#fff;margin:26px 0 4px}
+  p{margin:13px 0}
+  a{color:#f2a431;text-decoration:none;border-bottom:1px solid rgba(242,164,49,.32);overflow-wrap:anywhere}
+  a:hover{border-bottom-color:#f2a431}
+  strong{color:#eef3fa;font-weight:700}
+  em{color:#aebbcd}
+  ul,ol{padding-left:22px;margin:13px 0}
+  li{margin:7px 0}
+  blockquote{margin:18px 0;padding:6px 18px;border-left:3px solid #f2a431;color:#9fb0c6}
+  blockquote p{margin:6px 0}
+  table{border-collapse:collapse;width:100%;margin:18px 0;font-size:.9rem}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #15294a;vertical-align:top}
+  th{color:#9fb0c6;font-weight:700;border-bottom:1.5px solid #1d355a;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .obs{color:#2aa75e;font-weight:800} .inf{color:#f2a431;font-weight:800}
+  .tag{font-size:.68rem;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:4px}
+  .tag.o{color:#0c1f38;background:#2aa75e} .tag.i{color:#f2a431;border:1px dashed #f2a431}
+  .note{font-size:.92rem;color:#9fb0c6;font-style:italic}
+  @media (max-width:680px){ .wrap{padding:36px 16px 90px} table{font-size:.78rem} th,td{padding:7px 8px} }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav"><a href="tirzepatide-persistence.html">&larr; Acquisition Is Over</a></div>
+    <p class="kick">Companion data &amp; citations</p>
+    <h1>The Tirzepatide Persistence Gap — Sources &amp; Data</h1>
+    <p>Every figure in the scrollytelling (<code>tirzepatide-persistence.html</code>) is reproduced here with its source and tagged
+      <span class="tag o">OBSERVED</span> (verifiable from primary sources) or
+      <span class="tag i">MODELED</span> (constructed from stated assumptions, anchored to observed priors).</p>
+    <blockquote><p><strong>The honest core.</strong> The five-year retention curves, lifetime values, the $69B exposure and the $24–35B addressable wedge are <em>modeled</em> — built by exponential decay from two published endpoints and multiplied across an inferred patient count. The direction is robust; the precision is not. This is a strategy estimate, not a forecast.</p></blockquote>
+    <p class="note">By Matt East. For entertainment purposes only — analysis reflects the author's personal views and does not represent any employer or affiliated organization. Not investment advice.</p>
+    <hr style="border:none;border-top:1px solid #1d355a;margin:4px 0" />
+
+    <h2>0. Scene map</h2>
+    <table>
+      <thead><tr><th>Movement</th><th>Scenes</th><th>Data §</th></tr></thead>
+      <tbody>
+        <tr><td>The Exposure</td><td>A $69B leak</td><td>§7</td></tr>
+        <tr><td>The Gap</td><td>Trial vs. real world · It decays · Obesity breaks faster</td><td>§1, §2</td></tr>
+        <tr><td>The Cause</td><td>Why they quit · Friction not biology · Two readings</td><td>§3</td></tr>
+        <tr><td>The Unit</td><td>One refill · $5,980 a year</td><td>§4</td></tr>
+        <tr><td>The Model</td><td>Two anchors one curve · Area is the money</td><td>§5</td></tr>
+        <tr><td>The Gap in $</td><td>Deflate the gap</td><td>§6</td></tr>
+        <tr><td>The Scale</td><td>×5.5M · Most of it isn't yours</td><td>§7</td></tr>
+        <tr><td>The Range / Inversion / Answer</td><td>Sensitivity · Bear case · Operating system</td><td>§8, §9, §10</td></tr>
+      </tbody>
+    </table>
+    <hr style="border:none;border-top:1px solid #1d355a;margin:4px 0" />
+
+    <h2>1. The persistence gap <span class="tag o">OBSERVED</span></h2>
+    <p>Discontinuation within ~1 year. Trial endpoint is 72 weeks; real-world windows are 6–12 months, so a matched-window gap would be larger.</p>
+    <table>
+      <thead><tr><th>Cohort</th><th>Window</th><th>Discontinuation</th></tr></thead>
+      <tbody>
+        <tr><td>SURMOUNT-1 (trial)</td><td>72 wk</td><td class="num">15.1%</td></tr>
+        <tr><td>Optum obesity</td><td>6 mo</td><td class="num">44.6%</td></tr>
+        <tr><td>Truveta T2D</td><td>12 mo</td><td class="num">46.5%</td></tr>
+        <tr><td>Academic clinic</td><td>12 mo</td><td class="num">50.0%</td></tr>
+        <tr><td>Truveta obesity</td><td>12 mo</td><td class="num">64.8%</td></tr>
+        <tr><td><strong>Real-world median</strong></td><td>—</td><td class="num"><strong>~50%</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h2>2. Retention over time &amp; indication split <span class="tag o">OBSERVED</span> / <span class="tag i">MODELED</span></h2>
+    <p>12-month retention is observed; the 12–24 month segments are extrapolated (only 12-month indication-specific points are directly published).</p>
+    <table>
+      <thead><tr><th>Series</th><th>12-mo retention</th><th>vs. trial</th></tr></thead>
+      <tbody>
+        <tr><td>Trial (SURMOUNT-1)</td><td class="num">86%</td><td class="num">baseline</td></tr>
+        <tr><td>Real-world T2D</td><td class="num">54%</td><td class="num">−32 pp</td></tr>
+        <tr><td>Real-world obesity</td><td class="num">35%</td><td class="num">−51 pp</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Truveta data span 2018–2023 and include liraglutide-era users; tirzepatide-specific retention is likely somewhat higher.</p>
+
+    <h2>3. Why patients discontinue <span class="tag o">OBSERVED</span></h2>
+    <p>Cleveland Clinic decomposition, non-T2D obesity (n=288), stated reason at point of discontinuation.</p>
+    <table>
+      <thead><tr><th>Reason</th><th>Share</th><th>Bucket</th></tr></thead>
+      <tbody>
+        <tr><td>Cost / insurance</td><td class="num">47.6%</td><td>commercial</td></tr>
+        <tr><td>Side-effect intolerance</td><td class="num">14.6%</td><td>drug</td></tr>
+        <tr><td>Unable to fill (shortage)</td><td class="num">11.8%</td><td>supply artifact</td></tr>
+        <tr><td>Unspecified</td><td class="num">11.1%</td><td>—</td></tr>
+        <tr><td>Other</td><td class="num">10.8%</td><td>—</td></tr>
+        <tr><td>Switched to compounded</td><td class="num">2.4%</td><td>supply artifact</td></tr>
+        <tr><td>Unsatisfactory weight loss</td><td class="num">1.7%</td><td>drug</td></tr>
+      </tbody>
+    </table>
+    <p class="note">~16% is drug-related (AE + poor response); ~14.2% (shortage + compounded) are 2022–2024 supply artifacts. For contrast, Truveta extracted cost <em>mentions</em> from clinical notes at only ~13% — stated reason vs. note mention diverge by method.</p>
+
+    <h2>4. Unit economics <span class="tag i">MODELED</span> (illustrative)</h2>
+    <table>
+      <thead><tr><th>Per 28-day fill (patient-month)</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Net revenue</td><td class="num">$460</td></tr>
+        <tr><td>Gross profit (~82%)</td><td class="num">$377</td></tr>
+        <tr><td>Operating profit (~41%)</td><td class="num">$189</td></tr>
+        <tr><td>Net revenue / fully persistent year (×13)</td><td class="num">$5,980</td></tr>
+      </tbody>
+    </table>
+    <p class="note">$460 is a 2026 base-case estimate; net realized US price disclosed −13% YoY in Q1 2026 (prior $520 anchor was 2024-era). 41% operating margin is company-level; tirzepatide-specific is likely higher.</p>
+
+    <h2>5. Five-year retention construction <span class="tag i">MODELED</span></h2>
+    <p>Two observed anchors + a constant-per-patient-month hazard (exponential decay), S(t)=e<sup>−λt</sup>.</p>
+    <table>
+      <thead><tr><th>Anchor</th><th>Observed point</th><th>λ / PM</th><th>Cumulative PM (5-yr)</th></tr></thead>
+      <tbody>
+        <tr><td>Trial (SURMOUNT-1)</td><td class="num">84.9% @ 18 PM</td><td class="num">0.0091</td><td class="num">~49</td></tr>
+        <tr><td>Real-world obesity (Truveta)</td><td class="num">35% @ 13 PM</td><td class="num">0.0808</td><td class="num">~12</td></tr>
+        <tr><td>+ Reinitiation (35% restart)</td><td>—</td><td>—</td><td class="num">+2.75</td></tr>
+      </tbody>
+    </table>
+
+    <h2>6. LTV &amp; the closeable gap <span class="tag i">MODELED</span></h2>
+    <table>
+      <thead><tr><th>Per obesity patient (5-yr)</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Trial-like LTV (49 PM × $460)</td><td class="num">~$22.5K</td></tr>
+        <tr><td>Real-world LTV (12 PM × $460)</td><td class="num">~$5.5K</td></tr>
+        <tr><td>Naive gap</td><td class="num">$17.0K</td></tr>
+        <tr><td>− Reinitiation recapture</td><td class="num">−$1.3K</td></tr>
+        <tr><td>− Competitive switching (placeholder)</td><td class="num">−$1.5K</td></tr>
+        <tr><td><strong>Closeable gap</strong></td><td class="num"><strong>~$14K</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="note">T2D LTV gap is smaller (~$10K) given higher retention (~54% at 13 PM) and higher reinitiation (~51% within 1 yr).</p>
+
+    <h2>7. Enterprise exposure &amp; addressable wedge <span class="tag o">OBSERVED</span> revenue / <span class="tag i">MODELED</span> exposure</h2>
+    <table>
+      <thead><tr><th>Step</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>2025 US tirzepatide revenue ($13.5B Zepbound + $13.6B Mounjaro) <span class="tag o">OBS</span></td><td class="num">$27.1B</td></tr>
+        <tr><td>Est. US unique patients (back-solved) <span class="tag i">MOD</span></td><td class="num">~5.5M</td></tr>
+        <tr><td>Indication-weighted closeable gap (65% obesity × $14K + 35% T2D × $10K) <span class="tag i">MOD</span></td><td class="num">~$12.5K</td></tr>
+        <tr><td>Lifetime revenue exposure (5.5M × $12.5K) <span class="tag i">MOD</span></td><td class="num">~$69B</td></tr>
+        <tr><td>Operating-profit exposure (× 41%) <span class="tag i">MOD</span></td><td class="num">~$28B</td></tr>
+        <tr><td>Lilly-addressable (35–50% of leak) <span class="tag i">MOD</span></td><td class="num">$24–35B</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Lilly owns: affordability, copay, LillyDirect, titration support. Not Lilly's: prior authorization, formulary placement, Medicare obesity coverage (PBMs, payers, CMS).</p>
+
+    <h2>8. Sensitivity <span class="tag i">MODELED</span> (illustrative, not a forecast)</h2>
+    <p>Lifetime revenue captured ($B) from one 2025 US cohort, by closure rate × net revenue per patient-month (100% row spans the $24–35B addressable wedge).</p>
+    <table>
+      <thead><tr><th>Closure</th><th>$380 (stress)</th><th>$460 (base)</th><th>$550 (bull)</th></tr></thead>
+      <tbody>
+        <tr><td>25%</td><td class="num">$5.8B</td><td class="num">$7.1B</td><td class="num">$8.5B</td></tr>
+        <tr><td>50%</td><td class="num">$11.7B</td><td class="num">$14.1B</td><td class="num">$16.9B</td></tr>
+        <tr><td>75%</td><td class="num">$17.5B</td><td class="num">$21.2B</td><td class="num">$25.4B</td></tr>
+        <tr><td>100%</td><td class="num">$23.4B</td><td class="num">$28.3B</td><td class="num">$33.8B</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Base-case operating profit recaptured @ 41% margin: 25% → ~$2.9B, 50% → ~$5.8B, 75% → ~$8.7B, 100% → ~$11.6B.</p>
+
+    <h2>9. Bear case</h2>
+    <ul>
+      <li><strong>Net price decline swamps gains.</strong> A further 15–20% net-price cut over 2026–2028 could make closing 50% of the gap net to flat revenue.</li>
+      <li><strong>Reinitiation already recaptures the leak.</strong> 35–51% of patients restart within 12 months; modeling discontinuation as permanent overstates the gap.</li>
+      <li><strong>Pre-2026 supply was the binding constraint.</strong> 2023–mid-2025 lost persistence ≠ lost revenue — Lilly was capacity-rationed. The thesis is forward-looking only.</li>
+      <li><strong>Orforglipron cannibalizes injectable tirzepatide.</strong> Oral GLP-1 preserves franchise persistence but at lower per-fill economics — margin compression.</li>
+      <li><strong>Cost-effectiveness threshold sits below current net price.</strong> ~30% additional price cut needed to hit $100K/QALY (JAMA Health Forum, Hwang 2025).</li>
+      <li><strong>Acquisition is still the dominant growth lever — today.</strong> Q1 2026 US Zepbound grew 79% YoY. Persistence is the quality-of-revenue question, not yet the rate-of-growth question.</li>
+    </ul>
+
+    <h2>10. The adherence operating system</h2>
+    <table>
+      <thead><tr><th>Lever</th><th>~% of leak</th><th>Lilly ownership</th></tr></thead>
+      <tbody>
+        <tr><td>PA friction / coverage churn</td><td class="num">25–30%</td><td>Influences</td></tr>
+        <tr><td>Patient out-of-pocket affordability</td><td class="num">15–20%</td><td>Partially owns</td></tr>
+        <tr><td>AE management / titration</td><td class="num">~15%</td><td>Influences</td></tr>
+        <tr><td>Patient engagement / habits</td><td class="num">~10%</td><td>Influences</td></tr>
+        <tr><td>Fill failures / shortages</td><td class="num">12% → ~2%</td><td>Owns</td></tr>
+        <tr><td>Portfolio recapture</td><td class="num">—</td><td>Owns</td></tr>
+      </tbody>
+    </table>
+
+    <h2>11. The OBSERVED / MODELED ledger</h2>
+    <h3><span class="tag o">OBSERVED</span> — verifiable from primary sources</h3>
+    <ul>
+      <li>SURMOUNT-1 trial completion at 72 weeks: <strong>84.9%</strong> — NEJM 2022 (Jastreboff et al.).</li>
+      <li>Real-world obesity 12-month retention: <strong>35%</strong> — Truveta; JAMA Network Open 2025 (Rodriguez/Emanuel).</li>
+      <li>US tirzepatide FY2025: <strong>$27.1B</strong> ($13.5B Zepbound + $13.6B Mounjaro); global $36.5B — Lilly Q4 2025 8-K (Feb 4, 2026).</li>
+      <li>Cleveland Clinic discontinuation drivers (n=288): <strong>47.6%</strong> cite cost/insurance — Gasoyan et al., Obesity 2025.</li>
+      <li>Real-world median 12-month discontinuation: <strong>~50%</strong> — Optum Market Clarity, Truveta, academic clinics.</li>
+      <li>Lilly US manufacturing commitment: <strong>&gt;$50B</strong> since 2020 — Lilly press release, Feb 26, 2025.</li>
+    </ul>
+    <h3><span class="tag i">MODELED</span> — constructed from simplifying assumptions</h3>
+    <ul>
+      <li><strong>~5.5M</strong> US patients touched in 2025 — back-solved from $27.1B ÷ ~$460/fill × ~10.7 fills/yr. Plausible range 5.5–7M against IQVIA Q2 2025 cross-indication GLP-1 pool of ~11M.</li>
+      <li><strong>5-year retention curves</strong> — exponential decay anchored to observed endpoints (λ_trial=0.0091/PM, λ_RW=0.0808/PM); cumulative trial ~49 PM, RW obesity ~12 PM, +2.75 PM reinitiation.</li>
+      <li><strong>~$14K</strong> closeable obesity LTV gap (~$10K T2D) — naive 5-yr gap × $460 net/fill, less reinitiation (~$1.3K) and competitive switching ($1.5K placeholder).</li>
+      <li><strong>$69B / $28B / $24–35B</strong> — exposure, operating-profit exposure, and Lilly-addressable wedge from the per-patient gap × patient count × margin × addressable share.</li>
+    </ul>
+
+    <h2>12. Primary sources</h2>
+    <ul>
+      <li>Jastreboff AM, et al. <em>Tirzepatide Once Weekly for the Treatment of Obesity</em> (SURMOUNT-1). NEJM 2022;387:205–216.</li>
+      <li>Rodriguez P, Emanuel E, et al. Real-world GLP-1 persistence/retention (Truveta). JAMA Network Open 2025.</li>
+      <li>Gasoyan H, et al. Discontinuation of anti-obesity medications (Cleveland Clinic, n=288). Obesity 2025.</li>
+      <li>Samuels S, et al. Real-world persistence. Diabetes, Obesity &amp; Metabolism (DOM) 2025.</li>
+      <li>Truveta Research, ISPOR 2025 (clinical-note cost mentions ~13%); Optum Market Clarity.</li>
+      <li>Hwang T, et al. Cost-effectiveness of tirzepatide. JAMA Health Forum 2025.</li>
+      <li>Eli Lilly Q4 2025 8-K (Feb 4, 2026) and Q1 2026 disclosures; manufacturing press release (Feb 26, 2025).</li>
+      <li>IQVIA, cross-indication GLP-1 patient pool, Q2 2025.</li>
+    </ul>
+
+    <h2>13. Methods &amp; caveats</h2>
+    <ul>
+      <li><strong>Cross-window comparison.</strong> Trial discontinuation is at 72 weeks; real-world bars are 6–12 months. At matched windows the gap is larger, not smaller.</li>
+      <li><strong>Decay assumption.</strong> Constant per-patient-month hazard is a simplification; real hazards are front-loaded, which would lower early-month retention further.</li>
+      <li><strong>Patient count.</strong> ~5.5M is back-solved and sits at the low end of a 5.5–7M plausible range.</li>
+      <li><strong>Liraglutide-era contamination.</strong> Truveta 2018–2023 data include earlier GLP-1s; tirzepatide-specific retention is likely higher.</li>
+      <li><strong>Dollar figures are illustrative.</strong> Exposure and capture ranges are strategy estimates to size the opportunity, not formal forecasts.</li>
+    </ul>
+
+    <h2>14. Disclaimers</h2>
+    <p><strong>For entertainment purposes only.</strong> This is independent editorial analysis of public data, reflecting the author's personal views. It does not represent any employer or affiliated organization.</p>
+    <p><strong>Not investment advice.</strong> Nothing here is a recommendation regarding any security or company.</p>
+    <p><strong>Not medical advice.</strong> Persistence and discontinuation are clinical decisions for patients and clinicians.</p>
+    <p class="note">Compiled June 2026. © 2026 Matt East.</p>
+  </div>
+</body>
+</html>

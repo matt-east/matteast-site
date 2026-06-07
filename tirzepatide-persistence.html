@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acquisition Is Over — The Tirzepatide Persistence Gap</title>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --navy:#0c1f38; --navy2:#102a49; --ink:#eef3fa; --mut:#9fb0c6; --faint:#62748f;
+    --amber:#f2a431; --green:#2aa75e; --blue:#3f88d8; --slate:#5d7290;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:#0c1f38; color:#eef3fa; font-family:var(--sans);
+    -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:#f2a431; text-transform:uppercase; letter-spacing:.24em; font-size:.7rem; font-weight:800; margin:0 0 14px}
+  .h-mega{font-size:clamp(1.9rem,3vw,3rem); font-weight:800; letter-spacing:-.025em; line-height:1.05; margin:0; color:#fff}
+  .h-big{font-size:clamp(1.5rem,2.3vw,2.25rem); font-weight:800; letter-spacing:-.02em; line-height:1.12; margin:0; color:#fff}
+  p.body{font-size:clamp(1rem,1.05vw,1.1rem); color:#c4d0e0; margin:1em 0 0; line-height:1.55; font-weight:400}
+  .accent{color:#f2a431}
+  .accent2{color:#2aa75e}
+
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; font-weight:800; color:#9fb0c6; text-decoration:none}
+  .sitenav:hover{color:#f2a431}
+
+  .hero{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .hero .mark{display:flex; align-items:center; gap:12px; margin-bottom:30px}
+  .hero .mdot{width:34px;height:34px;border-radius:50%;background:#2aa75e; display:flex; align-items:center; justify-content:center}
+  .hero .mdot svg{width:18px;height:18px}
+  .hero h1{font-size:clamp(2.6rem,7.5vw,6rem); font-weight:800; letter-spacing:-.04em; margin:0; line-height:.98; color:#fff}
+  .hero .sub{max-width:640px; color:#9fb0c6; font-size:clamp(1.05rem,1.7vw,1.35rem); margin-top:24px; line-height:1.5}
+  .hero .sub .accent{color:#f2a431}
+  .scrollcue{position:absolute; bottom:32px; left:50%; transform:translateX(-50%); color:#62748f;
+    font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:sticky; top:0; align-self:start; height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body, .copy h2, .copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body, .step.is-active .copy h2, .step.is-active .copy .kicker{opacity:1; transform:none}
+
+  .layer{opacity:0; transition:opacity .7s ease; pointer-events:none}
+  .layer.on{opacity:1}
+  .grow{transform-box:fill-box; transform-origin:bottom; transition:transform .14s linear}
+  .gx{transform-box:fill-box; transform-origin:left; transition:transform .14s linear}
+  text{font-family:var(--sans)}
+
+  .coda{min-height:84vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:13vh 7vw}
+  .coda .big{font-size:clamp(2rem,4.6vw,3.4rem); font-weight:800; letter-spacing:-.03em; margin:0; color:#fff; max-width:880px}
+  .coda .big .accent{color:#f2a431}
+  .coda .pts{display:grid; grid-template-columns:repeat(3,1fr); gap:26px; max-width:920px; margin:54px 0 0; text-align:left}
+  .coda .pt{border-top:2px solid #f2a431; padding-top:14px}
+  .coda .pt .n{color:#f2a431; font-weight:800; font-size:.8rem; letter-spacing:.14em}
+  .coda .pt .h{color:#fff; font-weight:700; font-size:1.05rem; margin:8px 0 6px}
+  .coda .pt p{color:#9fb0c6; font-size:.92rem; margin:0; line-height:1.5}
+  .coda .tail{color:#c4d0e0; font-size:clamp(1rem,1.3vw,1.18rem); margin:48px 0 0; max-width:640px; line-height:1.6}
+  footer{border-top:1px solid #1d355a; padding:42px 7vw 80px; color:#7e90a9; font-size:.82rem; max-width:900px; margin:0 auto; line-height:1.6}
+  footer a{color:#f2a431}
+  .byline{color:#62748f; font-size:.8rem; margin-top:10px}
+
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:48vh; z-index:6; background:#0c1f38; border-bottom:1px solid #1d355a}
+    .col-graphic svg{max-height:44vh}
+    .col-text{z-index:1}
+    .step{min-height:76vh; align-items:flex-start; padding:7vh 7vw 0}
+    .copy{max-width:none; background:rgba(16,42,73,.66); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid #1d355a; border-radius:14px; padding:18px 20px}
+    .coda .pts{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important} .layer,.grow,.gx,.copy *{transition:opacity .2s linear !important} }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+  <section class="hero">
+    <a class="sitenav" href="index.html">← All essays</a>
+    <div class="mark">
+      <span class="mdot"><svg viewBox="0 0 24 24" fill="none" stroke="#0c1f38" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,17 9,11 13,15 21,6"/></svg></span>
+      <span class="kicker" style="margin:0">Tirzepatide Persistence</span>
+    </div>
+    <h1>Acquisition<br>Is Over</h1>
+    <div class="sub">Tirzepatide is the best-selling drug on earth. The next war isn't for new patients — it's for the <span class="accent">refill that never comes</span>.</div>
+    <div class="scrollcue">Scroll</div>
+  </section>
+
+  <section class="scrolly">
+    <div class="col-graphic">
+      <svg id="viz" viewBox="0 0 1000 600" role="img" aria-label="Tirzepatide persistence economics visualization"></svg>
+    </div>
+
+    <div class="col-text" id="steps">
+      <div class="step" data-step="0"><div class="copy">
+        <p class="kicker">The Exposure</p>
+        <h2 class="h-big">A $69 billion <span class="accent">leak</span>.</h2>
+        <p class="body">Tirzepatide is the world's best-selling drug. Yet about <span class="accent">$69B</span> of value from its 2025 US patient cohort is exposed over the next five years — to the patients who simply stop refilling.</p>
+      </div></div>
+
+      <div class="step" data-step="1"><div class="copy">
+        <p class="kicker">The Gap</p>
+        <h2 class="h-big">15% in the trial. ~50% in <span class="accent">the wild</span>.</h2>
+        <p class="body">SURMOUNT-1 saw 15% discontinuation. Real-world cohorts run near 50% within a year. The trial measures 72 weeks and the real-world bars 6–12 months — so the true gap is <em>wider</em>, not narrower.</p>
+      </div></div>
+
+      <div class="step" data-step="2"><div class="copy">
+        <p class="kicker">The Gap</p>
+        <h2 class="h-big">It <span class="accent">decays</span>.</h2>
+        <p class="body">Retention falls fast: 86% still on therapy at twelve months in-trial, 54% in real-world diabetes, just 35% in obesity.</p>
+      </div></div>
+
+      <div class="step" data-step="3"><div class="copy">
+        <p class="kicker">The Gap</p>
+        <h2 class="h-big">Obesity breaks <span class="accent">faster</span>.</h2>
+        <p class="body">Obesity loses 51 points against the trial; diabetes loses 32. And the franchise mix is tilting toward obesity — so the economics get worse, not better. (Beyond 12 months is extrapolated.)</p>
+      </div></div>
+
+      <div class="step" data-step="4"><div class="copy">
+        <p class="kicker">The Cause</p>
+        <h2 class="h-big">Why they <span class="accent">quit</span>.</h2>
+        <p class="body">Among obesity patients who discontinued at the Cleveland Clinic, one reason towers over the rest: cost and insurance, at <span class="accent">47.6%</span>.</p>
+      </div></div>
+
+      <div class="step" data-step="5"><div class="copy">
+        <p class="kicker">The Cause</p>
+        <h2 class="h-big">Friction, not <span class="accent">biology</span>.</h2>
+        <p class="body">Only about 16% is the drug itself — side effects or disappointing loss. The rest is access, affordability, and supply. This is a commercial problem before it's a clinical one.</p>
+      </div></div>
+
+      <div class="step" data-step="6"><div class="copy">
+        <p class="kicker">The Cause</p>
+        <h2 class="h-big">Two readings of one <span class="accent">problem</span>.</h2>
+        <p class="body">Stated at the point of quitting, cost is 47.6%. Mined from clinical notes, it's ~13%. How you measure decides what you see — both are real.</p>
+      </div></div>
+
+      <div class="step" data-step="7"><div class="copy">
+        <p class="kicker">The Unit</p>
+        <h2 class="h-big">One <span class="accent">refill</span>.</h2>
+        <p class="body">The unit that matters is a filled 28-day prescription: about <span class="accent">$460</span> of net revenue, $189 of operating profit. A persistent year is roughly thirteen of them.</p>
+      </div></div>
+
+      <div class="step" data-step="8"><div class="copy">
+        <p class="kicker">The Unit</p>
+        <h2 class="h-big">$5,980 a year — <span class="accent">if they stay</span>.</h2>
+        <p class="body">Thirteen fills make ~$5,980 in net revenue per persistent patient-year. The engine isn't the first script; it's the refill sequence. (Net price is falling — down 13% year-over-year.)</p>
+      </div></div>
+
+      <div class="step" data-step="9"><div class="copy">
+        <p class="kicker">The Model</p>
+        <h2 class="h-big">Two anchors, one <span class="accent">curve</span>.</h2>
+        <p class="body">Take two published points — 84.9% still on at 18 months in-trial, 35% at 13 months in the real world — and let exponential decay connect them.</p>
+      </div></div>
+
+      <div class="step" data-step="10"><div class="copy">
+        <p class="kicker">The Model</p>
+        <h2 class="h-big">The area is the <span class="accent">money</span>.</h2>
+        <p class="body">Sum the months under each curve: about 49 patient-months in the trial world, 12 in the real one. At $460 a fill, that's <span class="accent">$22.5K</span> of lifetime value versus $5.5K.</p>
+      </div></div>
+
+      <div class="step" data-step="11"><div class="copy">
+        <p class="kicker">The Gap, in Dollars</p>
+        <h2 class="h-big">Deflate the <span class="accent">gap</span>.</h2>
+        <p class="body">The naive gap is $17K per obesity patient. But a third restart within a year (−$1.3K), and some switch within the portfolio (−$1.5K). The honest closeable gap is about <span class="accent">$14K</span>.</p>
+      </div></div>
+
+      <div class="step" data-step="12"><div class="copy">
+        <p class="kicker">The Scale</p>
+        <h2 class="h-big">Times five and a half <span class="accent">million</span>.</h2>
+        <p class="body">Weight the gap across indications (~$12.5K), multiply by ~5.5M US patients, and the exposure is <span class="accent">~$69B</span> in revenue — about $28B in operating profit.</p>
+      </div></div>
+
+      <div class="step" data-step="13"><div class="copy">
+        <p class="kicker">The Scale</p>
+        <h2 class="h-mega">Most of it isn't <span class="accent">yours</span>.</h2>
+        <p class="body">Only <span class="accent">$24–35B</span> is Lilly-addressable. Affordability, copay, fulfillment, titration — those it owns. Prior authorization, formularies, Medicare obesity coverage — those belong to PBMs, payers, and CMS.</p>
+      </div></div>
+
+      <div class="step" data-step="14"><div class="copy">
+        <p class="kicker">The Range</p>
+        <h2 class="h-big">How much actually <span class="accent">lands</span>.</h2>
+        <p class="body">Captured value swings with how much of the gap closes and where net price settles — from under $6B to the mid-$30Bs. The direction is robust; the precision is not.</p>
+      </div></div>
+
+      <div class="step" data-step="15"><div class="copy">
+        <p class="kicker">The Inversion</p>
+        <h2 class="h-big">What could <span class="accent">break</span> this.</h2>
+        <p class="body">Six honest counter-arguments: price decline could swamp the gains; reinitiation may already recapture the leak; acquisition still drives growth today. Persistence matters — it isn't the only thing that does.</p>
+      </div></div>
+
+      <div class="step" data-step="16"><div class="copy">
+        <p class="kicker">The Answer</p>
+        <h2 class="h-big">An adherence operating <span class="accent">system</span>.</h2>
+        <p class="body">Closing the gap isn't one fix; it's coordinated infrastructure across access, affordability, fulfillment, and engagement — and Lilly <span class="accent">owns</span> some levers and only <span style="color:#6f86a3;font-weight:600">influences</span> others.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="coda">
+    <p class="big">The battle moves from acquisition <span class="accent">→ persistence</span>.</p>
+    <div class="pts">
+      <div class="pt"><div class="n">01</div><div class="h">Persistence is the gap</div><p>~50% of real-world tirzepatide patients quit within a year. Trial-controlled discontinuation is ~15%.</p></div>
+      <div class="pt"><div class="n">02</div><div class="h">Commercial friction, not biology</div><p>Cost, coverage churn and refill failures drive most of the leak — well above side-effect intolerance.</p></div>
+      <div class="pt"><div class="n">03</div><div class="h">Lilly owns only part of it</div><p>Of the ~$69B exposure, only $24–35B is Lilly-addressable. PBMs, payers and CMS hold the rest.</p></div>
+    </div>
+    <p class="tail">The winners will treat adherence as commercial infrastructure — and be honest about what they own versus what they only influence.</p>
+  </section>
+
+  <footer>
+    Every figure is sourced in the <a href="tirzepatide-sources.html">companion sources &amp; data</a>, and labelled <strong style="color:#cfd8e6">observed</strong> (from primary sources) or <strong style="color:#cfd8e6">modeled</strong> (constructed from stated assumptions). Five-year retention and LTV are constructed by exponential decay anchored to published endpoints; dollar exposures are illustrative, not a forecast.
+    <div class="byline">By Matt East. For entertainment purposes only — analysis reflects the author's personal views and does not represent any employer or affiliated organization. Not investment advice.</div>
+  </footer>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+  var INK="#eef3fa", MUT="#9fb0c6", FAINT="#62748f", AMBER="#f2a431", GREEN="#2aa75e",
+      BLUE="#3f88d8", SLATE="#5d7290", GRID="#1d3a5e", NAVY="#0c1f38", PANEL="#102a49";
+  function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+  function clamp(x){return x<0?0:x>1?1:x;}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function len(p){try{return p.getTotalLength();}catch(e){return 0;}}
+  function setDraw(p,prog){if(!p)return;var L=p.__L||(p.__L=len(p));p.style.strokeDasharray=L;p.style.strokeDashoffset=(L*(1-clamp(prog))).toFixed(1);}
+  // mark a shape as INFERRED (modeled): translucent fill + dashed outline
+  function inf(el,col){el.setAttribute("fill-opacity","0.34");el.setAttribute("stroke",col);el.setAttribute("stroke-width","1.6");el.setAttribute("stroke-dasharray","5 3");return el;}
+
+  var FX={};
+  function layer(id){return E("g",{id:id,"class":"layer"},svg);}
+
+  // persistent OBSERVED / INFERRED legend (outside layers)
+  (function(){
+    var g=E("g",{id:"legend"},svg);
+    E("rect",{x:40,y:560,width:13,height:13,rx:2,fill:AMBER},g);
+    T(60,571,"observed",{fill:MUT,"font-size":"12"},g);
+    var r=E("rect",{x:152,y:560,width:13,height:13,rx:2,fill:AMBER},g); inf(r,AMBER);
+    T(172,571,"modeled",{fill:MUT,"font-size":"12"},g);
+  })();
+
+  /* ===== L_hook : $69B headline ===== */
+  (function(){
+    var g=layer("L_hook");
+    T(500,150,"2025 US cohort lifetime value at risk · next 5 years",{fill:MUT,"font-size":"16","text-anchor":"middle"},g);
+    FX.hookBig=T(500,300,"$69B",{fill:AMBER,"font-size":"118","text-anchor":"middle","font-weight":"800","letter-spacing":"-3"},g);
+    T(500,348,"exposed",{fill:INK,"font-size":"26","text-anchor":"middle","font-weight":"700"},g);
+    var sub=[["5.5M","2025 US patient cohort",GREEN,250],["~50%","quit within a year",AMBER,500],["$24–35B","Lilly can actually address",INK,750]];
+    FX.hookSub=E("g",null,g);
+    sub.forEach(function(s){
+      E("line",{x1:s[3]-95,y1:430,x2:s[3]+95,y2:430,stroke:s[2],"stroke-width":"3"},FX.hookSub);
+      T(s[3],478,s[0],{fill:s[2],"font-size":"34","text-anchor":"middle","font-weight":"800"},FX.hookSub);
+      T(s[3],506,s[1],{fill:MUT,"font-size":"13","text-anchor":"middle"},FX.hookSub);
+    });
+  })();
+
+  /* ===== L_gap : trial vs real-world discontinuation ===== */
+  (function(){
+    var g=layer("L_gap"); var baseY=486, maxH=340; function gh(v){return v/70*maxH;}
+    T(500,96,"Discontinuation within ~1 year (%)",{fill:MUT,"font-size":"16","text-anchor":"middle"},g);
+    [0,20,40,60].forEach(function(v){E("line",{x1:120,y1:baseY-gh(v),x2:900,y2:baseY-gh(v),stroke:GRID},g);T(110,baseY-gh(v)+4,v+"%",{fill:FAINT,"font-size":"12","text-anchor":"end"},g);});
+    var data=[
+      {lab:"SURMOUNT-1",sub:"trial · 72wk",v:15.1,x:210,col:BLUE},
+      {lab:"Optum obesity",sub:"6-mo",v:44.6,x:380,col:AMBER},
+      {lab:"Truveta T2D",sub:"12-mo",v:46.5,x:520,col:AMBER},
+      {lab:"Academic",sub:"12-mo",v:50.0,x:660,col:AMBER},
+      {lab:"Truveta obesity",sub:"12-mo",v:64.8,x:800,col:AMBER}
+    ];
+    var W=86;
+    FX.gapBars=data.map(function(d){
+      var h=gh(d.v);
+      var rect=E("rect",{x:d.x-W/2,y:baseY-h,width:W,height:h,rx:3,fill:d.col,"class":"grow"},g);
+      T(d.x,baseY+22,d.lab,{fill:INK,"font-size":"12.5","text-anchor":"middle","font-weight":"700"},g);
+      T(d.x,baseY+39,d.sub,{fill:FAINT,"font-size":"11","text-anchor":"middle"},g);
+      T(d.x,baseY-h-10,d.v.toFixed(1)+"%",{fill:d.col,"font-size":"16","text-anchor":"middle","font-weight":"800"},g);
+      return {rect:rect};
+    });
+    // RW median ~50% line + gap bracket
+    FX.gapMed=E("g",null,g); FX.gapMed.style.opacity=0;
+    E("line",{x1:330,y1:baseY-gh(50),x2:880,y2:baseY-gh(50),stroke:AMBER,"stroke-width":"1.4","stroke-dasharray":"6 5"},FX.gapMed);
+    T(336,baseY-gh(50)-8,"real-world median ~50%",{fill:AMBER,"font-size":"12.5","text-anchor":"start","font-weight":"700"},FX.gapMed);
+    E("line",{x1:150,y1:baseY-gh(15.1),x2:150,y2:baseY-gh(50),stroke:INK,"stroke-width":"1.4"},FX.gapMed);
+    T(140,baseY-gh(32),"~35 pp",{fill:INK,"font-size":"14","text-anchor":"end","font-weight":"800"},FX.gapMed);
+    T(140,baseY-gh(32)+16,"gap",{fill:MUT,"font-size":"11.5","text-anchor":"end"},FX.gapMed);
+  })();
+
+  /* ===== L_curves : retention over time ===== */
+  (function(){
+    var g=layer("L_curves"); var PB={l:130,r:760,t:140,b:486};
+    function cx(m){return PB.l+m/24*(PB.r-PB.l);} function cy(r){return PB.b-r/100*(PB.b-PB.t);}
+    [0,25,50,75,100].forEach(function(v){E("line",{x1:PB.l,y1:cy(v),x2:PB.r,y2:cy(v),stroke:GRID},g);T(PB.l-10,cy(v)+4,v+"%",{fill:FAINT,"font-size":"12","text-anchor":"end"},g);});
+    [0,6,12,18,24].forEach(function(m){T(cx(m),PB.b+22,m+"mo",{fill:FAINT,"font-size":"12","text-anchor":"middle"},g);});
+    T(PB.l-10,PB.t-26,"% still on therapy",{fill:MUT,"font-size":"15","font-weight":"700"},g);
+    // observed 0-12 (solid), inferred 12-24 (dashed)
+    function seg(pts){var d="";pts.forEach(function(p,i){d+=(i?" L ":"M ")+cx(p[0]).toFixed(1)+" "+cy(p[1]).toFixed(1);});return d;}
+    var TRIAL_O=[[0,100],[6,93],[12,86]], TRIAL_I=[[12,86],[18,82],[24,79]];
+    var T2D_O=[[0,100],[6,72],[12,54]],   T2D_I=[[12,54],[18,46],[24,40]];
+    var OB_O=[[0,100],[6,58],[12,35]],    OB_I=[[12,35],[18,27],[24,22]];
+    FX.cTrialO=E("path",{d:seg(TRIAL_O),fill:"none",stroke:BLUE,"stroke-width":"3","stroke-linecap":"round","stroke-linejoin":"round"},g);
+    FX.cTrialI=E("path",{d:seg(TRIAL_I),fill:"none",stroke:BLUE,"stroke-width":"2.5","stroke-dasharray":"5 4","stroke-linecap":"round"},g);
+    FX.cT2dO=E("path",{d:seg(T2D_O),fill:"none",stroke:GREEN,"stroke-width":"3","stroke-linecap":"round","stroke-linejoin":"round"},g);
+    FX.cT2dI=E("path",{d:seg(T2D_I),fill:"none",stroke:GREEN,"stroke-width":"2.5","stroke-dasharray":"5 4","stroke-linecap":"round"},g);
+    FX.cObO=E("path",{d:seg(OB_O),fill:"none",stroke:AMBER,"stroke-width":"3.5","stroke-linecap":"round","stroke-linejoin":"round"},g);
+    FX.cObI=E("path",{d:seg(OB_I),fill:"none",stroke:AMBER,"stroke-width":"2.5","stroke-dasharray":"5 4","stroke-linecap":"round"},g);
+    // 12-month markers + side panel
+    FX.cDots=E("g",null,g);
+    [[86,BLUE,"Trial","86%"],[54,GREEN,"Real-world T2D","54%"],[35,AMBER,"Real-world obesity","35%"]].forEach(function(d){
+      E("circle",{cx:cx(12),cy:cy(d[0]),r:5,fill:d[1]},FX.cDots);
+    });
+    FX.cPanel=E("g",null,g); FX.cPanel.style.opacity=0;
+    var px=800;
+    T(px,160,"12-MONTH RETENTION",{fill:MUT,"font-size":"12","font-weight":"800","letter-spacing":"1.5"},FX.cPanel);
+    [["Trial","86%","",BLUE,210],["Real-world T2D","54%","−32 pp vs trial",GREEN,290],["Real-world obesity","35%","−51 pp vs trial",AMBER,370]].forEach(function(d){
+      E("circle",{cx:px+8,cy:d[4]-4,r:7,fill:d[3]},FX.cPanel);
+      T(px+26,d[4]+1,d[0],{fill:INK,"font-size":"13","font-weight":"700"},FX.cPanel);
+      T(px,d[4]+30,d[1],{fill:d[3],"font-size":"30","font-weight":"800"},FX.cPanel);
+      if(d[2])T(px+70,d[4]+30,d[2],{fill:MUT,"font-size":"12"},FX.cPanel);
+    });
+  })();
+
+  /* ===== L_why : discontinuation drivers ===== */
+  (function(){
+    var g=layer("L_why"); var x0=300, maxW=560; function wb(v){return v/50*maxW;}
+    T(170,96,"Why obesity patients discontinued — Cleveland Clinic (n=288)",{fill:MUT,"font-size":"15.5","font-weight":"600"},g);
+    var data=[
+      {lab:"Cost / insurance",v:47.6,grp:"comm"},
+      {lab:"Side-effect intolerance",v:14.6,grp:"drug"},
+      {lab:"Unable to fill (shortage)",v:11.8,grp:"supply"},
+      {lab:"Unspecified",v:11.1,grp:"other"},
+      {lab:"Other",v:10.8,grp:"other"},
+      {lab:"Switched to compounded",v:2.4,grp:"supply"},
+      {lab:"Unsatisfactory weight loss",v:1.7,grp:"drug"}
+    ];
+    var top=140, rh=46;
+    FX.whyBars=data.map(function(d,i){
+      var y=top+i*rh, w=wb(d.v);
+      T(x0-12,y+15,d.lab,{fill:INK,"font-size":"13","text-anchor":"end"},g);
+      var rect=E("rect",{x:x0,y:y,width:w,height:22,rx:3,fill:AMBER,"class":"gx"},g);
+      var vl=T(x0+w+8,y+16,d.v.toFixed(1)+"%",{fill:AMBER,"font-size":"13","font-weight":"800"},g);
+      return {rect:rect,vl:vl,grp:d.grp,w:w,x:x0};
+    });
+    // grouping annotations (step 5)
+    FX.whyGroup=E("g",null,g); FX.whyGroup.style.opacity=0;
+    T(x0+wb(47.6)+70,162,"commercial friction",{fill:AMBER,"font-size":"13.5","font-weight":"800"},FX.whyGroup);
+    T(x0+200,340,"~16% is the drug itself",{fill:SLATE,"font-size":"13.5","font-weight":"700"},FX.whyGroup);
+    T(x0+200,360,"(side effects + poor response)",{fill:FAINT,"font-size":"11.5"},FX.whyGroup);
+    // two-readings (step 6)
+    FX.whyTwo=E("g",{transform:"translate(0,22)"},g); FX.whyTwo.style.opacity=0;
+    E("rect",{x:300,y:430,width:560,height:120,rx:10,fill:PANEL,stroke:GRID},FX.whyTwo);
+    T(360,468,"47.6%",{fill:AMBER,"font-size":"34","font-weight":"800","text-anchor":"middle"},FX.whyTwo);
+    T(360,492,"stated at",{fill:MUT,"font-size":"12.5","text-anchor":"middle"},FX.whyTwo);
+    T(360,508,"point of quitting",{fill:MUT,"font-size":"12.5","text-anchor":"middle"},FX.whyTwo);
+    T(470,498,"vs",{fill:FAINT,"font-size":"15","text-anchor":"middle","font-style":"italic"},FX.whyTwo);
+    T(610,468,"~13%",{fill:INK,"font-size":"34","font-weight":"800","text-anchor":"middle"},FX.whyTwo);
+    T(610,492,"mentioned in",{fill:MUT,"font-size":"12.5","text-anchor":"middle"},FX.whyTwo);
+    T(610,508,"clinical notes (Truveta)",{fill:MUT,"font-size":"12.5","text-anchor":"middle"},FX.whyTwo);
+    T(770,490,"how you measure",{fill:INK,"font-size":"13","text-anchor":"middle","font-weight":"700"},FX.whyTwo);
+    T(770,508,"decides what you see",{fill:MUT,"font-size":"12","text-anchor":"middle"},FX.whyTwo);
+  })();
+
+  /* ===== L_unit : patient-month economics ===== */
+  (function(){
+    var g=layer("L_unit");
+    T(500,110,"One patient-month = one filled 28-day prescription",{fill:MUT,"font-size":"16","text-anchor":"middle"},g);
+    // single-fill decomposition (step 7)
+    FX.unitOne=E("g",null,g);
+    var bx=180, by=210, bw=150;
+    function block(x,y,w,h,col,solid){var r=E("rect",{x:x,y:y,width:w,height:h,rx:4,fill:col},FX.unitOne);if(!solid)inf(r,col);return r;}
+    block(bx,by,bw,150,AMBER,1);
+    T(bx+bw/2,by-12,"$460",{fill:AMBER,"font-size":"30","text-anchor":"middle","font-weight":"800"},FX.unitOne);
+    T(bx+bw/2,by+85,"net revenue",{fill:NAVY,"font-size":"13","text-anchor":"middle","font-weight":"700"},FX.unitOne);
+    T(bx+bw/2,by+103,"per fill",{fill:NAVY,"font-size":"13","text-anchor":"middle","font-weight":"700"},FX.unitOne);
+    // arrows to gross & op
+    block(bx+260,by+20,bw,110,GREEN,1);
+    T(bx+260+bw/2,by+8,"$377",{fill:GREEN,"font-size":"24","text-anchor":"middle","font-weight":"800"},FX.unitOne);
+    T(bx+260+bw/2,by+78,"gross profit",{fill:NAVY,"font-size":"12.5","text-anchor":"middle","font-weight":"700"},FX.unitOne);
+    T(bx+260+bw/2,by+95,"~82% margin",{fill:NAVY,"font-size":"11","text-anchor":"middle"},FX.unitOne);
+    block(bx+520,by+58,bw,72,BLUE,1);
+    T(bx+520+bw/2,by+46,"$189",{fill:BLUE,"font-size":"22","text-anchor":"middle","font-weight":"800"},FX.unitOne);
+    T(bx+520+bw/2,by+95,"op profit · ~41%",{fill:NAVY,"font-size":"11.5","text-anchor":"middle","font-weight":"700"},FX.unitOne);
+    // year stack (step 8)
+    FX.unitYear=E("g",null,g); FX.unitYear.style.opacity=0;
+    var yx=150, yb=470, fw=33, fg=5;
+    FX.unitFills=[];
+    for(var i=0;i<13;i++){var r=E("rect",{x:yx+i*(fw+fg),y:yb-150,width:fw,height:150,rx:3,fill:AMBER},FX.unitYear);FX.unitFills.push(r);}
+    T(yx,yb+24,"13 fills = one persistent patient-year",{fill:MUT,"font-size":"13.5"},FX.unitYear);
+    T(yx+13*(fw+fg)+24,yb-150,"$5,980",{fill:AMBER,"font-size":"40","font-weight":"800"},FX.unitYear);
+    T(yx+13*(fw+fg)+26,yb-112,"net revenue / persistent year",{fill:MUT,"font-size":"13"},FX.unitYear);
+    T(yx+13*(fw+fg)+26,yb-92,"net price −13% YoY (Q1 2026)",{fill:FAINT,"font-size":"11.5","font-style":"italic"},FX.unitYear);
+  })();
+
+  /* ===== L_ltv : decay curves + area = LTV ===== */
+  (function(){
+    var g=layer("L_ltv"); var PB={l:130,r:780,t:150,b:470};
+    function lx(m){return PB.l+m/65*(PB.r-PB.l);} function ly(r){return PB.b-r/100*(PB.b-PB.t);}
+    [0,25,50,75,100].forEach(function(v){E("line",{x1:PB.l,y1:ly(v),x2:PB.r,y2:ly(v),stroke:GRID},g);T(PB.l-10,ly(v)+4,v+"%",{fill:FAINT,"font-size":"12","text-anchor":"end"},g);});
+    [0,13,26,39,52,65].forEach(function(m){T(lx(m),PB.b+22,m,{fill:FAINT,"font-size":"11.5","text-anchor":"middle"},g);});
+    T(PB.l-10,PB.t-24,"% remaining on therapy",{fill:MUT,"font-size":"14","font-weight":"700"},g);
+    T(PB.r,PB.b+44,"patient-months (28-day) →",{fill:MUT,"font-size":"13","text-anchor":"end"},g);
+    var lamT=0.0091, lamR=0.0808;
+    function curve(lam){var d="",N=65;for(var i=0;i<=N;i++){var m=i;d+=(i?" L ":"M ")+lx(m).toFixed(1)+" "+ly(100*Math.exp(-lam*m)).toFixed(1);}return d;}
+    function area(lam){var d="M "+lx(0)+" "+ly(0),N=65;for(var i=0;i<=N;i++){var m=i;d+=" L "+lx(m).toFixed(1)+" "+ly(100*Math.exp(-lam*m)).toFixed(1);}d+=" L "+lx(65)+" "+ly(0)+" Z";return d;}
+    FX.ltvAreaT=E("path",{d:area(lamT),fill:BLUE,"fill-opacity":"0","stroke":"none"},g);
+    FX.ltvAreaR=E("path",{d:area(lamR),fill:AMBER,"fill-opacity":"0","stroke":"none"},g);
+    FX.ltvCurveT=E("path",{d:curve(lamT),fill:"none",stroke:BLUE,"stroke-width":"3","stroke-dasharray":"5 4","stroke-linecap":"round"},g);
+    FX.ltvCurveR=E("path",{d:curve(lamR),fill:"none",stroke:AMBER,"stroke-width":"3","stroke-dasharray":"5 4","stroke-linecap":"round"},g);
+    // anchor points (observed) - solid dots
+    FX.ltvAnchors=E("g",null,g);
+    E("circle",{cx:lx(18),cy:ly(84.9),r:6,fill:BLUE},FX.ltvAnchors);
+    T(lx(18),ly(84.9)-12,"84.9% @ 18mo",{fill:BLUE,"font-size":"12","text-anchor":"middle","font-weight":"700"},FX.ltvAnchors);
+    E("circle",{cx:lx(13),cy:ly(35),r:6,fill:AMBER},FX.ltvAnchors);
+    T(lx(13)+8,ly(35)-10,"35% @ 13mo",{fill:AMBER,"font-size":"12","font-weight":"700"},FX.ltvAnchors);
+    // LTV labels (step 10)
+    FX.ltvLbl=E("g",null,g); FX.ltvLbl.style.opacity=0;
+    T(lx(40),ly(70),"trial world",{fill:BLUE,"font-size":"13","font-weight":"700"},FX.ltvLbl);
+    T(lx(40),ly(70)+18,"≈ 49 patient-months → $22.5K",{fill:BLUE,"font-size":"13","font-weight":"800"},FX.ltvLbl);
+    T(lx(20),ly(14),"real world",{fill:AMBER,"font-size":"13","font-weight":"700"},FX.ltvLbl);
+    T(lx(20),ly(14)+18,"≈ 12 PM → $5.5K",{fill:AMBER,"font-size":"13","font-weight":"800"},FX.ltvLbl);
+  })();
+
+  /* ===== L_water : deflation waterfall ($K per obesity patient) ===== */
+  (function(){
+    var g=layer("L_water"); var baseY=470, maxV=24, H=320; function wy(v){return baseY-v/maxV*H;}
+    T(500,104,"Closeable LTV gap per obesity patient ($K, 5-yr)",{fill:MUT,"font-size":"16","text-anchor":"middle"},g);
+    [0,6,12,18,24].forEach(function(v){E("line",{x1:150,y1:wy(v),x2:880,y2:wy(v),stroke:GRID},g);T(140,wy(v)+4,"$"+v+"K",{fill:FAINT,"font-size":"11.5","text-anchor":"end"},g);});
+    // reference: trial vs RW LTV
+    function bar(x,w,top,h,col,solid){var r=E("rect",{x:x,y:top,width:w,height:h,rx:3,fill:col,"class":"grow"},g);if(!solid)inf(r,col);return r;}
+    FX.wRef=E("g",null,g);
+    var rb=bar(200,70,wy(22.5),baseY-wy(22.5),BLUE,0);FX.wRef.appendChild(rb);
+    T(235,wy(22.5)-10,"$22.5K",{fill:BLUE,"font-size":"13","text-anchor":"middle","font-weight":"800"},FX.wRef);
+    T(235,baseY+20,"trial LTV",{fill:MUT,"font-size":"12","text-anchor":"middle"},FX.wRef);
+    var rb2=bar(300,70,wy(5.5),baseY-wy(5.5),AMBER,0);FX.wRef.appendChild(rb2);
+    T(335,wy(5.5)-10,"$5.5K",{fill:AMBER,"font-size":"13","text-anchor":"middle","font-weight":"800"},FX.wRef);
+    T(335,baseY+20,"real-world LTV",{fill:MUT,"font-size":"12","text-anchor":"middle"},FX.wRef);
+    // waterfall: naive 17 -> -1.3 -> -1.5 -> 14
+    FX.wFall=E("g",null,g); FX.wFall.style.opacity=0;
+    var steps=[
+      {lab:"naive gap",x:470,from:0,to:17.0,col:AMBER,solid:0,val:"$17.0K"},
+      {lab:"− reinit",x:560,from:17.0,to:15.7,col:SLATE,solid:1,val:"−$1.3K"},
+      {lab:"− switching",x:650,from:15.7,to:14.2,col:SLATE,solid:1,val:"−$1.5K"},
+      {lab:"closeable",x:760,from:0,to:14.0,col:AMBER,solid:0,val:"$14K"}
+    ];
+    steps.forEach(function(s){
+      var top=wy(Math.max(s.from,s.to)), h=Math.abs(wy(s.to)-wy(s.from));
+      var r=E("rect",{x:s.x-38,y:top,width:76,height:Math.max(h,3),rx:3,fill:s.col},FX.wFall);
+      if(!s.solid)inf(r,s.col);
+      T(s.x,top-9,s.val,{fill:(s.col===SLATE?MUT:s.col),"font-size":(s.lab==="closeable"?"16":"13"),"text-anchor":"middle","font-weight":"800"},FX.wFall);
+      T(s.x,baseY+20,s.lab,{fill:MUT,"font-size":"11.5","text-anchor":"middle"},FX.wFall);
+    });
+    T(615,150,"the gap is smaller than naive subtraction",{fill:INK,"font-size":"13.5","text-anchor":"middle","font-weight":"700"},FX.wFall);
+  })();
+
+  /* ===== L_ent : enterprise scale + addressable partition ===== */
+  (function(){
+    var g=layer("L_ent");
+    // build-up (step 12)
+    FX.entBuild=E("g",null,g);
+    var rows=[
+      ["~$12.5K","indication-weighted gap / patient",GREEN,200],
+      ["× 5.5M","US patients touched in 2025",INK,270],
+      ["= ~$69B","lifetime revenue exposure",AMBER,348],
+      ["× 41%  →  ~$28B","operating-profit exposure",BLUE,418]
+    ];
+    T(110,150,"Enterprise exposure — 2025 US cohort",{fill:MUT,"font-size":"16"},g);
+    FX.entRows=rows.map(function(r){
+      var grp=E("g",null,FX.entBuild);
+      T(120,r[3],r[0],{fill:r[2],"font-size":(r[0].indexOf("28B")>=0?"30":"34"),"font-weight":"800"},grp);
+      T(125,r[3]+24,r[1],{fill:MUT,"font-size":"13"},grp);
+      return grp;
+    });
+    // partition (step 13): $69B bar split addressable vs not
+    FX.entPart=E("g",null,g); FX.entPart.style.opacity=0;
+    var bx=140, bw=720, by=300, bh=70;
+    var addrFrac=0.43; // ~$30B of $69B midpoint
+    var ra=E("rect",{x:bx,y:by,width:bw*addrFrac,height:bh,rx:4,fill:AMBER},FX.entPart);
+    var rn=E("rect",{x:bx+bw*addrFrac,y:by,width:bw*(1-addrFrac),height:bh,rx:4,fill:SLATE},FX.entPart);
+    T(bx+bw*addrFrac/2,by+30,"$24–35B",{fill:NAVY,"font-size":"22","text-anchor":"middle","font-weight":"800"},FX.entPart);
+    T(bx+bw*addrFrac/2,by+52,"Lilly-addressable",{fill:NAVY,"font-size":"13","text-anchor":"middle","font-weight":"700"},FX.entPart);
+    T(bx+bw*addrFrac+bw*(1-addrFrac)/2,by+30,"the rest",{fill:INK,"font-size":"20","text-anchor":"middle","font-weight":"800"},FX.entPart);
+    T(bx+bw*addrFrac+bw*(1-addrFrac)/2,by+52,"PBMs · payers · CMS",{fill:"#cdd8e6","font-size":"13","text-anchor":"middle"},FX.entPart);
+    T(bx,by-16,"of the ~$69B exposure…",{fill:MUT,"font-size":"14"},FX.entPart);
+    T(bx,by+bh+30,"owns: affordability · copay · LillyDirect · titration",{fill:AMBER,"font-size":"12.5","font-weight":"700"},FX.entPart);
+    T(bx,by+bh+50,"not Lilly's: prior auth · formulary · Medicare obesity coverage",{fill:MUT,"font-size":"12.5"},FX.entPart);
+  })();
+
+  /* ===== L_sens : sensitivity heatmap ===== */
+  (function(){
+    var g=layer("L_sens");
+    T(500,96,"Lifetime revenue captured ($B) — one 2025 US cohort",{fill:MUT,"font-size":"15.5","text-anchor":"middle"},g);
+    var cols=[["$380","stress"],["$460","base"],["$550","bull"]];
+    var rows=["25%","50%","75%","100%"];
+    var V=[[5.8,7.1,8.5],[11.7,14.1,16.9],[17.5,21.2,25.4],[23.4,28.3,33.8]];
+    var gx=320, gy=150, cw=150, ch=78;
+    cols.forEach(function(c,j){T(gx+j*cw+cw/2,gy-26,c[0]+" / mo",{fill:INK,"font-size":"14","text-anchor":"middle","font-weight":"700"},g);T(gx+j*cw+cw/2,gy-10,c[1],{fill:FAINT,"font-size":"11.5","text-anchor":"middle"},g);});
+    T(gx-14,gy-18,"closure",{fill:MUT,"font-size":"12","text-anchor":"end","font-weight":"700"},g);
+    FX.sensCells=[];
+    rows.forEach(function(rl,i){
+      T(gx-14,gy+i*ch+ch/2+5,rl,{fill:MUT,"font-size":"13","text-anchor":"end","font-weight":"700"},g);
+      V[i].forEach(function(v,j){
+        var t=v/34; var fill="rgba(242,164,49,"+(0.14+t*0.8).toFixed(2)+")";
+        var base=(i===1&&j===1);
+        var r=E("rect",{x:gx+j*cw,y:gy+i*ch,width:cw-6,height:ch-6,rx:5,fill:fill,stroke:(base?INK:"none"),"stroke-width":(base?"2.5":"0")},g);
+        var tx=T(gx+j*cw+(cw-6)/2,gy+i*ch+(ch-6)/2+7,"$"+v.toFixed(1)+"B",{fill:(t>0.5?NAVY:INK),"font-size":"19","text-anchor":"middle","font-weight":"800"},g);
+        FX.sensCells.push({r:r,tx:tx});
+      });
+    });
+    T(gx+150,gy+4*ch+30,"base case ≈ $14B captured · direction robust, precision not",{fill:MUT,"font-size":"12.5","text-anchor":"middle","font-style":"italic"},g);
+  })();
+
+  /* ===== L_bear : bear-case cards ===== */
+  (function(){
+    var g=layer("L_bear");
+    T(500,90,"Bear case — what could break the thesis",{fill:MUT,"font-size":"16","text-anchor":"middle"},g);
+    var cards=[
+      ["Net price decline","A further 15–20% cut could make closing half the gap net to flat revenue."],
+      ["Reinitiation recaptures","35–51% restart within 12 months — modeling dropout as permanent overstates it."],
+      ["Supply was the constraint","2023–25 losses ≠ lost revenue; Lilly was capacity-rationed. Forward-looking only."],
+      ["Orforglipron cannibalizes","Oral GLP-1 keeps the patient but at lower per-fill economics. Margin compression."],
+      ["Cost-effectiveness ceiling","~30% more price cut to hit $100K/QALY — structural downward pressure."],
+      ["Acquisition still wins — today","Q1 2026 US Zepbound grew 79% YoY. Persistence is quality, not yet rate, of growth."]
+    ];
+    var cx=[190,500,810], cy=[150,360], cw=290, ch=170;
+    FX.bearCards=[];
+    cards.forEach(function(c,i){
+      var col=i%3, row=Math.floor(i/3);
+      var x=cx[col]-cw/2, y=cy[row];
+      var grp=E("g",null,g);
+      E("rect",{x:x,y:y,width:cw,height:ch,rx:10,fill:PANEL,stroke:GRID,"stroke-width":"1.5"},grp);
+      E("rect",{x:x,y:y,width:5,height:ch,rx:2,fill:AMBER},grp);
+      T(x+22,y+38,(i+1<10?"0":"")+(i+1),{fill:AMBER,"font-size":"15","font-weight":"800"},grp);
+      T(x+22,y+66,c[0],{fill:INK,"font-size":"15.5","font-weight":"800"},grp);
+      // wrap body ~ 34 chars
+      var words=c[1].split(" "), line="", ln=0;
+      for(var w=0;w<words.length;w++){ var test=line?line+" "+words[w]:words[w]; if(test.length>32){ T(x+22,y+96+ln*19,line,{fill:MUT,"font-size":"12.5"},grp); line=words[w]; ln++; } else line=test; }
+      if(line)T(x+22,y+96+ln*19,line,{fill:MUT,"font-size":"12.5"},grp);
+      FX.bearCards.push(grp);
+    });
+  })();
+
+  /* ===== L_os : adherence operating system (leak by lever) ===== */
+  (function(){
+    var g=layer("L_os");
+    T(500,96,"The leak, by lever — and who owns it",{fill:MUT,"font-size":"16","text-anchor":"middle"},g);
+    var levers=[
+      {lab:"PA / coverage churn",pct:28,own:"INFLUENCES"},
+      {lab:"Out-of-pocket cost",pct:18,own:"PARTIALLY OWNS"},
+      {lab:"AE / titration",pct:15,own:"INFLUENCES"},
+      {lab:"Engagement / habits",pct:10,own:"INFLUENCES"},
+      {lab:"Fill failures",pct:8,own:"OWNS"},
+      {lab:"Other / portfolio",pct:21,own:"OWNS"}
+    ];
+    var bx=130, by=250, bw=740, bh=80, x=bx;
+    function colFor(o){return o==="OWNS"?AMBER:(o==="PARTIALLY OWNS"?GREEN:SLATE);}
+    FX.osSegs=[];
+    levers.forEach(function(l,i){
+      var w=l.pct/100*bw;
+      var r=E("rect",{x:x,y:by,width:w-2,height:bh,rx:3,fill:colFor(l.own),"class":"gx"},g);
+      if(l.own==="PARTIALLY OWNS")inf(r,GREEN);
+      var ly=by+bh+(i%2?44:20);   // stagger labels so narrow segments don't collide
+      T(x+w/2,ly,l.lab,{fill:INK,"font-size":"11.5","text-anchor":"middle","font-weight":"600"},g);
+      T(x+w/2,ly+15,l.pct+"%",{fill:MUT,"font-size":"11","text-anchor":"middle"},g);
+      T(x+w/2,by-12,(l.own==="OWNS"?"●":(l.own==="PARTIALLY OWNS"?"◐":"○")),{fill:colFor(l.own),"font-size":"13","text-anchor":"middle"},g);
+      FX.osSegs.push(r);
+      x+=w;
+    });
+    // ownership key
+    var ky=430;
+    [["● owns",AMBER,300],["◐ partially owns",GREEN,430],["○ only influences",SLATE,600]].forEach(function(k){
+      T(k[2],ky,k[0],{fill:k[1],"font-size":"13","font-weight":"700"},g);
+    });
+    T(500,475,"Lilly directly owns a minority of the leak — the rest it can only influence.",{fill:MUT,"font-size":"13","text-anchor":"middle"},g);
+  })();
+
+  /* ===================== SCENE CONTROL ===================== */
+  var STEP_LAYER=["L_hook","L_gap","L_curves","L_curves","L_why","L_why","L_why","L_unit","L_unit",
+                  "L_ltv","L_ltv","L_water","L_ent","L_ent","L_sens","L_bear","L_os"];
+  var LAY=["L_hook","L_gap","L_curves","L_why","L_unit","L_ltv","L_water","L_ent","L_sens","L_bear","L_os"];
+  function setScene(step){var want=STEP_LAYER[step];LAY.forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle("on",id===want);});}
+
+  function applyHook(step,p){
+    FX.hookBig.style.opacity=clamp(p/0.4);
+    FX.hookSub.style.opacity=clamp((p-0.4)/0.4);
+  }
+  function applyGap(step,p){
+    var grow=clamp(p);
+    FX.gapBars.forEach(function(b,i){b.rect.style.transform="scaleY("+clamp((p-i*0.06)/0.5)+")";});
+    FX.gapMed.style.opacity=clamp((p-0.55)/0.3);
+  }
+  function applyCurves(step,p){
+    if(step===2){
+      setDraw(FX.cTrialO,clamp(p/0.4));setDraw(FX.cT2dO,clamp((p-0.12)/0.4));setDraw(FX.cObO,clamp((p-0.24)/0.4));
+      FX.cTrialO.style.opacity=1;FX.cT2dO.style.opacity=1;FX.cObO.style.opacity=1;
+      var di=clamp((p-0.5)/0.4);   // modeled tails fade in (keep dashed) rather than draw solid
+      FX.cTrialI.style.opacity=di;FX.cT2dI.style.opacity=di;FX.cObI.style.opacity=di;
+      FX.cPanel.style.opacity=clamp((p-0.6)/0.3);
+    } else { // step 3
+      setDraw(FX.cTrialO,1);setDraw(FX.cT2dO,1);setDraw(FX.cObO,1);
+      FX.cT2dI.style.opacity=1;FX.cObI.style.opacity=1;
+      FX.cPanel.style.opacity=1;
+      var dim=lerp(1,.4,clamp(p/0.5)); // emphasize obesity: dim trial (solid + dashed)
+      FX.cTrialO.style.opacity=dim;FX.cTrialI.style.opacity=dim;
+      FX.cT2dO.style.opacity=1;FX.cObO.style.opacity=1;
+    }
+  }
+  function applyWhy(step,p){
+    if(step===4){
+      FX.whyBars.forEach(function(b,i){b.rect.style.transform="scaleX("+clamp((p-i*0.05)/0.5)+")";b.vl.style.opacity=clamp((p-0.2-i*0.04)/0.3);});
+      FX.whyGroup.style.opacity=0;FX.whyTwo.style.opacity=0;
+    } else if(step===5){
+      FX.whyBars.forEach(function(b){b.rect.style.transform="scaleX(1)";b.vl.style.opacity=1;
+        var c=b.grp==="comm"?AMBER:(b.grp==="drug"?SLATE:(b.grp==="supply"?BLUE:FAINT));
+        b.rect.setAttribute("fill",c);b.vl.setAttribute("fill",c);});
+      FX.whyGroup.style.opacity=clamp((p-0.2)/0.4);FX.whyTwo.style.opacity=0;
+    } else { // step 6
+      FX.whyBars.forEach(function(b){b.rect.style.transform="scaleX(1)";b.vl.style.opacity=1;});
+      FX.whyGroup.style.opacity=0;
+      FX.whyTwo.style.opacity=clamp((p-0.1)/0.4);
+    }
+  }
+  function applyUnit(step,p){
+    if(step===7){FX.unitOne.style.opacity=1;FX.unitYear.style.opacity=0;}
+    else {FX.unitOne.style.opacity=lerp(1,0,clamp(p/0.3));FX.unitYear.style.opacity=clamp((p-0.15)/0.3);
+      FX.unitFills.forEach(function(r,i){r.style.transform="scaleY("+clamp((p-0.2-i*0.04)/0.4)+")";r.style.transformBox="fill-box";r.style.transformOrigin="bottom";});}
+  }
+  function applyLtv(step,p){
+    if(step===9){
+      FX.ltvCurveT.style.opacity=clamp(p/0.45);FX.ltvCurveR.style.opacity=clamp((p-0.15)/0.45);
+      FX.ltvAnchors.style.opacity=clamp((p-0.4)/0.3);
+      FX.ltvAreaT.setAttribute("fill-opacity","0");FX.ltvAreaR.setAttribute("fill-opacity","0");FX.ltvLbl.style.opacity=0;
+    } else { // step 10
+      FX.ltvCurveT.style.opacity=1;FX.ltvCurveR.style.opacity=1;FX.ltvAnchors.style.opacity=1;
+      FX.ltvAreaT.setAttribute("fill-opacity",(0.22*clamp(p/0.5)).toFixed(3));
+      FX.ltvAreaR.setAttribute("fill-opacity",(0.30*clamp(p/0.5)).toFixed(3));
+      FX.ltvLbl.style.opacity=clamp((p-0.4)/0.3);
+    }
+  }
+  function applyWater(step,p){
+    FX.wRef.style.opacity=1;
+    FX.wFall.style.opacity=clamp((p-0.1)/0.4);
+  }
+  function applyEnt(step,p){
+    if(step===12){
+      FX.entBuild.style.opacity=1;FX.entPart.style.opacity=0;
+      FX.entRows.forEach(function(g,i){g.style.opacity=clamp((p-i*0.18)/0.3);});
+    } else { // step 13
+      FX.entBuild.style.opacity=lerp(1,0,clamp(p/0.3));
+      FX.entPart.style.opacity=clamp((p-0.15)/0.35);
+    }
+  }
+  function applySens(step,p){
+    FX.sensCells.forEach(function(c,i){var f=clamp((p-i*0.04)/0.3);c.r.style.opacity=f;c.tx.style.opacity=f;});
+  }
+  function applyBear(step,p){
+    FX.bearCards.forEach(function(c,i){c.style.opacity=clamp((p-i*0.07)/0.3);});
+  }
+  function applyOs(step,p){
+    FX.osSegs.forEach(function(r,i){r.style.transform="scaleX("+clamp((p-i*0.07)/0.4)+")";});
+  }
+
+  function applyFX(step,p){
+    p=clamp(p);
+    applyHook(step,p);applyGap(step,p);applyCurves(step,p);applyWhy(step,p);applyUnit(step,p);
+    applyLtv(step,p);applyWater(step,p);applyEnt(step,p);applySens(step,p);applyBear(step,p);applyOs(step,p);
+  }
+
+  var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var copies=steps.map(function(s){return s.querySelector(".copy");});
+  var activeStep=0, ticking=false;
+  function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+  function frame(){ticking=false;applyFX(activeStep,progressOf(activeStep));}
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+  function activate(i){if(i===activeStep && steps[i].classList.contains("is-active"))return;activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});setScene(i);frame();}
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+  steps.forEach(function(s){io.observe(s);});
+  window.addEventListener("scroll",onScroll,{passive:true});
+  window.addEventListener("resize",onScroll);
+  setScene(0); steps[0].classList.add("is-active"); applyFX(0,0);
+})();
+</script>
+</body>
+</html>
