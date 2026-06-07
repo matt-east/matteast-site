@@ -235,13 +235,17 @@
   var FX={};
   function layer(id){return E("g",{id:id,"class":"layer"},svg);}
 
-  // persistent OBSERVED / INFERRED legend (outside layers)
+  // scene-aware OBSERVED / MODELED legend (outside layers; toggled per scene by updateLegend)
   (function(){
-    var g=E("g",{id:"legend"},svg);
-    E("rect",{x:40,y:560,width:13,height:13,rx:2,fill:AMBER},g);
-    T(60,571,"observed",{fill:MUT,"font-size":"12"},g);
-    var r=E("rect",{x:152,y:560,width:13,height:13,rx:2,fill:AMBER},g); inf(r,AMBER);
-    T(172,571,"modeled",{fill:MUT,"font-size":"12"},g);
+    var LEGC="#aeb9c8";
+    FX.legObs=E("g",null,svg);
+    E("rect",{x:0,y:0,width:13,height:13,rx:2,fill:LEGC},FX.legObs);
+    T(20,11,"observed",{fill:MUT,"font-size":"12"},FX.legObs);
+    FX.legObs.setAttribute("transform","translate(40,560)"); FX.legObs.style.opacity=0;
+    FX.legMod=E("g",null,svg);
+    E("rect",{x:0,y:0,width:13,height:13,rx:2,fill:"none",stroke:LEGC,"stroke-width":"1.6","stroke-dasharray":"4 3"},FX.legMod);
+    T(20,11,"modeled",{fill:MUT,"font-size":"12"},FX.legMod);
+    FX.legMod.setAttribute("transform","translate(150,560)"); FX.legMod.style.opacity=0;
   })();
 
   /* ===== L_hook : $69B headline ===== */
@@ -580,7 +584,16 @@
   var STEP_LAYER=["L_hook","L_gap","L_curves","L_curves","L_why","L_why","L_why","L_unit","L_unit",
                   "L_ltv","L_ltv","L_water","L_ent","L_ent","L_sens","L_bear","L_os"];
   var LAY=["L_hook","L_gap","L_curves","L_why","L_unit","L_ltv","L_water","L_ent","L_sens","L_bear","L_os"];
-  function setScene(step){var want=STEP_LAYER[step];LAY.forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle("on",id===want);});}
+  // which evidence types each scene actually shows -> drives the bottom-left legend
+  var STEP_LEG=[{o:0,m:0},{o:1,m:0},{o:1,m:1},{o:1,m:1},{o:1,m:0},{o:1,m:0},{o:1,m:0},
+                {o:0,m:1},{o:0,m:1},{o:1,m:1},{o:1,m:1},{o:0,m:1},{o:0,m:1},{o:0,m:1},
+                {o:0,m:1},{o:0,m:0},{o:0,m:0}];
+  function updateLegend(step){
+    var L=STEP_LEG[step]||{o:0,m:0};
+    FX.legObs.style.opacity=L.o?1:0; FX.legMod.style.opacity=L.m?1:0;
+    FX.legMod.setAttribute("transform","translate("+(L.o?150:40)+",560)");
+  }
+  function setScene(step){var want=STEP_LAYER[step];LAY.forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle("on",id===want);});updateLegend(step);}
 
   function applyHook(step,p){
     FX.hookBig.style.opacity=clamp(p/0.4);
