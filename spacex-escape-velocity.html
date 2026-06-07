@@ -308,9 +308,10 @@
     FX.sxLine=E("path",{d:ds,fill:"none",stroke:RED,"stroke-width":"3","stroke-linecap":"round"},g);
     T(PB.r+12,by(Math.pow(1.617,15))+4,"Tesla · 62%/yr",{fill:GRAY,"font-size":"14","font-weight":"700"},g);
     T(PB.r+12,by(Math.pow(1.415,15))+4,"SpaceX · 41.5%/yr",{fill:RED,"font-size":"14","font-weight":"700"},g);
-    // endpoint dots at year 15 — these become the column points in the next scene
-    FX.teslaEnd=E("circle",{cx:PB.r,cy:by(Math.pow(1.617,15)),r:6,fill:GRAY},g);FX.teslaEnd.style.opacity=0;
-    FX.sxEnd=E("circle",{cx:PB.r,cy:by(Math.pow(1.415,15)),r:6,fill:RED},g);FX.sxEnd.style.opacity=0;
+    // endpoint dots at year 15 — these become the column points in the next scene (y stored for the morph)
+    FX.endYtesla=by(Math.pow(1.617,15)); FX.endYsx=by(Math.pow(1.415,15));
+    FX.teslaEnd=E("circle",{cx:PB.r,cy:FX.endYtesla,r:6,fill:GRAY},g);FX.teslaEnd.style.opacity=0;
+    FX.sxEnd=E("circle",{cx:PB.r,cy:FX.endYsx,r:6,fill:RED},g);FX.sxEnd.style.opacity=0;
   })();
 
   /* ===== L2 : SHARED SCATTER (1D collapse -> unfold -> frontier) ===== */
@@ -324,17 +325,12 @@
     [[0.1,"$100M"],[1,"$1B"],[10,"$10B"]].forEach(function(p){E("line",{x1:sx(p[0]),y1:PX.t,x2:sx(p[0]),y2:PX.b,stroke:GRID},xa);T(sx(p[0]),PX.b+30,p[1],{fill:DIM,"font-size":"15","text-anchor":"middle"},xa);});
     T(PX.r,PX.b+60,"starting revenue  (log scale)  →",{fill:MUT,"font-size":"15","text-anchor":"end"},xa);
 
-    // ±3 SD band ("growth's speed limit") — behind the points; persists wherever the scatter appears
+    // ±1 SD band — behind the points; just the shaded region, persists wherever the scatter appears
     FX.band=E("g",null,g); FX.band.style.opacity=0;
-    (function(b2){var N2=50,up="",lo="",ue="",le="";
-      for(var i=0;i<=N2;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N2),yu=Math.max(PX.t,sy(fit(b)*2.18)),yl=Math.min(PX.b,sy(fit(b)*0.459));
-        up+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+yu.toFixed(1);ue+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+yu.toFixed(1);le+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+yl.toFixed(1);}
-      for(var i=N2;i>=0;i--){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N2);lo+=" L "+sx(b).toFixed(1)+" "+Math.min(PX.b,sy(fit(b)*0.459)).toFixed(1);}
-      E("path",{d:up+lo+" Z",fill:"rgba(150,165,210,.13)",stroke:"none"},b2);
-      E("path",{d:ue,fill:"none",stroke:"rgba(150,165,210,.55)","stroke-width":"1","stroke-dasharray":"4 4"},b2);
-      E("path",{d:le,fill:"none",stroke:"rgba(150,165,210,.55)","stroke-width":"1","stroke-dasharray":"4 4"},b2);
-      T(PX.r-4,300,"±3 SD band",{fill:"#aab4d8","font-size":"13","text-anchor":"end","font-weight":"700"},b2);
-      T(PX.r-4,318,"growth's speed limit",{fill:"#8a93b5","font-size":"12","text-anchor":"end"},b2);})(FX.band);
+    (function(b2){var N2=50,up="",lo="";
+      for(var i=0;i<=N2;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N2);up+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+Math.max(PX.t,sy(fit(b)*1.297)).toFixed(1);}
+      for(var i=N2;i>=0;i--){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N2);lo+=" L "+sx(b).toFixed(1)+" "+Math.min(PX.b,sy(fit(b)*0.771)).toFixed(1);}
+      E("path",{d:up+lo+" Z",fill:"rgba(150,165,210,.15)",stroke:"none"},b2);})(FX.band);
 
     var cloud=spart("p-cloud",g);
     COMPS.forEach(function(d,i){var pg=E("g",{"class":"pt"},cloud);
@@ -356,13 +352,22 @@
     T(424,sy(SPACEX.c)+4,"SpaceX 41.5%",{fill:RED,"font-size":"12.5","text-anchor":"end","font-weight":"700"},FX.lowerBar);
     E("line",{x1:452,y1:sy(SPACEX.c),x2:452,y2:sy(TESLA.c),stroke:MUT,"stroke-width":"1"},FX.lowerBar);
     T(460,(sy(SPACEX.c)+sy(TESLA.c))/2+4,"lower",{fill:MUT,"font-size":"12","font-style":"italic"},FX.lowerBar);
-    // step-7 base-gap bracket: Tesla's base -> SpaceX's base = 160×
+    // step-8 base-gap bracket (x-axis): Tesla's base -> SpaceX's base = 160×
     FX.baseGap=E("g",null,g); FX.baseGap.style.opacity=0;
     (function(gg){var yb=510,xT=sx(TESLA.b),xS=sx(SPACEX.b);
       E("line",{x1:xT,y1:yb,x2:xS,y2:yb,stroke:RED,"stroke-width":"1.5"},gg);
       E("line",{x1:xT,y1:yb-6,x2:xT,y2:yb+6,stroke:RED,"stroke-width":"1.5"},gg);
       E("line",{x1:xS,y1:yb-6,x2:xS,y2:yb+6,stroke:RED,"stroke-width":"1.5"},gg);
       T((xT+xS)/2,yb-10,"160× the base",{fill:RED,"font-size":"15","text-anchor":"middle","font-weight":"700"},gg);})(FX.baseGap);
+    // step-8 CAGR-share bracket (right of the graphic): SpaceX's rate vs Tesla's
+    FX.cagrGap=E("g",null,g); FX.cagrGap.style.opacity=0;
+    (function(gg){var xb=936,yT=sy(TESLA.c),yS=sy(SPACEX.c),mid=((yT+yS)/2).toFixed(1);
+      E("line",{x1:xb,y1:yS,x2:xb,y2:yT,stroke:RED,"stroke-width":"1.5"},gg);
+      E("line",{x1:xb-6,y1:yT,x2:xb+6,y2:yT,stroke:RED,"stroke-width":"1.5"},gg);
+      E("line",{x1:xb-6,y1:yS,x2:xb+6,y2:yS,stroke:RED,"stroke-width":"1.5"},gg);
+      T(xb-9,yT+4,"62%",{fill:GRAY,"font-size":"12","text-anchor":"end"},gg);
+      T(xb-9,yS+4,"41.5%",{fill:RED,"font-size":"12","text-anchor":"end","font-weight":"700"},gg);
+      T(xb+13,mid,"⅔ the rate",{fill:RED,"font-size":"13","font-weight":"700","text-anchor":"middle","transform":"rotate(-90 "+(xb+13)+" "+mid+")"},gg);})(FX.cagrGap);
 
     var fl=spart("p-fit",g);
     var d="",N=50;for(var i=0;i<=N;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N);d+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+sy(fit(b)).toFixed(1);}
@@ -388,9 +393,10 @@
     var sxg=E("g",{id:"spacexG"},g);
     E("circle",{cx:SXx,cy:SXy,r:18,fill:RED,"fill-opacity":".18"},sxg);
     E("circle",{cx:SXx,cy:SXy,r:9,fill:RED},sxg);
-    T(SXx,SXy-26,"SPACEX (25)",{fill:RED,"font-size":"16","text-anchor":"middle","font-weight":"700"},sxg);
-    T(SXx,SXy-9,"41.5% required",{fill:RED,"font-size":"12","text-anchor":"middle"},sxg);
-    FX.spacex=sxg; FX.dx1Dsx=498-SXx; FX.baseXsx=SXx;
+    FX.spacexLbl=E("g",null,sxg);
+    T(SXx,SXy-26,"SPACEX (25)",{fill:RED,"font-size":"16","text-anchor":"middle","font-weight":"700"},FX.spacexLbl);
+    T(SXx,SXy-9,"41.5% required",{fill:RED,"font-size":"12","text-anchor":"middle"},FX.spacexLbl);
+    FX.spacex=sxg; FX.dx1Dsx=498-SXx; FX.baseXsx=SXx; FX.dy6sx=FX.endYsx-SXy; FX.dy6tesla=FX.endYtesla-sy(TESLA.c);
     FX.sp={yaxis:ya,xaxis:xa,cloud:cloud,fit:fl,flbl:flb,eq:eq,ann:ann,elon:elon};
   })();
 
@@ -620,15 +626,21 @@
     FX.pts.forEach(function(g,i){
       var on=cloudVis&&(step===6?(i===FX.teslaIdx):(step===7?(i===FX.teslaIdx||i<nOth):true));
       g.style.opacity=on?1:0;
-      var tx=step===6?lerp(806-FX.baseX[i],FX.dx1D[i],slideP):(FX.dx1D[i]*unf);
-      g.style.transform="translateX("+tx.toFixed(1)+"px)";
-      FX.ptLbls[i].style.opacity=(on&&(step>=8||i===FX.teslaIdx))?1:0;});
+      var tx,ty=0;
+      if(step===6){tx=lerp(806-FX.baseX[i],FX.dx1D[i],slideP); if(i===FX.teslaIdx)ty=FX.dy6tesla*(1-slideP);}
+      else tx=FX.dx1D[i]*unf;
+      g.style.transform="translate("+tx.toFixed(1)+"px,"+ty.toFixed(1)+"px)";
+      FX.ptLbls[i].style.opacity=(on&&step>=8)?1:0;});
     FX.spacex.style.opacity=cloudVis?1:0;
-    var txs=step===6?lerp(806-FX.baseXsx,FX.dx1Dsx,slideP):(FX.dx1Dsx*unf);
-    FX.spacex.style.transform="translateX("+txs.toFixed(1)+"px)";
+    var txs,tys=0;
+    if(step===6){txs=lerp(806-FX.baseXsx,FX.dx1Dsx,slideP); tys=FX.dy6sx*(1-slideP);}
+    else txs=FX.dx1Dsx*unf;
+    FX.spacex.style.transform="translate("+txs.toFixed(1)+"px,"+tys.toFixed(1)+"px)";
+    FX.spacexLbl.style.opacity=(cloudVis&&step>=8)?1:0;                                        // hero label only once unfolded
     FX.lowerBar.style.opacity=(step===6?clamp((p-0.55)/0.25):0);                              // "lower bar" cue
-    FX.baseGap.style.opacity=(step===8?clamp((p-0.55)/0.30):0);                               // base-gap bracket on unfold
-    FX.band.style.opacity=(step===9?clamp(p/0.5):((step===10||step===17||step===18)?1:0));    // ±3 SD band persists
+    FX.baseGap.style.opacity=(step===8?clamp((p-0.55)/0.30):0);                               // base-gap bracket (x-axis)
+    FX.cagrGap.style.opacity=(step===8?clamp((p-0.55)/0.30):0);                               // CAGR-share bracket (right)
+    FX.band.style.opacity=(step===9?clamp(p/0.5):((step===10||step===17||step===18)?1:0));    // ±1 SD band persists
     setDraw(FX.fitPath, step<10?0:(step===10?clamp(p):1));
     applyOutlier(step,p);
     FX.mbars.forEach(function(b){b.style.transform="scaleY("+(step===13?p:1)+")";});
