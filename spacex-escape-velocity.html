@@ -405,12 +405,19 @@
     var g=layer("Lout");
     var gs=E("g",null,g); FX.gScatter=gs;
     [0,0.2,0.4,0.6].forEach(function(c){E("line",{x1:PX.l,y1:sy(c),x2:PX.r,y2:sy(c),stroke:GRID},gs);});
+    (function(b2){var up="",lo="";   // ±1 SD band — rides with the scatter so it persists through the outlier
+      for(var i=0;i<=50;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/50);up+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+Math.max(PX.t,sy(fit(b)*1.297)).toFixed(1);}
+      for(var i=50;i>=0;i--){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/50);lo+=" L "+sx(b).toFixed(1)+" "+Math.min(PX.b,sy(fit(b)*0.771)).toFixed(1);}
+      E("path",{d:up+lo+" Z",fill:"rgba(150,165,210,.15)",stroke:"none"},b2);})(gs);
     var d="",N=50;for(var i=0;i<=N;i++){var b=Math.pow(10,XD[0]+(XD[1]-XD[0])*i/N);d+=(i?" L ":"M ")+sx(b).toFixed(1)+" "+sy(fit(b)).toFixed(1);}
-    E("path",{d:d,fill:"none",stroke:WHITE,"stroke-width":"2","stroke-linecap":"round"},gs);
+    E("path",{d:d,fill:"none",stroke:WHITE,"stroke-width":"2.5","stroke-linecap":"round"},gs);
     T(PX.l,PX.t-22,"each company's distance from the frontier",{fill:MUT,"font-size":"15","font-weight":"600"},gs);
-    function resid(b,c,col,big){FX.outResid.push(E("path",{d:"M "+sx(b)+" "+sy(fit(b))+" L "+sx(b)+" "+sy(c),fill:"none",stroke:col,"stroke-width":(big?3:1.6),"stroke-opacity":(big?1:.7)},gs));}
+    function resid(b,c,col,big){FX.outResid.push(E("path",{d:"M "+sx(b)+" "+sy(fit(b))+" L "+sx(b)+" "+sy(c),fill:"none",stroke:col,"stroke-width":(big?3.5:2.5),"stroke-opacity":(big?1:.85),"stroke-linecap":"round"},gs));}
     COMPS.forEach(function(o){resid(o.b,o.c,(o.c>=fit(o.b)?"#d98b6a":GRAY),0);});
     resid(SPACEX.b,SPACEX.c,RED,1);
+    // lollipop heads — the points, kept visible through the whole outlier until they fly to the box
+    FX.loutPts=[]; COMPS.forEach(function(o){FX.loutPts.push(E("circle",{cx:sx(o.b),cy:sy(o.c),r:5,fill:(o.c>=fit(o.b)?"#d98b6a":GRAY)},gs));});
+    FX.loutPtsSx=E("circle",{cx:sx(SPACEX.b),cy:sy(SPACEX.c),r:8,fill:RED},gs);
 
     // ranked bars (right)
     var gb=E("g",null,g); FX.gBars=gb; gb.style.opacity=0;
@@ -578,18 +585,20 @@
   }
   function applyOutlier(step,p){
     if(step===11){
-      // residuals draw on the FULL frontier, then it shrinks aside as the ranked bars grow (residuals held as ghosts)
+      // residuals (thick lollipops) draw on the full frontier, then it shrinks left as the ranked bars grow — points kept visible
       var shrink=clamp((p-0.40)/0.35),sc=lerp(1,0.56,shrink),tx=lerp(0,-58,shrink),tyy=lerp(0,84,shrink);
       FX.gScatter.setAttribute("transform","translate("+tx.toFixed(1)+","+tyy.toFixed(1)+") scale("+sc.toFixed(3)+")");FX.gScatter.style.opacity=1;
-      var rd=clamp(p/0.42);FX.outResid.forEach(function(l){setDraw(l,rd);l.style.opacity=lerp(1,0.32,shrink);});
+      var rd=clamp(p/0.42);FX.outResid.forEach(function(l){setDraw(l,rd);l.style.opacity=1;});
+      FX.loutPts.forEach(function(d){d.style.opacity=1;});FX.loutPtsSx.style.opacity=1;
       FX.gBars.setAttribute("transform","translate(0,0)");FX.gBars.style.opacity=clamp((p-0.60)/0.30);
       var bg=clamp((p-0.66)/0.34);FX.outBars.forEach(function(b){b.style.transform="scaleX("+bg+")";});
       FX.odots.forEach(function(o){o.el.style.opacity=0;});
       FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;}
     else if(step===12){
-      // scatter persists (shrunk, ghost residuals); bars fade; vertical box forms; ghost dots fly across into it
+      // scatter + thick residuals persist (shrunk); bars fade; box forms; the points themselves move across into it
       FX.gScatter.setAttribute("transform","translate(-58,84) scale(0.56)");FX.gScatter.style.opacity=1;
-      FX.outResid.forEach(function(l){setDraw(l,1);l.style.opacity=0.30;});
+      FX.outResid.forEach(function(l){setDraw(l,1);l.style.opacity=1;});
+      var ptFade=1-clamp((p-0.10)/0.20);FX.loutPts.forEach(function(d){d.style.opacity=ptFade;});FX.loutPtsSx.style.opacity=ptFade;
       FX.gBars.setAttribute("transform","translate(0,0)");FX.gBars.style.opacity=1-clamp(p/0.28);
       FX.outBars.forEach(function(b){b.style.transform="scaleX(1)";});
       FX.gBox.style.opacity=clamp((p-0.15)/0.30);
@@ -597,7 +606,7 @@
       FX.odots.forEach(function(o){o.el.setAttribute("cx",lerp(o.sX,o.bX,f).toFixed(1));o.el.setAttribute("cy",lerp(o.sY,o.bY,f).toFixed(1));o.el.style.opacity=clamp((p-0.10)/0.20);});
       FX.boxSpace.style.opacity=clamp((p-0.70)/0.25);}
     else{FX.gScatter.style.opacity=0;FX.gBars.style.opacity=0;FX.gBox.style.opacity=0;FX.boxSpace.style.opacity=0;
-      FX.outResid.forEach(function(l){l.style.opacity=1;});FX.odots.forEach(function(o){o.el.style.opacity=0;});}
+      FX.outResid.forEach(function(l){l.style.opacity=1;});FX.loutPts.forEach(function(d){d.style.opacity=1;});FX.loutPtsSx.style.opacity=1;FX.odots.forEach(function(o){o.el.style.opacity=0;});}
   }
   function applyMachine(step,p){
     var on=(step===15||step===16),i;
