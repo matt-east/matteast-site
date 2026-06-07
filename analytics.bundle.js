@@ -124,5 +124,8 @@
   }
 
   // analytics.js
-  inject();
+  inject({
+    mode: "auto"
+    // Automatically detect environment (development/production)
+  });
 })();

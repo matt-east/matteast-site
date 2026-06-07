@@ -1,3 +1,7 @@
 import { inject } from '@vercel/analytics';
 
-inject();
+// Initialize Vercel Web Analytics
+// Documentation: https://vercel.com/docs/analytics/quickstart
+inject({
+  mode: 'auto', // Automatically detect environment (development/production)
+});
