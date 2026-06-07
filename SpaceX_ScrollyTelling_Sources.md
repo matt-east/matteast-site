@@ -1,13 +1,31 @@
 # Escape Velocity — Sources & Supporting Data
 
 Companion data/citations file for the SpaceX growth-frontier scrollytelling (`spacex-escape-velocity.html`).
-**Status:** First draft. **Compiled:** June 5, 2026.
+**Compiled:** June 5, 2026. Companion data and citations for the published essay.
 
 Two tiers of data here:
 1. **Post-cutoff facts** (SpaceX IPO, financials, Morgan Stanley forecast, index rule changes). Each is cited to a specific, dated source URL below. These are the load-bearing claims and should be re-checked the week of publication — several are days old and still moving (S&P's decision is dated June 4–5).
-2. **Historical comparables** (15-yr revenue CAGRs of public companies). Revenue figures are drawn from company SEC filings (10-Ks) and standard aggregators (Macrotrends, StockAnalysis.com). They are first-draft figures and should be confirmed against primary filings before publication — flagged in §6.
+2. **Historical comparables** (15-yr revenue CAGRs of public companies). Revenue figures are drawn from company SEC filings (10-Ks) and standard aggregators (Macrotrends, StockAnalysis.com). They are aggregator-level and flagged for primary-filing confirmation in §6.
 
 All CAGR, margin, and scale figures are computed by us from the cited inputs (see `calc.py`); they need no external citation, but the **inputs** do.
+
+---
+
+## 0. Scene structure (as published)
+
+Twenty-one scroll panes; the figures below map to these scenes.
+
+| Act | Panes | Data |
+|---|---|---|
+| The Offering | The Largest IPO Ever · But You Can't Buy Much | §1, §1b |
+| The Claim | Real, Fast Growth · Then This | §2, §3 |
+| The Naive Read | 41.5% a Year · Tesla Climbed Steeper | §4, §6 |
+| The Reframe | A Lower Bar · Against the Field · From 160× the Base | §6 |
+| The Frontier | Growth Has a Speed Limit · The Growth Frontier | §7 |
+| The Outlier | Measure the Gaps · Rank Them · Most Sit Near 1.0× · Off the Manifold | §6, §7 |
+| The Tell / Scale | 79% Margins · Six Percent of Everything | §5, §5b |
+| The Machine | Forced to Buy · Someone Sells Into It | §8, §9 |
+| The Close | Coherence Isn't Truth · The Elon Frontier | §6, §7 |
 
 ---
 
@@ -80,7 +98,7 @@ The implausibility is **front-loaded**: near-annual doublings off a ~$19B base f
 |---|---|---|
 | Implied 2040 EBITDA margin | **79.4%** ($2.7T / $3.4T) | Aramco ~50–55%; software ~40–50% |
 | Revenue vs largest company ever | **5.0×** Walmart (~$680B) | — |
-| Share of projected 2040 US GDP | **~6.3%** | 2040 GDP ≈ $54T (2025 ~$30T @ 4% nominal × 15y) |
+| Share of projected 2040 US GDP | **~6.4%** | 2040 GDP ≈ $53T (2025 $30.76T @ 3.7% nominal × 15y) |
 
 ## 5b. SpaceX revenue as a share of U.S. GDP (2025 → 2040)
 
@@ -102,7 +120,7 @@ Share rises ~100-fold in fifteen years and passes today's largest-company share 
 
 Rule: revenue in the company's fiscal year at/near IPO (the "base") vs. 15 fiscal years later (14 for Tesla, 12 for Meta — noted). GAAP revenue. **First-draft figures — confirm against 10-Ks before publishing.**
 
-**Residual ×** = actual 15-yr CAGR ÷ the frontier-predicted CAGR at that base (§7 fit). >1 beat the trend; <1 fell short. Used directly to rank "The Outlier" bar chart.
+**Residual ×** = actual 15-yr CAGR ÷ the frontier-predicted CAGR at that base (§7 fit). >1 beat the trend; <1 fell short. Drives the Outlier act — the residual lollipops ("Measure the Gaps"), the ranked bars ("Rank Them" / "Most Sit Near 1.0×"), and the distribution ("Off the Manifold").
 
 | Company | Window | Base rev ($B) | End rev ($B) | Yrs | 15-yr CAGR | Residual × |
 |---|---|---|---|---|---|---|
@@ -127,6 +145,12 @@ Ranked residual factor (largest → smallest): **SpaceX 2.15** · Tesla 1.49 · 
 
 **Intellectual-honesty note:** Meta (~34% from a $5B base) and Amazon's second window (~28% from a $6.9B base) are the strongest "high base AND fast" points — they soften the frontier and should be shown, not hidden. Even so, the **best 15-yr CAGR ever achieved from a base ≥ $15B is Apple's iPhone decade at 20.3%.** SpaceX requires ~2× that.
 
+**Distribution (drives "Off the Manifold"):** across the 15 historical residual factors, Q1 ≈ 0.84, median **1.07**, Q3 1.24, IQR 0.40. Tukey upper fence = Q3 + 1.5·IQR = **1.84×**. Tesla's 1.49× sits just inside it; SpaceX's required **2.15×** falls beyond, a statistical outlier ~44% past the record.
+
+**By rate alone (drives "Against the Field"):** only **3 of 15** comps ever exceeded SpaceX's required 41.5% 15-yr CAGR — Tesla (61.7%), Amazon '97 (49.4%), Cisco (47.9%). The rate is high but not unprecedented; the base is what makes it an outlier.
+
+**Base & rate ratios (drives "From 160× the Base"):** SpaceX's $18.67B base ÷ Tesla's $0.117B base = **159.6× ≈ 160×**; rate ratio 41.5% ÷ 62% = **0.67 ≈ ⅔**. The framing: ⅔ the rate, from 160× the base.
+
 ## 7. Frontier fit + methodology
 
 Log-log OLS regression of CAGR on starting base across the 15 historical points:
@@ -137,7 +161,8 @@ R² = 0.533
 ```
 
 - Predicted CAGR at SpaceX's $18.67B base: **19.3%**. Required: **41.5%** → **2.15× the trend.**
-- **This is a descriptive trend, not a law.** Size explains ~53% of the variance in 15-yr CAGR across these companies — real and directional, but not deterministic. The honest framing is "observed size–growth envelope," and the piece should say so rather than dressing it as physics. (The −0.15 exponent rhymes with firm-growth literature on Gibrat's-law violations, but we are not claiming a causal metabolic law.)
+- **±1 SD band (the shaded region on the scatter).** The standard deviation of ln(residual factor) across the 15 points is **≈0.26** (mean ≈ 0, so the fit is unbiased in log space), so the shaded ±1 SD band spans **×0.77 to ×1.30** of the predicted CAGR. SpaceX's required 2.15× sits ~2.9 SD above the trend; the Elon-frontier line rises above the band to the right of SpaceX. The band persists on every scene where the scatter appears.
+- **A trend, not a law — and a metaphor, not a mechanism.** Size explains ~53% of the variance in 15-yr CAGR here: real and directional, not deterministic. The published piece uses a gravity / escape-velocity image ("size becomes a rate-limiting factor to sustained velocity") as intuition for *why* a larger base grows slower, while keeping the on-screen claim honest ("a stubborn trend," R² ≈ 0.53). Note the forms differ: our empirical relationship is a **power law** (CAGR ∝ base^−0.15, a gentle decline), whereas the rocket equation's fuel-vs-velocity cost is **exponential**. The metaphor conveys direction, not functional form. (The −0.15 exponent rhymes with firm-growth literature on Gibrat's-law violations; we are not claiming a causal metabolic law.)
 - **Selection bias, stated plainly:** these are survivors — the most successful companies in history. The frontier is therefore a *best-case* envelope. That cuts toward the bear case (even the winners couldn't do it from this base) but means the curve is an upper bound on observed outcomes, not a hard ceiling on what is possible.
 - **Window sensitivity:** CAGR depends on the chosen window (Apple appears at 35% and 20% for different eras). Windows here are rule-based (from ~IPO). A critic using different windows will get a different exponent; robustness should be checked before publishing.
 
@@ -168,7 +193,7 @@ R² = 0.533
 
 > Do **not** assert an unverified annual lease dollar figure (earlier drafts floated "$1.25B/month" / "$15B/yr" — not confirmed in sourcing). Describe the lease by its verified specs (all compute, 220k GPUs, 300MW) instead.
 
-## 11. Limitations / to-verify before publishing
+## 11. Limitations & open items
 
 1. **Re-pull all §1–§3 and §8 facts the week of publication** — post-cutoff and moving. Confirm SpaceX actually begins trading (~June 12) and that no figure repriced.
 2. **Confirm every historical revenue figure in §6 against 10-Ks** — currently aggregator-level.
