@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Mandate · Sign in with Apple · The Interface Playbook</title>
+<meta name="description" content="App Store rule 4.8 forced Apple's login button onto every rival sign-in sheet for 1,596 days. Then it quietly vanished. The identity play, charted.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The 2019 Play</p>
+  <h1>The button Apple required.</h1>
+  <div class="sub">For 1,596 days, App Store rule 4.8 ordered any app offering Google&rsquo;s or Facebook&rsquo;s login to install Apple&rsquo;s button beside them, <strong>&ldquo;as an equivalent option.&rdquo;</strong> The only play Apple ran by decree&mdash;and the only one whose winnings were never disclosed.</div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="Sign in with Apple: the login sheet, guideline 4.8, the relay, the mandate era, and the undisclosed yield"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">One sheet, two <span class="it">landlords</span>.</h2><p class="body">Every account on the modern internet starts at the same place: a sign-in sheet with a stack of buttons. For the iPhone&rsquo;s first twelve years, those buttons belonged to <span class="b">Google and Facebook</span>&mdash;and whoever owns a button on that sheet owns the identity graph behind it: who you are, where you log in, what you come back to. Apple owned the device, the store, and the screen. The door to the account layer it didn&rsquo;t own at all.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Rule</p><h2 class="h-big">Apple didn&rsquo;t compete for the sheet. It <span class="it">wrote a rule</span>.</h2><p class="body">Announced at WWDC on June 3, 2019; in the App Store Review Guidelines by <span class="b">September 12, 2019</span>: any app using a third-party or social login &ldquo;must also offer Sign in with Apple as an equivalent option.&rdquo; Existing apps had until April 2020, extended to June 30, 2020. Google fought for the search box with $20 billion a year; Facebook built a developer platform. Apple conscripted its distribution by policy&mdash;the only play in the playbook that shipped as a paragraph.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Wrapper</p><h2 class="h-big">A shield for you. A <span class="it">famine</span> for them.</h2><p class="body">The button came wrapped in a real benefit: tap it and Apple mints a random relay address, so the app can reach you while your inbox stays hidden. In one global restaurant chain&rsquo;s iPhone app, <span class="b">19.3% of new sign-ups</span> arrived as relay addresses (AtData, 2021). Every one is an email the developer can&rsquo;t match to an ad profile, and a login Google and Facebook never see at all. Like App Tracking Transparency, the privacy halo and the competitive weapon are the same feature.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Quiet End</p><h2 class="h-big">Then the mandate <span class="it">vanished</span>.</h2><p class="body">The state circled first: the House antitrust report in October 2020, then a DOJ probe of the sign-in rule reported in February 2021. On <span class="b">January 25, 2024</span>, in the same announcement cycle as its EU Digital Markets Act compliance package, Apple quietly rewrote 4.8: apps now need &ldquo;an equivalent privacy-focused login service&rdquo;&mdash;criteria 9to5Mac read as a description of exactly one product. The requirement had stood for 1,596 days. No competitor ended it. The state, again, barely did.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">A four-year toll. Yield: <span class="it">undisclosed</span>.</h2><p class="body">Apple has never published a Sign in with Apple number: not accounts, not sign-ins, not share. The only readings are external. Across Auth0&rsquo;s login platform in March 2022, Apple&rsquo;s button was already the <span class="b">#2 social login, at 14%</span> of social sign-ins against Google&rsquo;s 75%, and Okta&rsquo;s own analysts credited the App Store requirement. That is the tell of the cheapest play on the board: when Apple wants an interface, it doesn&rsquo;t build market share. It writes a rule.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The play that shipped as a paragraph.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="signin">
+    <a id="exitnext" href="play-silicon.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">Apple Silicon <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: Sign in with Apple announced at WWDC June 3, 2019 [D]. App Store Review Guideline 4.8, in force 2019&ndash;2024, verbatim [D]: &ldquo;Apps that use a third-party or social login service (such as Facebook Login, Google Sign-In, Sign in with Twitter, Sign In with LinkedIn, Login with Amazon, or WeChat Login) to set up or authenticate the user's primary account with the app must also offer Sign in with Apple as an equivalent option.&rdquo; Apple Developer News, Sept 12, 2019 [D]: &ldquo;Starting today, new apps submitted to the App Store must follow these guidelines. Existing apps and app updates must follow them by April 2020&rdquo;; deadline later extended to June 30, 2020 (Apple, Upcoming Requirements) [D]. Carve-outs (unchanged through both eras) [D]: apps using only their own account system; education/enterprise/business sign-ins; government or industry-backed citizen ID; clients of a single third-party service. Hide My Email relay addresses use the format random@privaterelay.appleid.com; Apple: it &ldquo;will not track users' activity in your app or website&rdquo; [D]. Repeal: Apple Developer News, announced with the EU Digital Markets Act compliance package, Jan 25, 2024 [D]: developers &ldquo;will have the option to offer Sign in with Apple, or they will now be able to offer an equivalent privacy-focused login service instead&rdquo;; new 4.8 criteria: data collection limited to name and email, users may keep their email private, no tracking of in-app activity (reported by 9to5Mac and Michael Tsai, Jan 26&ndash;27, 2024) [D/R]. Mandate duration Sept 12, 2019 &ndash; Jan 25, 2024 = 1,596 days [derived from Apple's dates]. Relay-share data: AtData (TowerData/FreshAddress), Feb 2022 [R]: across one global restaurant chain's iPhone app, May&ndash;Dec 2021, privaterelay.appleid.com averaged 19.3% of new-signup email traffic (gmail.com 51.6%, icloud.com 5.4%); across AtData's overall API traffic the relay share was ~0.3%. Social-login mix: Okta/Auth0 whitepaper &ldquo;Going Deep with Social Login,&rdquo; June 2023, data March 2022 [R]: Google 75% of Auth0 social logins, Apple 14% (#2), Facebook 8%; the report itself notes Apple's rank &ldquo;is significant considering sign-in with Apple was just released in September 2019,&rdquo; citing the App Store requirement. The state: House Judiciary antitrust report, Oct 6, 2020 [R] (Apple has &ldquo;monopoly power&rdquo; over iOS app distribution); DOJ probe of the sign-in button and related rules, reported by The Information, Feb 23, 2021 [R]; OpenID Foundation open letter to Apple, June 2019 [R]. Apple has published no Sign in with Apple account, user, or share figure from launch through June 2026 [D, by absence of disclosure]. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Mandate: engine v2 (ported from play-search). Actors created once; beats are target
+   states with per-actor timing windows. Exits complete by .35; entrances run .22-.75; all
+   windows end by .75 so the last quarter of every beat is a poster frame. Binary rest at p=1.
+   build sn-4 */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015",BAND="#c9c9cf";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);} /* mobile type bump ~1.4x at engine init */
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+function lerpC(a,b,t){t=clamp(t);
+  function h(x){return [parseInt(x.substr(1,2),16),parseInt(x.substr(3,2),16),parseInt(x.substr(5,2),16)];}
+  var A=h(a),B=h(b);
+  function q(i){var v=Math.round(lerp(A[i],B[i],t));v=v<0?0:v>255?255:v;var s=v.toString(16);return s.length<2?"0"+s:s;}
+  return "#"+q(0)+q(1)+q(2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ THE SHEET (persistent device) ============ */
+/* local coords: card -160..160 x, -150..150 y. Button slots: -72,-16,40,96 (centers). */
+function btn(fill,stroke,label,lblFill){
+  var g=E("g",{},null);
+  E("rect",{x:-140,y:-22,width:280,height:44,rx:12,fill:fill,stroke:stroke||"none","stroke-width":stroke?1:0},g);
+  T(0,5,label,{fill:lblFill,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},g);
+  return g;
+}
+A.sheet=E("g",{opacity:0},cam);
+E("rect",{x:-160,y:-150,width:320,height:300,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.sheet);
+T(0,-114,"Create your account",{fill:INK,"font-size":FS(14),"font-weight":"700","text-anchor":"middle"},A.sheet);
+A.btnA=btn(INK,null,"Sign in with Apple","#fff"); A.btnA.setAttribute("opacity",0); A.sheet.appendChild(A.btnA);
+A.btnG=btn("#fff",LINE,"Continue with Google",INK); A.sheet.appendChild(A.btnG);
+A.btnF=btn(GRAPH,null,"Continue with Facebook","#fff"); A.sheet.appendChild(A.btnF);
+A.btnE=btn("#fff",LINE,"Sign up with email",MUT); A.sheet.appendChild(A.btnE);
+A.shFoot=T(0,5,"Already have an account? Sign in",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.sheet);
+A.hlRect=E("rect",{x:-146,y:-100,width:292,height:56,rx:14,fill:"none",stroke:BLUE,"stroke-width":2,opacity:0},A.sheet);
+
+/* ============ BEAT 0: ribbons to the rivals' identity graphs ============ */
+/* sheet at (500,318) k1.06: right edge x=670; Google row y=241.7; Facebook row y=360.4 */
+A.rib=E("g",{opacity:0},cam);
+E("path",{d:"M 672 233 C 730 224 762 224 786 228 L 786 240 C 762 238 730 242 672 251 Z",fill:GRAPH},A.rib);
+E("polygon",{points:"786,224 804,234 786,244",fill:GRAPH},A.rib);
+E("path",{d:"M 672 352 C 730 356 762 392 786 404 L 786 416 C 762 406 730 374 672 370 Z",fill:GRAPH},A.rib);
+E("polygon",{points:"786,400 804,410 786,420",fill:GRAPH},A.rib);
+E("circle",{cx:822,cy:234,r:16,fill:GRAPH},A.rib);
+E("circle",{cx:822,cy:410,r:16,fill:GRAPH},A.rib);
+T(822,196,"Google",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.rib);
+T(822,452,"Facebook",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.rib);
+T(822,468,"the identity graph",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.rib);
+A.ribDots=[];
+[[822,234],[822,410]].forEach(function(c){
+  for(var i=0;i<8;i++){var an=i*Math.PI/4+0.42, rr=i%2?28:38;
+    A.ribDots.push(E("circle",{cx:(c[0]+rr*Math.cos(an)).toFixed(1),cy:(c[1]+rr*Math.sin(an)).toFixed(1),r:2.2,fill:MUT,opacity:1},A.rib));}
+});
+A.noteR=E("g",{opacity:0},cam);
+T(700,120,"every sign-up routes the account",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.noteR);
+T(700,136,"to the button's owner",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.noteR);
+
+/* ============ BEAT 1: guideline 4.8 stamps in ============ */
+A.doc=E("g",{opacity:0},cam);
+E("rect",{x:470,y:110,width:480,height:290,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.doc);
+T(494,142,"App Store Review Guidelines",{fill:MUT,"font-size":FS(12)},A.doc);
+T(494,168,"4.8 Sign in with Apple",{fill:INK,"font-size":FS(15),"font-weight":"700"},A.doc);
+[["Apps that use a third-party or social login service",196],
+ ["(such as Facebook Login, Google Sign-In, Sign in with",215],
+ ["Twitter, Sign In with LinkedIn, Login with Amazon, or",234],
+ ["WeChat Login) to set up or authenticate the user's",253],
+ ["primary account with the app",272]].forEach(function(d){
+  T(494,d[1],d[0],{fill:MUT,"font-size":FS(13)},A.doc);});
+T(494,300,"must also offer Sign in with Apple",{fill:BLUE,"font-size":FS(15),"font-weight":"700"},A.doc);
+T(494,323,"as an equivalent option.",{fill:BLUE,"font-size":FS(15),"font-weight":"700"},A.doc);
+T(494,356,"guideline 4.8, verbatim, as in force 2019-2024 [D]",{fill:MUT,"font-size":FS(11)},A.doc);
+A.ul=E("path",{d:"M 486 288 L 486 330",fill:"none",stroke:BLUE,"stroke-width":3,opacity:0},cam);
+var ULLEN=42;
+A.dates=E("g",{opacity:0},cam);
+[[494,"June 3, 2019","announced (WWDC)"],[660,"Sept 12, 2019","in force, new apps"],[820,"June 30, 2020","all apps"]].forEach(function(d){
+  T(d[0],440,d[1],{fill:INK,"font-size":FS(13),"font-weight":"700",style:TNUM},A.dates);
+  T(d[0],458,d[2],{fill:MUT,"font-size":FS(12)},A.dates);
+});
+
+/* ============ BEAT 2: the relay split + the AtData bars ============ */
+/* sheet at (272,318) k1: Apple row y=246, right edge x=412 */
+A.seg1=E("path",{d:"M 416 246 C 462 246 510 246 556 246",fill:"none",stroke:BLUE,"stroke-width":2.5,opacity:0},cam);
+var S1LEN=140;
+A.shieldG=E("g",{opacity:0},cam);
+E("rect",{x:560,y:210,width:164,height:72,rx:12,fill:"#fff",stroke:BLUE,"stroke-width":1.5},A.shieldG);
+T(642,238,"Apple's relay",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.shieldG);
+T(642,258,"privaterelay.appleid.com",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.shieldG);
+A.seg2=E("path",{d:"M 728 246 L 824 246",fill:"none",stroke:GRAPH,"stroke-width":2.5,opacity:0},cam);
+var S2LEN=96;
+A.arr2=E("polygon",{points:"824,238 840,246 824,254",fill:GRAPH,opacity:0},cam);
+A.devG=E("g",{opacity:0},cam);
+E("circle",{cx:862,cy:246,r:18,fill:GRAPH},A.devG);
+T(862,290,"the developer",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.devG);
+A.chipReal=E("g",{opacity:0},cam);
+E("path",{d:"M 446 184 L 456 188 L 456 196 C 456 202 451 206 446 208 C 441 206 436 202 436 196 L 436 188 Z",fill:BLUE},A.chipReal);
+T(516,193,"you@gmail.com",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.chipReal);
+T(516,211,"stays with Apple",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.chipReal);
+A.chipRelay=E("g",{opacity:0},cam);
+T(768,193,"xk29qv@privaterelay.appleid.com",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},HALO),A.chipRelay);
+T(768,211,"what the app receives",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.chipRelay);
+function bar(cx,baseY,w,h,c,val,valC,sub){
+  var g=E("g",{opacity:0},cam);
+  var r=E("rect",{x:cx-w/2,y:baseY-h,width:w,height:h,rx:3,fill:c},g);
+  r.style.transformOrigin=cx+"px "+baseY+"px"; r.style.transform="scaleY(0)";
+  T(cx,baseY-h-10,val,Object.assign({fill:valC,"font-size":FS(13),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  T(cx,baseY+18,sub,{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},g);
+  return {g:g,bar:r};
+}
+A.atdHd=E("g",{opacity:0},cam);
+T(728,382,"new-signup email mix, one iPhone app",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.atdHd);
+T(728,400,"global restaurant chain, May-Dec 2021 (AtData) [R]",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.atdHd);
+A.atb0=bar(620,532,60,103.2,GRAPH,"51.6%",INK,"gmail.com");
+A.atb1=bar(728,532,60,38.6,BLUE,"19.3%",BLUE,"Apple relay");
+A.atb2=bar(836,532,60,10.8,BAND,"5.4%",INK,"icloud.com");
+
+/* ============ BEAT 3: the mandate era ============ */
+A.rw=E("g",{opacity:0},cam);
+T(130,132,"January 25, 2024",{fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},A.rw);
+T(130,152,"guideline 4.8, rewritten with the DMA-era package:",{fill:MUT,"font-size":FS(12)},A.rw);
+T(130,184,"must also offer Sign in with Apple",{fill:MUT,"font-size":FS(14),"font-weight":"600"},A.rw);
+T(130,212,"\"the option to offer Sign in with Apple, or ... an",{fill:INK,"font-size":FS(14),"font-weight":"600"},A.rw);
+T(130,232,"equivalent privacy-focused login service instead\"",{fill:INK,"font-size":FS(14),"font-weight":"600"},A.rw);
+T(130,252,"Apple Developer News, Jan 2024 [D]",{fill:MUT,"font-size":FS(11)},A.rw);
+A.strike=E("path",{d:"M 128 179 L 384 179",fill:"none",stroke:RED,"stroke-width":2,opacity:0},cam);
+var STLEN=256;
+A.tl=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:430,x2:880,y2:430,stroke:LINE,"stroke-width":1.5},A.tl);
+[[150,"2019"],[282.7,"2020"],[415.5,"2021"],[548.2,"2022"],[680.9,"2023"],[813.6,"2024"]].forEach(function(d){
+  E("line",{x1:d[0],y1:426,x2:d[0],y2:434,stroke:LINE,"stroke-width":1},A.tl);
+  T(d[0],462,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.tl);
+});
+A.bandR=E("rect",{x:243,y:408,width:0,height:18,rx:3,fill:BLUE,opacity:0},cam);
+var BANDW=579;
+A.bandLbls=E("g",{opacity:0},cam);
+T(243,400,"Sept 12, 2019",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600",style:TNUM},HALO),A.bandLbls);
+T(822,400,"Jan 25, 2024",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"end",style:TNUM},HALO),A.bandLbls);
+A.dl=E("g",{opacity:0},cam);
+E("line",{x1:349,y1:408,x2:349,y2:436,stroke:"#fff","stroke-width":1.5},A.dl);
+T(355,446,"Jun 30, 2020: all apps",{fill:MUT,"font-size":FS(11)},A.dl);
+A.days=E("g",{opacity:0},cam);
+T(533,300,"1,596 days",Object.assign({fill:INK,"font-size":FS(40),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.days);
+T(533,322,"the mandate stood, Sept 2019 - Jan 2024",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.days);
+A.flags=E("g",{opacity:0},cam);
+E("line",{x1:384,y1:362,x2:384,y2:404,stroke:MUT,"stroke-width":1},A.flags);
+T(376,356,"Oct 2020: House report",Object.assign({fill:INK,"font-size":FS(11),"font-weight":"600","text-anchor":"end"},HALO),A.flags);
+E("line",{x1:435,y1:362,x2:435,y2:404,stroke:MUT,"stroke-width":1},A.flags);
+T(443,356,"Feb 2021: DOJ probe reported",Object.assign({fill:INK,"font-size":FS(11),"font-weight":"600"},HALO),A.flags);
+
+/* ============ BEAT 4: the void ============ */
+A.voidg=E("g",{opacity:0},cam);
+[200,267.5,335,402.5].forEach(function(y){
+  E("line",{x1:150,y1:y,x2:880,y2:y,stroke:LINE,"stroke-width":1},A.voidg);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.voidg);
+[["2019",150],["2020",254.3],["2021",358.6],["2022",462.9],["2023",567.1],["2024",671.4],["2025",775.7],["2026",880]].forEach(function(d){
+  T(d[1],492,d[0],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.voidg);
+});
+A.voidLbl=E("g",{opacity:0},cam);
+T(515,298,"No adoption figure has ever been published.",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO),A.voidLbl);
+T(515,320,"not at launch, not at the deadline, not at the repeal",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.voidLbl);
+A.tr1=note(484,470,560,416,["Auth0 mix, Mar 2022 [R]: Apple 14% of","social logins - #2 behind Google's 75%"]);
+A.tr2=note(421,470,340,416,["AtData, 2021 [R]: 19.3% of one iOS app's","sign-ups arrived as relay addresses"]);
+A.tell=E("g",{opacity:0},cam);
+T(515,524,"When Apple wants an interface, it doesn't build market share.",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO),A.tell);
+T(515,546,"It writes a rule.",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO),A.tell);
+
+/* ============ furniture ============ */
+var TITLES=["The sign-in sheet, before 2019","App Store Review Guideline 4.8",
+  "Hide My Email: what the app receives","The mandate era, 2019-2024",
+  "Sign in with Apple adoption, 2019-2026"];
+var CAPS=[
+ ["The sheet is the account door of every iOS app; each third-party button routes the new",
+  "account into its owner's identity graph. Active Apple devices, 2019: 1.4B [D, Apple]."],
+ ["Guideline 4.8 verbatim, in force 2019-2024 [D]; announced June 3, 2019; new apps Sept 12, 2019;",
+  "all apps by June 30, 2020 (April deadline, extended). Exempt: own-account, enterprise, gov-ID apps."],
+ ["Relay format: random@privaterelay.appleid.com [D]. Apple pledged not to track in-app activity [D].",
+  "Bars: AtData [R], new-signup email mix, one global chain's iPhone app, May-Dec 2021; relay 19.3%."],
+ ["Rule in force Sept 12, 2019 - Jan 25, 2024: 1,596 days [derived from Apple's dates, D].",
+  "House report Oct 6, 2020 [R]; DOJ probe of the sign-in rule reported Feb 23, 2021 [R, The Information]."],
+ ["Apple has published no account, user, or share figure for Sign in with Apple, 2019-2026 [D, absence].",
+  "Only external readings exist: Auth0/Okta social-login mix, Mar 2022 [R]; AtData relay share, 2021 [R]."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  sheet:{o:1,x:500,y:318,k:1.06,ins:0,hl:0},
+  rib:{o:0}, noteR:{o:0},
+  doc:{o:0,dy:0}, ul:{o:0}, dates:{o:0},
+  seg1:{o:0}, shieldG:{o:0}, seg2:{o:0}, arr2:{o:0}, devG:{o:0},
+  chipReal:{o:0}, chipRelay:{o:0},
+  atdHd:{o:0}, atb0:{o:0,gr:1}, atb1:{o:0,gr:1}, atb2:{o:0,gr:1},
+  rw:{o:0}, strike:{o:0}, tl:{o:0}, bandR:{o:0,w:0}, bandLbls:{o:0}, dl:{o:0}, days:{o:0}, flags:{o:0},
+  voidg:{o:0}, voidLbl:{o:0}, tr1:{o:0}, tr2:{o:0}, tell:{o:0},
+  T:[0,0,0,0,0], C:[0,0,0,0,0]};}
+var Z=base();
+Z.sheet={o:0,x:500,y:318,k:1.06,ins:0,hl:0};
+var S=[];
+S[0]=Object.assign(base(),{
+  sheet:{o:{v:1,win:[.08,.2]},x:500,y:318,k:1.06,ins:0,hl:0},
+  rib:{o:{v:1,win:[.3,.44]}},
+  noteR:{o:{v:1,win:[.6,.72]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  sheet:{o:1,x:{v:272,win:[.14,.34]},y:318,k:{v:1,win:[.14,.34]},ins:{v:1,win:[.5,.64]},hl:0},
+  doc:{o:{v:1,win:[.06,.18]},dy:{v:0,win:[.06,.18]}},
+  ul:{o:{v:1,win:[.3,.38]}},
+  dates:{o:{v:1,win:[.62,.72]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  sheet:{o:1,x:272,y:318,k:1,ins:1,hl:{v:1,win:[.12,.2]}},
+  seg1:{o:{v:1,win:[.18,.26]}},
+  shieldG:{o:{v:1,win:[.24,.34]}},
+  chipReal:{o:{v:1,win:[.36,.46]}},
+  seg2:{o:{v:1,win:[.44,.5]}},
+  arr2:{o:{v:1,win:[.54,.6]}},
+  devG:{o:{v:1,win:[.5,.58]}},
+  chipRelay:{o:{v:1,win:[.56,.64]}},
+  atdHd:{o:{v:1,win:[.56,.64]}},
+  atb0:{o:{v:1,win:[.58,.64]},gr:{v:1,win:[.58,.68],e:"back"}},
+  atb1:{o:{v:1,win:[.62,.68]},gr:{v:1,win:[.62,.72],e:"back"}},
+  atb2:{o:{v:1,win:[.66,.72]},gr:{v:1,win:[.66,.75],e:"back"}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  sheet:{o:1,x:{v:812,win:[.08,.28]},y:{v:152,win:[.08,.28]},k:{v:.5,win:[.08,.28]},ins:1,hl:0},
+  tl:{o:{v:1,win:[.14,.22]}},
+  bandR:{o:{v:1,win:[.2,.26]},w:{v:579,win:[.22,.5]}},
+  flags:{o:{v:1,win:[.36,.46]}},
+  dl:{o:{v:1,win:[.44,.52]}},
+  bandLbls:{o:{v:1,win:[.5,.58]}},
+  days:{o:{v:1,win:[.54,.64]}},
+  rw:{o:{v:1,win:[.5,.6]}},
+  strike:{o:{v:1,win:[.62,.68]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  sheet:{o:1,x:812,y:152,k:.5,ins:1,hl:0},
+  voidg:{o:{v:1,win:[.12,.24]}},
+  voidLbl:{o:{v:1,win:[.38,.5]}},
+  tr1:{o:{v:1,win:[.52,.62]}},
+  tr2:{o:{v:1,win:[.58,.68]}},
+  tell:{o:{v:1,win:[.66,.75]}},
+  T:onehot(4), C:onehot(4)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+function mix(s1,s2,t){
+  function c(ak,ck){return cv(s1[ak][ck],s2[ak][ck],t);}
+  function u(ak,ck){return cu(s1[ak][ck],s2[ak][ck],t);}
+  var st={
+    sheet:{o:c("sheet","o"),x:c("sheet","x"),y:c("sheet","y"),k:c("sheet","k"),ins:c("sheet","ins"),hl:c("sheet","hl")},
+    rib:{o:c("rib","o"),u:u("rib","o")},
+    noteR:{o:c("noteR","o"),u:u("noteR","o")},
+    doc:{o:c("doc","o"),u:u("doc","o")},
+    ul:{o:c("ul","o")},
+    dates:{o:c("dates","o"),u:u("dates","o")},
+    seg1:{o:c("seg1","o")},
+    shieldG:{o:c("shieldG","o"),u:u("shieldG","o")},
+    seg2:{o:c("seg2","o")},
+    arr2:{o:c("arr2","o")},
+    devG:{o:c("devG","o"),u:u("devG","o")},
+    chipReal:{o:c("chipReal","o"),u:u("chipReal","o")},
+    chipRelay:{o:c("chipRelay","o"),u:u("chipRelay","o")},
+    atdHd:{o:c("atdHd","o"),u:u("atdHd","o")},
+    atb0:{o:c("atb0","o"),gr:c("atb0","gr")},
+    atb1:{o:c("atb1","o"),gr:c("atb1","gr")},
+    atb2:{o:c("atb2","o"),gr:c("atb2","gr")},
+    rw:{o:c("rw","o"),u:u("rw","o")},
+    strike:{o:c("strike","o")},
+    tl:{o:c("tl","o")},
+    bandR:{o:c("bandR","o"),w:c("bandR","w")},
+    bandLbls:{o:c("bandLbls","o"),u:u("bandLbls","o")},
+    dl:{o:c("dl","o"),u:u("dl","o")},
+    days:{o:c("days","o"),u:u("days","o")},
+    flags:{o:c("flags","o"),u:u("flags","o")},
+    voidg:{o:c("voidg","o")},
+    voidLbl:{o:c("voidLbl","o"),u:u("voidLbl","o")},
+    tr1:{o:c("tr1","o"),u:u("tr1","o")},
+    tr2:{o:c("tr2","o"),u:u("tr2","o")},
+    tell:{o:c("tell","o"),u:u("tell","o")},
+    T:[],C:[]};
+  for(var i=0;i<5;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function clamp01b(x){return x<0?0:x;}
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  /* the sheet */
+  A.sheet.setAttribute("transform","translate("+st.sheet.x.toFixed(1)+" "+st.sheet.y.toFixed(1)+") scale("+st.sheet.k.toFixed(3)+")");
+  setO(A.sheet,st.sheet.o);
+  var ins=clamp(st.sheet.ins);
+  setO(A.btnA,ins);
+  A.btnA.setAttribute("transform","translate(0 -72)");
+  A.btnG.setAttribute("transform","translate(0 "+lerp(-72,-16,ins).toFixed(1)+")");
+  A.btnF.setAttribute("transform","translate(0 "+lerp(-16,40,ins).toFixed(1)+")");
+  A.btnE.setAttribute("transform","translate(0 "+lerp(40,96,ins).toFixed(1)+")");
+  A.shFoot.setAttribute("transform","translate(0 "+lerp(96,134,ins).toFixed(1)+")");
+  setO(A.shFoot,(1-ins).toFixed(3));
+  setO(A.hlRect,st.sheet.hl);
+  /* beat 0 */
+  setO(A.rib,st.rib.o); rise(A.rib,st.rib.u);
+  A.ribDots.forEach(function(d,i){
+    if(beat===0){var s0=.34+i*0.0187;setO(d,w(s0,s0+.08).toFixed(3));}
+    else setO(d,1);
+  });
+  setO(A.noteR,st.noteR.o); rise(A.noteR,st.noteR.u);
+  /* beat 1 */
+  setO(A.doc,st.doc.o);
+  A.doc.setAttribute("transform","translate(0 "+(-26*(1-clamp(st.doc.u))).toFixed(1)+")");
+  setO(A.ul,st.ul.o);
+  dashTo(A.ul,ULLEN,beat===1?eo(w(.3,.46)):(NV(st.ul.o)>0?1:0));
+  setO(A.dates,st.dates.o); rise(A.dates,st.dates.u);
+  /* beat 2 */
+  setO(A.seg1,st.seg1.o); dashTo(A.seg1,S1LEN,beat===2?eo(w(.18,.34)):1);
+  setO(A.shieldG,st.shieldG.o); rise(A.shieldG,st.shieldG.u);
+  setO(A.seg2,st.seg2.o); dashTo(A.seg2,S2LEN,beat===2?eo(w(.44,.56)):1);
+  setO(A.arr2,st.arr2.o);
+  setO(A.devG,st.devG.o); rise(A.devG,st.devG.u);
+  setO(A.chipReal,st.chipReal.o); rise(A.chipReal,st.chipReal.u);
+  setO(A.chipRelay,st.chipRelay.o); rise(A.chipRelay,st.chipRelay.u);
+  setO(A.atdHd,st.atdHd.o); rise(A.atdHd,st.atdHd.u);
+  [["atb0",A.atb0],["atb1",A.atb1],["atb2",A.atb2]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.style.transform="scaleY("+clamp01b(s.gr).toFixed(3)+")";});
+  /* beat 3 */
+  setO(A.rw,st.rw.o); rise(A.rw,st.rw.u);
+  setO(A.strike,st.strike.o);
+  dashTo(A.strike,STLEN,beat===3?eo(w(.62,.72)):(NV(st.strike.o)>0?1:0));
+  setO(A.tl,st.tl.o);
+  A.bandR.setAttribute("width",Math.max(0,st.bandR.w).toFixed(1));
+  setO(A.bandR,st.bandR.o);
+  setO(A.bandLbls,st.bandLbls.o); rise(A.bandLbls,st.bandLbls.u);
+  setO(A.dl,st.dl.o); rise(A.dl,st.dl.u);
+  setO(A.days,st.days.o); rise(A.days,st.days.u);
+  setO(A.flags,st.flags.o); rise(A.flags,st.flags.u);
+  /* beat 4 */
+  setO(A.voidg,st.voidg.o);
+  setO(A.voidLbl,st.voidLbl.o); rise(A.voidLbl,st.voidLbl.u);
+  setO(A.tr1,st.tr1.o); rise(A.tr1,st.tr1.u);
+  setO(A.tr2,st.tr2.o); rise(A.tr2,st.tr2.u);
+  setO(A.tell,st.tell.o); rise(A.tell,st.tell.u);
+  for(var i=0;i<5;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:5};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("signin")<0){x.push("signin");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>

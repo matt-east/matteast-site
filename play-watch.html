@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Wrist · Apple Watch · The Interface Playbook</title>
+<meta name="description" content="Apple has led the smartwatch market every year since 2015. Competitors never dented the wrist—attrition and a courtroom did.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<!-- build aw2 -->
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The Wrist Play</p>
+  <h1>The body's default screen.</h1>
+  <div class="sub">Apple put a screen on the wrist, wired it to the iPhone alone, and has led the smartwatch market every year since 2015. <strong>The only fight it ever lost over the body's surface happened in a courtroom.</strong></div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="Apple Watch: the iPhone-only wrist, the shipment slide, the FDA staircase, the Masimo war, and the Swiss comparison"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">One wrist, one <span class="it">key</span>.</h2><p class="body">The Apple Watch shipped in April 2015 and has paired with exactly one thing since: an iPhone. No Android phone has ever set one up [D]. That one rule turns a watch into a gravity well—every Watch on a wrist makes its owner's next phone an iPhone. The Justice Department's 2024 antitrust complaint treats the design exactly that way: not an accessory, a switching cost.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Ledger</p><h2 class="h-big">Still first. <span class="it">Slipping</span>.</h2><p class="body">Ten years in, Apple still ships more smartwatches than anyone on earth—first place every year since launch. Now read the right edge of the chart plainly: shipments peaked in 2022, fell in 2023, then dropped another <span class="b">19% in 2024</span> as Apple's share slid from 25% to 22% [R, Counterpoint]. The market itself shrank for the first time ever, and China displaced North America as its largest region. No competitor took the wrist. The wrist just stopped upgrading.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Health Land-Grab</p><h2 class="h-big">A staircase only Apple has <span class="it">climbed</span>.</h2><p class="body">The strategy that outlasts a slow market: turn the watch from accessory into instrument. ECG and irregular-rhythm notifications cleared the FDA in September 2018—the first over-the-counter ECG of its kind. AFib History followed in 2022, sleep-apnea notifications in September 2024, and hypertension notifications in September 2025, a feature Apple expects to flag more than a million undiagnosed people in its first year [R]. Each stair took studies, submissions, and years. Each is a climb a rival must repeat from the bottom. And the one sensor Apple shipped without asking the FDA, blood oxygen in 2020, is the one that ended up in court.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Sensor War</p><h2 class="h-big">The one fight Apple <span class="it">lost</span>.</h2><p class="body">No rival watch ever took a feature off Apple's wrist. A medical-device company did. Masimo sued in January 2020; by Christmas 2023 the ITC had banned Apple Watch imports over the blood-oxygen sensor, and Apple stripped the feature from every US model it sold from January 2024. The workaround, shipped August 2025, is the playbook in miniature: the sensor stays on the wrist, the computation moves to the paired iPhone. Then November 2025: a federal jury ordered Apple to pay <span class="b">$634 million</span>. Apple is appealing—but the scoreboard now shows one loss, and no competitor is on it.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Comparison</p><h2 class="h-big">Two rulers, one <span class="it">wrist</span>.</h2><p class="body">Measure in units and it is a rout: roughly <span class="b">31 million</span> Apple Watches shipped in 2024 [E] against the 15.3 million watches exported by the entire Swiss industry [D]—one product out-shipping a nation's signature craft two to one. Measure in money and the picture flips: Swiss exports earned about $29 billion; Apple Watch revenue is a number Apple has never disclosed, folded into a $35.7 billion segment with AirPods and HomePods. Reporting pegs the Watch near $17–20 billion [R]. The Swiss, for now, still out-earn the watch that out-ships them.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">What it took to dent the wrist.</h2><p class="body">Score the decade. Broken by a rival watch: no—Samsung, Google, and Garmin never knocked it from first place. Dented: yes, twice, by a market that stopped upgrading and by the only courtroom that ever stripped a feature off the wrist. The scoreboard itself stays dark; Apple has never published a single Watch unit or revenue figure. Three numbers decide the next chapter: whether 22% share holds, how far the hypertension alert reaches, and what survives of the $634 million on appeal.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The wrist feeds the pocket.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="watch">
+    <a id="exitnext" href="play-airpods.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">AirPods <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: Apple Watch first shipped April 24, 2015; pairing requires an iPhone, and Android has never been supported [D, Apple]. US v. Apple complaint (DOJ, Mar 21, 2024) alleges Apple limits rival smartwatches and uses Apple Watch's iPhone exclusivity to raise switching costs [D, complaint]. Shipments 2015&ndash;2023 [E]: analyst estimates aggregated by Statista from IDC/Counterpoint data (8.5M in 2015; peak 53.9M in 2022; 38M in 2023); levels vary by tracker, the trend does not. 2024 [R, Counterpoint, Mar 2025]: Apple shipments fell 19% YoY (the chart's ~31M bar is derived from that decline); share of global smartwatch shipments 25% (2023) to 22% (2024); Apple remained the #1 vendor, as it has every year since launch; the global market declined 7%, its first drop ever; China passed North America as the largest market; Huawei rose from 9% to 13%. FDA timeline: ECG app and irregular-rhythm notification De Novo grants dated Sept 11, 2018 (DEN180044, DEN180042), announced with Series 4 [D, FDA]; AFib History cleared 2022 [R]; sleep-apnea notifications cleared Sept 16, 2024 [R, FDA/CNBC]; hypertension notifications cleared Sept 11, 2025 (510(k) K250507) [D, FDA], with Apple projecting more than one million previously undiagnosed people notified in year one [R, Apple]. Blood Oxygen (2020) shipped as a wellness feature, never FDA-cleared [R]. Masimo saga [court/R]: Masimo and Cercacor v. Apple filed Jan 9, 2020 (C.D. Cal.); May 2023 trade-secrets trial ended in a mistrial (jury 6&ndash;1 toward Apple, per Bloomberg); ITC final determination Oct 26, 2023 (inv. 337-TA-1276), import ban effective Dec 26, 2023 after presidential review; Apple pulled Series 9/Ultra 2 from its US store Dec 21, 2023; models returned Jan 18, 2024 with pulse oximetry disabled; Blood Oxygen returned Aug 14, 2025 via iOS 18.6.1/watchOS 11.6.1 with results computed on the paired iPhone, enabled by a US Customs ruling [D, Apple Newsroom]; Nov 14, 2025: a C.D. Cal. federal jury awarded Masimo $634 million for patent infringement (jury attributed ~43M watches; Apple had argued for $3&ndash;6M and is appealing) [court, Reuters]. Apple has also appealed the ITC ruling. Swiss comparison: Federation of the Swiss Watch Industry (FH), 2024 exports: 15.3M wristwatches (&minus;9.4%), CHF 26.0B (&minus;2.8%) &asymp; ~$29B [D, FH]. Apple Watch revenue: never disclosed; reporting pegs it near $17&ndash;20B/yr (Bloomberg's "$17 billion watch business," NYT "~$20 billion of annual sales," Dec 2023) [R]; the disclosed ceiling is the Wearables, Home and Accessories segment: $35.7B FY2025, $37.0B FY2024 [D, Apple 10-K]. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Wrist: engine v2 (ported from play-search/play-maps). Actors created once; beats are
+   target states with per-actor timing windows. Exits complete by .35; entrances run .22-.75;
+   all windows end by .75 so the last quarter of every beat is a poster frame. Binary rest at p=1. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015",BG="#f5f5f7";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);} /* mobile type bump ~1.4x at engine init */
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:BG,"stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+/* growth bars: rect scales, labels stay put */
+function vbar(attrs,ox,oy,p){var r=E("rect",attrs,p);r.style.transformOrigin=ox+"px "+oy+"px";r.style.transform="scaleY(0)";return r;}
+function hbar(attrs,ox,oy,p){var r=E("rect",attrs,p);r.style.transformOrigin=ox+"px "+oy+"px";r.style.transform="scaleX(0)";return r;}
+
+/* ============ THE OBJECT: the watch (persistent; parks top-right) ============ */
+A.watch=E("g",{opacity:0},cam);
+E("rect",{x:-28,y:-94,width:56,height:34,rx:3,fill:"#d9d9de"},A.watch);   /* band, top */
+E("rect",{x:-28,y:60,width:56,height:34,rx:3,fill:"#d9d9de"},A.watch);    /* band, bottom */
+E("rect",{x:-48,y:-60,width:96,height:120,rx:12,fill:GRAPH},A.watch);     /* case */
+E("rect",{x:48,y:-26,width:7,height:20,rx:3.5,fill:MUT},A.watch);         /* crown */
+E("rect",{x:48,y:4,width:7,height:26,rx:3.5,fill:MUT},A.watch);           /* side button */
+E("rect",{x:-40,y:-52,width:80,height:104,rx:12,fill:INK},A.watch);       /* screen */
+T(0,-26,"10:09",{fill:BG,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},A.watch);
+A.ecg=E("path",{d:"M -32 14 L -22 14 L -16 -2 L -9 26 L -3 8 L 2 14 L 10 14 L 15 4 L 22 18 L 27 14 L 34 14",fill:"none",stroke:RED,"stroke-width":2,"stroke-linejoin":"round"},A.watch);
+var ECGLEN=110;
+
+/* ============ BEAT 0: the pairing rule ============ */
+A.pairCard=E("g",{opacity:0},cam);
+E("rect",{x:320,y:413,width:360,height:64,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.pairCard);
+T(340,451,"Apple Watch - pairs with",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.pairCard);
+A.pairVal=T(660,451,"iPhone only",{fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM,opacity:0},cam);
+A.noteWrist=note(560,200,690,150,["the only always-on screen","worn on the body"]);
+A.noteNever=note(683,445,800,372,["Android: never -","not once in ten years [D]"]);
+A.dojTxt=E("g",{opacity:0},cam);
+T(500,524,"US v. Apple, March 2024: a watch that works only with iPhone",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.dojTxt);
+T(500,542,"raises the cost of leaving the iPhone [D, complaint]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.dojTxt);
+
+/* ============ BEAT 1: shipments 2015-2024 ============ */
+/* units M [E, Statista agg.]: 8.5 11.6 17.7 22.5 28.4 31.1 39.4 53.9 38 ~31(derived) */
+A.grid1=E("g",{opacity:0},cam);
+[[418.1,"10M"],[366.1,"20M"],[314.2,"30M"],[262.3,"40M"],[210.3,"50M"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid1);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid1);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid1);
+[[186.5,"2015"],[405.5,"2018"],[624.5,"2021"],[843.5,"2024"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.grid1);
+});
+var UH=[44.2,60.3,91.9,116.9,147.5,161.6,204.7,280,197.4,161];
+var UC=[186.5,259.5,332.5,405.5,478.5,551.5,624.5,697.5,770.5,843.5];
+var UV={0:"8.5M",8:"38M",9:"~31M"};
+var UB=[];
+UH.forEach(function(h,i){
+  var g=E("g",{opacity:0},cam);
+  var bar=vbar({x:UC[i]-24,y:470-h,width:48,height:h,rx:3,fill:i<8?BLUE:GRAPH},UC[i],470,g);
+  if(UV[i]!==undefined)T(UC[i],470-h-10,UV[i],Object.assign({fill:i<8?BLUE:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  UB.push({g:g,bar:bar});
+  A["u"+i]=g;
+});
+A.firstNote=T(160,150,"first place every year since launch [R]",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600",opacity:0},HALO),cam);
+A.peakNote=note(697.5,190,560,160,["the peak: 53.9M (2022) [E]"]);
+A.slideBr=E("path",{d:"M 758 244 L 758 238 L 856 238 L 856 244",fill:"none",stroke:RED,"stroke-width":2,opacity:0},cam);
+var SBLEN=110;
+A.slideLbl=T(807,224,"-19% in 2024 [R]",Object.assign({fill:RED,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM,opacity:0},HALO),cam);
+A.shareLbl=E("g",{opacity:0},cam);
+T(868,164,"share of all smartwatches [R]",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.shareLbl);
+T(868,184,"25% (2023) to 22% (2024)",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.shareLbl);
+
+/* ============ BEAT 2: the FDA staircase ============ */
+A.ax2=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.ax2);
+[[231.1,"2018"],[393.3,"2020"],[555.6,"2022"],[717.8,"2024"],[880,"2026"]].forEach(function(d){
+  E("line",{x1:d[0],y1:470,x2:d[0],y2:477,stroke:LINE,"stroke-width":1.5},A.ax2);
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.ax2);
+});
+A.risers=E("g",{opacity:0},cam);
+[[231.1,470,410],[555.6,410,350],[717.8,350,290],[798.9,290,230]].forEach(function(d){
+  E("line",{x1:d[0],y1:d[1],x2:d[0],y2:d[2],stroke:MUT,"stroke-width":1,"stroke-dasharray":"2 4"},A.risers);
+});
+function tread(x1,x2,y,name,date,anchorEnd){
+  var o={g:E("g",{opacity:0},cam)};
+  o.bar=hbar({x:x1,y:y-3,width:x2-x1,height:6,rx:3,fill:BLUE},x1,y,o.g);
+  var tx=anchorEnd?x2-5:x1+8, an=anchorEnd?"end":"start";
+  T(tx,y-36,name,Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":an},HALO),o.g);
+  T(tx,y-18,date,Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":an},HALO),o.g);
+  return o;
+}
+A.t1=tread(231.1,555.6,410,"ECG + irregular rhythm","cleared Sept 11, 2018 [D]",false);
+A.t2=tread(555.6,717.8,350,"AFib History","2022 [R]",false);
+A.t3=tread(717.8,798.9,290,"Sleep apnea","Sept 16, 2024 [R]",true);
+A.t4=tread(798.9,880,230,"Hypertension","Sept 11, 2025 [D]",true);
+A.o2g=E("g",{opacity:0},cam);
+E("circle",{cx:393.3,cy:410,r:5,fill:BG,stroke:RED,"stroke-width":2},A.o2g);
+T(393,446,"2020: Blood Oxygen ships - no clearance sought [R]",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.o2g);
+T(393,464,"remember this sensor",Object.assign({fill:RED,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.o2g);
+A.moatNote=note(758,290,700,430,["each stair: studies, FDA","review, years - a climb","rivals repeat from zero"]);
+
+/* ============ BEAT 3: Masimo v. Apple, 2020-2026 ============ */
+A.tl3=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:400,x2:880,y2:400,stroke:LINE,"stroke-width":1.5},A.tl3);
+[[150,"2020"],[271.7,"2021"],[393.3,"2022"],[515,"2023"],[636.7,"2024"],[758.3,"2025"],[880,"2026"]].forEach(function(d){
+  E("line",{x1:d[0],y1:400,x2:d[0],y2:407,stroke:LINE,"stroke-width":1.5},A.tl3);
+  T(d[0],422,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.tl3);
+});
+A.sens=E("g",{opacity:0},cam);
+E("circle",{cx:390,cy:182,r:18,fill:"#fff",stroke:LINE,"stroke-width":1.5},A.sens);
+E("circle",{cx:380.5,cy:182,r:4.5,fill:RED},A.sens);
+E("circle",{cx:399.5,cy:182,r:4.5,fill:RED},A.sens);
+E("circle",{cx:390,cy:172.5,r:4.5,fill:GRAPH},A.sens);
+E("circle",{cx:390,cy:191.5,r:4.5,fill:GRAPH},A.sens);
+E("circle",{cx:390,cy:182,r:3.5,fill:INK},A.sens);
+T(390,222,"the back crystal",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.sens);
+A.sLead=E("line",{x1:298,y1:183,x2:366,y2:183,stroke:MUT,"stroke-width":1,opacity:0},cam);
+A.sOn=T(390,246,"Blood Oxygen: on",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.sOff=T(390,246,"Blood Oxygen: OFF in the US",Object.assign({fill:RED,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.sVia=T(390,246,"on again - via the iPhone",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+function evdot(x,fill,hollow){
+  var g=E("g",{opacity:0},cam);
+  E("circle",hollow?{cx:x,cy:400,r:5,fill:BG,stroke:fill,"stroke-width":2}:{cx:x,cy:400,r:5,fill:fill},g);
+  return g;
+}
+A.e0=evdot(152,INK,false);
+T(175,448,"Jan 2020: Masimo sues",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.e0);
+A.e1=note(557,400,520,352,["May 2023: mistrial"]);
+A.e2=evdot(607,RED,false);
+E("line",{x1:607,y1:302,x2:607,y2:393,stroke:MUT,"stroke-width":1},A.e2);
+T(607,280,"Oct 2023: ITC import ban",Object.assign({fill:RED,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.e2);
+T(607,296,"effective Dec 26 [D]",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.e2);
+A.e3=evdot(626,RED,false);
+A.e4=evdot(642,RED,true);
+A.e34n=note(642,400,560,452,["Dec 2023: US sales paused;","Jan 18, 2024: back on sale","with pulse ox OFF"]);
+A.e5=evdot(834,BLUE,false);
+T(810,448,"Aug 14, 2025: returns -",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.e5);
+T(810,464,"computed on the iPhone",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.e5);
+A.e6=evdot(864,RED,false);
+A.e6lead=E("line",{x1:864,y1:392,x2:864,y2:290,stroke:MUT,"stroke-width":1,opacity:0},cam);
+A.heroV=E("g",{opacity:0},cam);
+T(800,242,"$634M",Object.assign({fill:RED,"font-size":FS(40),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.heroV);
+T(800,266,"the verdict, Nov 14, 2025",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.heroV);
+T(800,282,"[court] - Apple is appealing",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.heroV);
+
+/* ============ BEAT 4: vs. the Swiss industry, two rulers ============ */
+A.base4=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.base4);
+A.hdrU=T(290,180,"units shipped, 2024",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.hdrM=T(720,132,"the money, 2024",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+function cbar(cx,h,c,val,valC,s1,s2){
+  var o={g:E("g",{opacity:0},cam)};
+  o.bar=vbar({x:cx-45,y:470-h,width:90,height:h,rx:3,fill:c},cx,470,o.g);
+  T(cx,470-h-12,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),o.g);
+  T(cx,494,s1,{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},o.g);
+  T(cx,512,s2,{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},o.g);
+  return o;
+}
+A.ub0=cbar(230,180,BLUE,"~31M [E]",BLUE,"Apple Watch","shipments, est.");
+A.ub1=cbar(380,88.9,GRAPH,"15.3M [D]",INK,"the entire Swiss","watch industry [D, FH]");
+A.ratio=T(305,246,"2 to 1",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO,{opacity:0}),cam);
+A.ceil4=E("g",{opacity:0},cam);
+E("line",{x1:560,y1:190,x2:880,y2:190,stroke:LINE,"stroke-width":1,"stroke-dasharray":"3 6"},A.ceil4);
+T(880,162,"$35.7B: the Wearables segment, FY25 [D]",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"end"},HALO),A.ceil4);
+T(880,180,"Watch + AirPods + HomePod - never split out",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.ceil4);
+A.mb0=cbar(640,227.4,GRAPH,"~$29B [D, FH]",INK,"the same Swiss exports","in money (CHF 26.0B)");
+A.mb1=E("g",{opacity:0},cam);
+E("rect",{x:755,y:190,width:90,height:280,fill:"none",stroke:LINE,"stroke-width":1.5,"stroke-dasharray":"4 4"},A.mb1);
+T(800,268,"?",{fill:INK,"font-size":FS(21),"font-weight":"700","text-anchor":"middle"},A.mb1);
+T(800,494,"Apple Watch revenue",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.mb1);
+T(800,512,"never disclosed",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.mb1);
+A.band4=E("g",{opacity:0},cam);
+E("rect",{x:755,y:313.1,width:90,height:23.8,rx:3,fill:BLUE},A.band4);
+T(853,330,"est. $17-20B [R]",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.band4);
+A.invLine=T(515,545,"units: a rout. money: the Swiss still out-earn the watch that out-ships them.",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+
+/* ============ BEAT 5: the tell + the gap ============ */
+A.v0=T(500,152,"Broken by a rival watch: no. First place, all ten years. [R]",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.v1=T(500,180,"Dented by attrition: yes. Shipments -19% in 2024; share 25% to 22%. [R]",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.v2=T(500,208,"Dented by a courtroom: yes. The only feature ever stripped off the wrist. [court]",Object.assign({fill:RED,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.gapLine=T(500,250,"Apple Watch revenue, as disclosed by Apple since 2015: nothing.",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.wlCard=E("g",{opacity:0},cam);
+E("rect",{x:260,y:282,width:480,height:186,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.wlCard);
+T(290,318,"the watch-list for the next chapter",{fill:MUT,"font-size":FS(12),"text-transform":"uppercase"},A.wlCard);
+T(290,352,"1. Share: does 22% hold through 2025? [R]",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.wlCard);
+T(290,382,"2. Health: how far does the hypertension alert reach?",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.wlCard);
+T(290,412,"3. Court: the $634M appeal + the standing import ban",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.wlCard);
+A.closer=T(500,524,"The Watch was never the business. The wrist is a moat around the pocket.",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO,{opacity:0}),cam);
+
+/* ============ furniture: scene titles (top-left) + captions (bottom-left) ============ */
+var TITLES=["The iPhone-only wrist, 2015-2026","Smartwatch shipments, 2015-2024","FDA-cleared Watch features, 2018-2025",
+  "Masimo v. Apple, 2020-2026","Apple Watch vs. the Swiss industry, 2024","The scoreboard Apple keeps dark"];
+var CAPS=[
+ ["Apple Watch (first shipped April 24, 2015) requires an iPhone to set up; it has never paired with Android [D].",
+  "US v. Apple complaint (Mar 21, 2024): smartwatch limits are alleged iPhone switching costs [D, complaint]."],
+ ["Units: analyst estimates aggregated by Statista (IDC, Counterpoint) [E]; Apple has never disclosed a figure.",
+  "2024 bar: derived from Counterpoint's -19% YoY [R]. Share of shipments: 25% (2023) to 22% (2024) [R]."],
+ ["FDA: ECG + irregular rhythm De Novo grants, Sept 11, 2018 [D]; AFib History, 2022 [R]; sleep apnea,",
+  "Sept 16, 2024 [R]; hypertension, Sept 11, 2025 (K250507) [D]. Blood Oxygen (2020): never FDA-cleared."],
+ ["Masimo v. Apple: C.D. Cal. (filed Jan 9, 2020) + ITC inv. 337-TA-1276 [court]. Ban effective Dec 26, 2023;",
+  "US models sold without pulse ox Jan 18, 2024 - Aug 14, 2025 (returned via iPhone update). Verdict on appeal."],
+ ["Units [E]: Apple ~31M (2024, derived); Swiss wristwatch exports 15.3M, CHF 26.0B = ~$29B [D, FH].",
+  "Watch revenue: undisclosed; reporting ~$17-20B [R, Bloomberg/NYT, Dec 2023]. Segment: $35.7B FY25 [D]."],
+ ["Ten years, zero Watch disclosures: no units, no revenue. The Wearables segment [D] is the only ledger line.",
+  "Watch-list: 2025 share (Counterpoint); hypertension-alert reach; the $634M appeal and the ITC ban."]];
+A.titles=TITLES.map(function(s,i){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0,"font-style":i===3?"italic":"normal"},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0];a[i]=1;return a;}
+var PARKW={o:1,x:822,y:96,k:.5};
+function base(){
+  var s={
+  watch:{o:1,x:822,y:96,k:.5},
+  pairCard:{o:0}, pairVal:{o:0}, noteWrist:{o:0}, noteNever:{o:0}, dojTxt:{o:0},
+  grid1:{o:0}, firstNote:{o:0}, peakNote:{o:0}, slideBr:{o:0}, slideLbl:{o:0}, shareLbl:{o:0},
+  ax2:{o:0}, risers:{o:0}, t1:{o:0,gr:0}, t2:{o:0,gr:0}, t3:{o:0,gr:0}, t4:{o:0,gr:0}, o2g:{o:0}, moatNote:{o:0},
+  tl3:{o:0}, sens:{o:0}, sLead:{o:0},
+  e0:{o:0}, e1:{o:0}, e2:{o:0}, e3:{o:0}, e4:{o:0}, e34n:{o:0}, e5:{o:0}, e6:{o:0}, e6lead:{o:0}, heroV:{o:0},
+  base4:{o:0}, hdrU:{o:0}, hdrM:{o:0}, ub0:{o:0,gr:0}, ub1:{o:0,gr:0}, ratio:{o:0},
+  ceil4:{o:0}, mb0:{o:0,gr:0}, mb1:{o:0}, band4:{o:0}, invLine:{o:0},
+  v0:{o:0}, v1:{o:0}, v2:{o:0}, gapLine:{o:0}, wlCard:{o:0}, closer:{o:0},
+  T:[0,0,0,0,0,0], C:[0,0,0,0,0,0]};
+  for(var i=0;i<10;i++)s["u"+i]={o:0,gr:0};
+  return s;
+}
+var Z=base();
+Z.watch={o:0,x:500,y:245,k:1.25};
+var S=[];
+S[0]=Object.assign(base(),{
+  watch:{o:{v:1,win:[.08,.18]},x:500,y:245,k:1.25},
+  noteWrist:{o:{v:1,win:[.3,.42]}},
+  pairCard:{o:{v:1,win:[.34,.44]}},
+  pairVal:{o:{v:1,win:[.5,.6]}},
+  noteNever:{o:{v:1,win:[.56,.68]}},
+  dojTxt:{o:{v:1,win:[.66,.75]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  watch:{o:1,x:{v:822,win:[.16,.38]},y:{v:96,win:[.16,.38]},k:{v:.5,win:[.16,.38]}},
+  grid1:{o:{v:1,win:[.12,.2]}},
+  firstNote:{o:{v:1,win:[.3,.4]}},
+  peakNote:{o:{v:1,win:[.42,.52]}},
+  slideBr:{o:{v:1,win:[.56,.62]}},
+  slideLbl:{o:{v:1,win:[.6,.68]}},
+  shareLbl:{o:{v:1,win:[.64,.74]}},
+  T:onehot(1), C:onehot(1)});
+for(var bi=0;bi<10;bi++)S[1]["u"+bi]={o:{v:1,win:[.14+.022*bi,.2+.022*bi]},gr:{v:1,win:[.16+.022*bi,.34+.022*bi],e:"back"}};
+S[2]=Object.assign(base(),{
+  ax2:{o:{v:1,win:[.12,.2]}},
+  risers:{o:{v:1,win:[.3,.4]}},
+  t1:{o:{v:1,win:[.14,.2]},gr:{v:1,win:[.16,.34]}},
+  t2:{o:{v:1,win:[.26,.32]},gr:{v:1,win:[.28,.44]}},
+  t3:{o:{v:1,win:[.38,.44]},gr:{v:1,win:[.4,.54]}},
+  t4:{o:{v:1,win:[.5,.56]},gr:{v:1,win:[.52,.66]}},
+  o2g:{o:{v:1,win:[.58,.68]}},
+  moatNote:{o:{v:1,win:[.66,.75]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  watch:{o:1,x:{v:240,win:[.1,.28]},y:{v:185,win:[.1,.28]},k:{v:1.1,win:[.1,.28]}},
+  tl3:{o:{v:1,win:[.12,.2]}},
+  sens:{o:{v:1,win:[.14,.22]}},
+  sLead:{o:{v:1,win:[.16,.24]}},
+  e0:{o:{v:1,win:[.2,.26]}},
+  e1:{o:{v:1,win:[.26,.32]}},
+  e2:{o:{v:1,win:[.32,.38]}},
+  e3:{o:{v:1,win:[.4,.46]}},
+  e4:{o:{v:1,win:[.42,.48]}},
+  e34n:{o:{v:1,win:[.42,.5]}},
+  e5:{o:{v:1,win:[.56,.64]}},
+  e6:{o:{v:1,win:[.64,.7]}},
+  e6lead:{o:{v:1,win:[.64,.7]}},
+  heroV:{o:{v:1,win:[.66,.74]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  watch:{o:1,x:{v:822,win:[.1,.28]},y:{v:96,win:[.1,.28]},k:{v:.5,win:[.1,.28]}},
+  base4:{o:{v:1,win:[.12,.18]}},
+  hdrU:{o:{v:1,win:[.12,.18]}},
+  ub0:{o:{v:1,win:[.16,.22]},gr:{v:1,win:[.18,.36],e:"back"}},
+  ub1:{o:{v:1,win:[.24,.3]},gr:{v:1,win:[.26,.42],e:"back"}},
+  ratio:{o:{v:1,win:[.44,.5]}},
+  hdrM:{o:{v:1,win:[.4,.46]}},
+  ceil4:{o:{v:1,win:[.44,.52]}},
+  mb0:{o:{v:1,win:[.48,.54]},gr:{v:1,win:[.5,.64],e:"back"}},
+  mb1:{o:{v:1,win:[.56,.64]}},
+  band4:{o:{v:1,win:[.64,.7]}},
+  invLine:{o:{v:1,win:[.68,.75]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  v0:{o:{v:1,win:[.14,.22]}},
+  v1:{o:{v:1,win:[.22,.3]}},
+  v2:{o:{v:1,win:[.3,.38]}},
+  gapLine:{o:{v:1,win:[.42,.5]}},
+  wlCard:{o:{v:1,win:[.52,.62]}},
+  closer:{o:{v:1,win:[.68,.75]}},
+  T:onehot(5), C:onehot(5)});
+
+/* ============ interpolation (generic over the actor table) ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){ /* entrance progress for the 12px rise */
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){ /* furniture: out by .18, in .22-.34 */
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+function mix(s1,s2,t){
+  var st={T:[],C:[]};
+  for(var k in s2){
+    if(k==="T"||k==="C")continue;
+    var o1=s1[k],o2=s2[k],r={};
+    for(var ch in o2){if(ch==="e"||ch==="win")continue;r[ch]=cv(o1[ch],o2[ch],t);}
+    r.u=cu(o1.o,o2.o,t);
+    st[k]=r;
+  }
+  for(var i=0;i<6;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function nneg(x){return (x<0?0:x).toFixed(3);} /* easeOutBack may exceed 1; keep overshoot, floor at 0 */
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  A.watch.setAttribute("transform","translate("+st.watch.x.toFixed(1)+" "+st.watch.y.toFixed(1)+") scale("+st.watch.k.toFixed(3)+")");
+  setO(A.watch,st.watch.o);
+  dashTo(A.ecg,ECGLEN,beat===0?eo(w(.26,.5)):1);
+  setO(A.pairCard,st.pairCard.o); rise(A.pairCard,st.pairCard.u);
+  setO(A.pairVal,st.pairVal.o);
+  setO(A.noteWrist,st.noteWrist.o); rise(A.noteWrist,st.noteWrist.u);
+  setO(A.noteNever,st.noteNever.o); rise(A.noteNever,st.noteNever.u);
+  setO(A.dojTxt,st.dojTxt.o); rise(A.dojTxt,st.dojTxt.u);
+  setO(A.grid1,st.grid1.o);
+  for(var i=0;i<10;i++){var s=st["u"+i];setO(UB[i].g,s.o);UB[i].bar.style.transform="scaleY("+nneg(s.gr)+")";}
+  setO(A.firstNote,st.firstNote.o); rise(A.firstNote,st.firstNote.u);
+  setO(A.peakNote,st.peakNote.o); rise(A.peakNote,st.peakNote.u);
+  setO(A.slideBr,st.slideBr.o);
+  dashTo(A.slideBr,SBLEN,beat===1?eo(w(.56,.64)):1);
+  setO(A.slideLbl,st.slideLbl.o);
+  setO(A.shareLbl,st.shareLbl.o); rise(A.shareLbl,st.shareLbl.u);
+  setO(A.ax2,st.ax2.o);
+  setO(A.risers,st.risers.o);
+  [["t1",A.t1],["t2",A.t2],["t3",A.t3],["t4",A.t4]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.style.transform="scaleX("+nneg(s.gr)+")";});
+  setO(A.o2g,st.o2g.o); rise(A.o2g,st.o2g.u);
+  setO(A.moatNote,st.moatNote.o); rise(A.moatNote,st.moatNote.u);
+  setO(A.tl3,st.tl3.o);
+  setO(A.sens,st.sens.o);
+  setO(A.sLead,st.sLead.o);
+  /* sensor status: label swap inside beat 3 (swaps at zero; binary at rest) */
+  if(beat===3){
+    var offIn=w(.44,.5), offOut=w(.56,.62);
+    setO(A.sOn,(st.sens.o*(1-w(.4,.46))).toFixed(3));
+    setO(A.sOff,(offIn*(1-offOut)).toFixed(3));
+    setO(A.sVia,w(.6,.66).toFixed(3));
+  }else{setO(A.sOn,0);setO(A.sOff,0);setO(A.sVia,0);}
+  ["e0","e1","e2","e3","e4","e34n","e5","e6"].forEach(function(k){
+    setO(A[k],st[k].o);
+    if(k==="e34n")rise(A[k],st[k].u);
+  });
+  setO(A.e6lead,st.e6lead.o);
+  setO(A.heroV,st.heroV.o); rise(A.heroV,st.heroV.u);
+  setO(A.base4,st.base4.o);
+  setO(A.hdrU,st.hdrU.o); setO(A.hdrM,st.hdrM.o);
+  [["ub0",A.ub0],["ub1",A.ub1],["mb0",A.mb0]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.style.transform="scaleY("+nneg(s.gr)+")";});
+  setO(A.ratio,st.ratio.o); rise(A.ratio,st.ratio.u);
+  setO(A.ceil4,st.ceil4.o);
+  setO(A.mb1,st.mb1.o);
+  setO(A.band4,st.band4.o); rise(A.band4,st.band4.u);
+  setO(A.invLine,st.invLine.o); rise(A.invLine,st.invLine.u);
+  setO(A.v0,st.v0.o); setO(A.v1,st.v1.o); setO(A.v2,st.v2.o);
+  setO(A.gapLine,st.gapLine.o); rise(A.gapLine,st.gapLine.u);
+  setO(A.wlCard,st.wlCard.o); rise(A.wlCard,st.wlCard.u);
+  setO(A.closer,st.closer.o); rise(A.closer,st.closer.u);
+  for(var j=0;j<6;j++){setO(A.titles[j],st.T[j]);setO(A.caps[j],st.C[j]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:6};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("watch")<0){x.push("watch");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>

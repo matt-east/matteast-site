@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Competition Is for Losers · Apple's Interface Playbook</title>
+<meta name="description" content="The market scored Apple as a loser in the AI race. It's scoring the wrong race. Act I of the Interface Playbook.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  .h-mega{font-size:clamp(2rem,3.1vw,3.1rem); font-weight:700; letter-spacing:-.03em; line-height:1.07; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  .epigraph{margin:1.15em 0 0; padding:10px 0 10px 16px; border-left:3px solid var(--blue); font-size:.95rem; line-height:1.55; color:var(--ink); font-style:italic}
+  .copy .body a{color:var(--blue); text-decoration:none; font-weight:600}
+  /* progress bar */
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  /* hero */
+  .hero{min-height:100vh; min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .date{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.8rem; margin-bottom:18px}
+  .hero h1{font-size:clamp(2.3rem,5.6vw,4.8rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.02; max-width:14ch; color:var(--ink)}
+  .hero .sub{max-width:620px; color:var(--mut); font-size:clamp(1.05rem,1.55vw,1.3rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .herotick{margin-top:30px; width:min(520px,82vw)}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  /* act divider */
+  .divider{min-height:96vh; min-height:96svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10vh 7vw}
+  .divider .actno{color:var(--blue); font-weight:700; letter-spacing:.22em; text-transform:uppercase; font-size:.78rem}
+  .divider h2{font-size:clamp(1.7rem,3.4vw,2.7rem); font-weight:700; letter-spacing:-.03em; margin:12px 0 0}
+  .divider p{color:var(--mut); max-width:560px; margin:14px auto 0}
+  /* scrolly */
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker,.copy .epigraph{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker,.step.is-active .copy .epigraph{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  /* the door */
+  .door{padding:14vh 7vw 8vh; max-width:1180px; margin:0 auto}
+  .door .kicker{text-align:center}
+  .door h2{text-align:center; font-size:clamp(1.8rem,3.6vw,2.9rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .door .lede{text-align:center; color:var(--mut); max-width:640px; margin:16px auto 0; font-size:clamp(1rem,1.2vw,1.15rem)}
+  .door .thiel{text-align:center; color:var(--mut); font-size:.85rem; font-style:italic; margin:10px auto 0; max-width:640px}
+  .tours{display:flex; gap:12px; justify-content:center; margin:30px 0 8px; flex-wrap:wrap}
+  .tours a{display:inline-block; padding:10px 18px; border:1px solid var(--line); border-radius:999px; color:var(--ink); text-decoration:none; font-size:.88rem; font-weight:600; min-height:44px; line-height:24px}
+  .tours a:hover{border-color:var(--blue); color:var(--blue)}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:34px}
+  .card{position:relative; display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px; text-decoration:none; color:var(--ink); transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; min-height:118px}
+  a.card:hover{transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,.07); border-color:var(--blue)}
+  .card.soon{cursor:default; opacity:.92}
+  .card .yr{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:700}
+  .card .nm{font-size:1.02rem; font-weight:700; margin:6px 0 4px; letter-spacing:-.01em}
+  .card .st{font-size:.82rem; color:var(--mut); line-height:1.4}
+  .card .badge{position:absolute; top:14px; right:14px; font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:999px}
+  .badge.active{background:#e8f2fe; color:var(--blue)}
+  .badge.pried{background:#fdecec; color:var(--red)}
+  .badge.contested{background:#fff3e0; color:#b15c00}
+  .badge.here{background:var(--blue); color:#fff}
+  .card .done{position:absolute; bottom:12px; right:14px; color:var(--blue); font-weight:700; font-size:.8rem; opacity:0}
+  .card.explored .done{opacity:1}
+  .card .go{display:inline-block; margin-top:8px; font-size:.8rem; font-weight:700; color:var(--blue)}
+  .card.soon .go{color:var(--faint)}
+  .doorfoot{text-align:center; margin-top:30px; color:var(--mut); font-size:.9rem}
+  .doorfoot a{color:var(--blue); text-decoration:none; font-weight:600}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:8vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="index.html">&larr; All essays</a>
+  <div class="heroinner" id="heroInner">
+  <p class="date">June 8, 2026 &middot; WWDC</p>
+  <h1>Competition is for losers.</h1>
+  <div class="sub">Apple unveiled Siri AI, rebuilt on Google's Gemini. The stock touched an all-time high during the keynote, then closed <strong>down 2%</strong> on a day the S&amp;P rose. The verdict wrote itself: <strong>Apple lost AI.</strong><br>The market is scoring the wrong race.</div>
+  <svg class="herotick" viewBox="0 0 520 150" role="img" aria-label="AAPL on June 8, 2026: intraday high $317.40, close $301.54, down 2 percent">
+    <line x1="10" y1="128" x2="510" y2="128" stroke="#d2d2d7"/>
+    <path id="tickpath" d="M 10 96 L 70 88 L 120 90 L 168 74 L 214 62 L 252 40 L 296 58 L 338 72 L 380 86 L 422 96 L 470 108 L 510 112" fill="none" stroke="#1d1d1f" stroke-width="2.5"/>
+    <circle cx="252" cy="40" r="4" fill="#0071e3"/>
+    <text x="252" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#0071e3">$317.40&#8212;all-time high</text>
+    <circle cx="510" cy="112" r="4" fill="#d70015"/>
+    <text x="498" y="138" text-anchor="end" font-size="13" font-weight="700" fill="#d70015">close $301.54 &middot; &minus;2%</text>
+    <text x="10" y="144" font-size="11" fill="#6e6e73">AAPL &middot; June 8, 2026 &middot; S&amp;P 500 +0.3% that day</text>
+  </svg>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="divider">
+  <p class="actno">Act I &#8212; The Capitulation</p>
+  <h2>The cheapest thing Apple buys.</h2>
+  <p>What the market read as Apple renting its brain from a rival is, measured properly, the cheapest line item on Apple's books&#8212;and the clearest demonstration of how it wins.</p>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="Act I: the anatomy of the Gemini deal"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Verdict</p><h2 class="h-big">Down 2%, on an <span class="it">up tape</span>.</h2><p class="body">Siri AI shipped in beta at WWDC&#8212;rebuilt on a custom Gemini, with no consumer timeline. AAPL touched an all-time high during the keynote, then closed down 2% while the S&amp;P rose. Daniel Ives of Wedbush read the deal as an admission that Apple <span class="b">"cannot win the AI arms race alone"</span>; Gene Munster of Deepwater watched the stock sell off on the missing Siri date. A stock at roughly forty times trailing earnings, against a ten-year median near twenty-six, is priced as an AI competitor. The verdict wrote itself: Apple lost AI.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Deal</p><h2 class="h-big">One billion dollars a <span class="it">year</span>.</h2><p class="body">About $1 billion annually for a custom <span class="b">1.2-trillion-parameter</span> Gemini that runs Siri's hardest queries on Apple's own Private Cloud Compute servers. Apple is paying its oldest rival to think for Siri. Agreed in January, shipped in June&#8212;fast work for a company supposedly five years behind.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Scale</p><h2 class="h-big">Across <span class="it">1.5 billion</span> requests a day.</h2><p class="body">Siri fields about 1.5 billion requests a day, by Apple's own disclosure&#8212;roughly <span class="b">547 billion a year</span>, up from 25 billion a month in 2020. Whatever the frontier costs, Apple spreads it across a planetary denominator.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Unit Cost</p><h2 class="h-big">A fifth of a <span class="it">cent</span>.</h2><p class="body">$1B &divide; 547B answers &asymp; <span class="b">$0.0018 per request</span>, at Apple's disclosed June 2024 volume. If only 10&ndash;30% of requests ever reach Gemini, the bill is 0.6&ndash;1.8&cent; per answer&#8212;still trivial. Per device it lands near forty cents a year across 2.5 billion; Apple discloses >1B iPhones, so call it under a dollar per iPhone. The cheapest iCloud tier costs more per <em>month</em> than the frontier costs Apple per device per <em>year</em>.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Other Bill</p><h2 class="h-big">Or build it for a <span class="it">hundred billion</span>.</h2><p class="body">The other path is being the frontier. Training one Gemini model ran about $190 million (Gemini Ultra, 2023, the last public estimate); being the provider costs Alphabet roughly $49 billion a year in company-wide R&amp;D and <span class="b">~$185 billion in 2026 capex</span>&#8212;"more than $100 billion over time" on AI, by DeepMind chief Demis Hassabis's own count. Different ledgers, not a sum. On every one of them, Apple's rent is a rounding error on a war it declined to fund.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Invisible Engine</p><h2 class="h-big">You never see <span class="it">Google</span>.</h2><p class="body">Gemini runs stateless inside Apple's Private Cloud Compute and is <span class="b">not labeled anywhere in Siri</span>. The user sees Apple. Apple keeps the brand, the interface, the relationship, the data. Its supplier ships weights and gets a check.</p></div></div>
+    <div class="step" data-step="6"><div class="copy"><p class="kicker">The Leverage</p><h2 class="h-big">And it isn't <span class="it">locked in</span>.</h2><p class="body">The license is non-exclusive. Apple ran a bake-off (Gemini against OpenAI and Anthropic), keeps ChatGPT integrated, and dangles <span class="b">~2 billion devices</span> over every renewal. Google didn't pay to be generous; it paid to keep OpenAI off two billion devices. Apple monetized the labs' fear of each other.</p></div></div>
+    <div class="step" data-step="7"><div class="copy"><p class="kicker">The Trade</p><h2 class="h-big">The number the verdict <span class="it">missed</span>.</h2><p class="body">Here's the number the verdict missed: Google pays Apple <span class="b">~$20 billion a year</span>&#8212;twenty times the Gemini fee&#8212;for the same users. Call it a retcon if you like&#8212;Apple spent three years failing to build this in-house. So did Maps, in 2012. The playbook is judged by where it lands. Apple isn't renting its brain; it's leasing the only shelf that matters, and the brain's owner is its biggest tenant.</p><p class="epigraph">Apple licensing Google's Gemini (~$1B/yr) to power Siri is not AI capitulation but interface-monopoly strategy — Apple monetizes a planetary-scale interface while Google funds the hyperscale infrastructure.</p><p class="body">That $20 billion has its own twenty-year story&#8212;<a href="play-search.html">the founding play &rarr;</a></p></div></div>
+    <div class="step" data-step="8"><div class="copy"><p class="kicker">The Door</p><h2 class="h-big">The newest play of <span class="it">fourteen</span>.</h2><p class="body">Siri-on-Gemini is one run of a playbook Apple has executed for over a decade: <span class="b">kill a default, tax a path, own a prompt, rent a fab.</span> Every tile below is a door, and the doors are real. Choose where to go next.</p></div></div>
+  </div>
+</section>
+
+<section class="door" id="door">
+  <p class="kicker">The Interface Playbook</p>
+  <h2>Fourteen plays. One strategy.</h2>
+  <p class="lede">Each play below is its own deep-researched, charted, sourced read. Take them in any order; the site keeps score.</p>
+  <p class="thiel">The frame is Peter Thiel's: "competition is for losers."</p>
+  <div class="tours">
+    <a href="play-search.html?tour=chrono">Chronological tour · start in 2002 &rarr;</a>
+    <a href="play-app-store.html?tour=money">Follow the money · start at the biggest toll &rarr;</a>
+    <a href="the-score.html">Skip to the score &rarr;</a>
+  </div>
+  <div class="grid" id="playgrid"></div>
+  <p class="doorfoot">Browse the full reference&#8212;every play, every series, every source: <a href="the-interface-playbook.html">The Interface Playbook &rarr;</a></p>
+</section>
+
+<footer>
+  Figures: Bloomberg / CNBC / CNN (deal terms, $1B/yr, 1.2T-parameter custom Gemini, Private Cloud Compute, non-exclusive, Jan&ndash;Jun 2026); Apple disclosures (Siri 1.5B requests/day, WWDC 2024; 25B/month, 2020; 2.5B active devices, Jan 2026; >1B iPhones); Alphabet 10-K + guidance (R&amp;D ~$49B 2024; capex $91.4B 2025, $180&ndash;190B guided 2026); Stanford AI Index (~$191M Gemini Ultra training, 2023; the last public estimate); Hassabis "more than $100B over time" (Apr 2024); DOJ <em>US v. Google</em> + Bernstein (~$20B/yr Safari default; remedies Sept 2025 permit the payments). Quotes: Daniel Ives (Wedbush); Gene Munster (Deepwater). Valuation context ~40x trailing vs ~26x ten-year median (reported). Cost-per-request, per-device, and routed-share sensitivity (10&ndash;30%) figures are derived. June 8, 2026 market data: reported intraday/close (re-verify at publication). <a href="competition-is-for-losers-sources.html">Full sources &amp; data &rarr;</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* Competition Is for Losers: gateway engine v2. Actors created once; beats are
+   target states with per-actor timing windows {v, win:[a,b], e:"back"}; scalars
+   use the global fade (exits complete by .35, entrances run .22-.75). All windows
+   end by .75: the last quarter of every beat is a poster frame. Binary rest:
+   at p=1 opacity is 0 or 1, plus at most one context-ghost per scene at .12.
+   Seam doctrine: the June-8 AAPL tick is actor #1 and fractures into the orb. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);} /* mobile type bump ~1.4x at engine init */
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}                       /* ease-out: entrances, draws */
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);} /* easeOutBack ~1.04 */
+function sr(i){var x=Math.sin(i*91.7+3.3)*43758.5453;return x-Math.floor(x);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+/* orb craft def: radial base, rim shade, blurred specular, soft contact shadow */
+var defs=E("defs",null,svg);
+var og=E("radialGradient",{id:"orbBase",cx:"35%",cy:"30%",r:"75%"},defs);
+E("stop",{offset:"0%","stop-color":"#8ed0ff"},og);E("stop",{offset:"55%","stop-color":"#0a84ff"},og);E("stop",{offset:"100%","stop-color":"#5e5ce6"},og);
+var rg=E("radialGradient",{id:"orbRim",cx:"50%",cy:"50%",r:"50%"},defs);
+E("stop",{offset:"0%","stop-color":"#1d1d5f","stop-opacity":"0"},rg);
+E("stop",{offset:"80%","stop-color":"#1d1d5f","stop-opacity":"0"},rg);
+E("stop",{offset:"100%","stop-color":"#1d1d5f","stop-opacity":".32"},rg);
+var fb=E("filter",{id:"fblur",x:"-60%",y:"-60%",width:"220%",height:"220%"},defs);E("feGaussianBlur",{stdDeviation:"3"},fb);
+var fsf=E("filter",{id:"fsoft",x:"-60%",y:"-60%",width:"220%",height:"220%"},defs);E("feGaussianBlur",{stdDeviation:"4"},fsf);
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper for every callout: 2px dot at the datum, 1px elbow leader
+   (diagonal then 12px horizontal, 4px gap), tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ BEAT 0: the June 8 intraday tick (primary, actor #1) ============ */
+/* y(price) = 470 - (price-295)*12 ; x: 9:30am=150 .. 4pm=880 */
+var PTS=[[150,311.6],[206,296],[290,304.4],[375,275.6],[459,254],[543,236],[608,201.2],[674,266],[749,320],[824,360.4],[880,391.5]];
+var D_TICK="M "+PTS.map(function(q){return q[0]+" "+q[1];}).join(" L ");
+var TLEN=815;
+A.grid0=E("g",{opacity:0},cam);
+[["$300",410],["$305",350],["$310",290],["$315",230]].forEach(function(d){
+  E("line",{x1:150,y1:d[1],x2:880,y2:d[1],stroke:LINE,"stroke-width":1},A.grid0);
+  T(138,d[1]+4,d[0],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid0);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid0);
+[[150,"9:30am"],[543,"1pm (keynote)"],[880,"4pm"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.grid0);
+});
+A.tick=E("path",{d:D_TICK,fill:"none",stroke:INK,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},cam);
+A.hiDot=E("circle",{cx:608,cy:201.2,r:4.5,fill:BLUE,opacity:0},cam);
+A.clDot=E("circle",{cx:880,cy:391.5,r:4.5,fill:RED,opacity:0},cam);
+A.nHigh=note(608,201.2,470,150,["$317.40—all-time high,","during the keynote [R]"]);
+A.nClose=note(880,391.5,762,442,["close $301.54 · −2%"]);
+A.nIves=note(543,236,320,236,["“cannot win the AI arms","race alone”","Daniel Ives, Wedbush"]);
+A.nMun=note(749,320,620,396,["sold on no Siri timeline","Gene Munster, Deepwater"]);
+
+/* ============ BEAT 1: the tick fractures into the orb; the deal diagram ============ */
+A.shards=E("g",{opacity:0},cam);
+var SH=[];
+for(var si=0;si<PTS.length-1;si++){
+  var pa=PTS[si],pb=PTS[si+1];
+  for(var hf=0;hf<2;hf++){
+    var x1=lerp(pa[0],pb[0],hf*0.5),y1=lerp(pa[1],pb[1],hf*0.5),
+        x2=lerp(pa[0],pb[0],hf*0.5+0.46),y2=lerp(pa[1],pb[1],hf*0.5+0.46);
+    var ln=E("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:INK,"stroke-width":3,"stroke-linecap":"round",opacity:0},A.shards);
+    SH.push({el:ln,cx:(x1+x2)/2,cy:(y1+y2)/2});
+  }
+}
+A.blk=E("g",{opacity:0},cam);
+E("rect",{x:-110,y:-44,width:220,height:88,rx:12,fill:"#ececed",stroke:LINE,"stroke-width":1},A.blk);
+T(0,-8,"Google Gemini",{fill:GRAPH,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},A.blk);
+T(0,16,"1.2T parameters",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.blk);
+A.rib1=E("g",{opacity:0},cam);
+A.rib1Body=E("polygon",{points:"0,0",fill:GRAPH},A.rib1);
+A.rib1Head=E("polygon",{points:"0,0",fill:GRAPH},A.rib1);
+A.rib1Guide=E("line",{x1:0,y1:0,x2:0,y2:0,stroke:"rgba(255,255,255,.55)","stroke-width":1,"stroke-dasharray":"4 5"},A.rib1);
+function setRib(body,head,guide,x1,y1,x2,y2,w){
+  var dx=x2-x1,dy=y2-y1,L=Math.sqrt(dx*dx+dy*dy)||1,ux=dx/L,uy=dy/L,nx=-uy,ny=ux;
+  var hl=Math.max(16,w*0.7),hw=Math.max(w*0.7,9);
+  var bex=x2-ux*hl,bey=y2-uy*hl,w1=w/2,w2=w*0.36;
+  body.setAttribute("points",
+    (x1+nx*w1).toFixed(1)+","+(y1+ny*w1).toFixed(1)+" "+(bex+nx*w2).toFixed(1)+","+(bey+ny*w2).toFixed(1)+" "+
+    (bex-nx*w2).toFixed(1)+","+(bey-ny*w2).toFixed(1)+" "+(x1-nx*w1).toFixed(1)+","+(y1-ny*w1).toFixed(1));
+  head.setAttribute("points",
+    (bex+nx*hw).toFixed(1)+","+(bey+ny*hw).toFixed(1)+" "+x2.toFixed(1)+","+y2.toFixed(1)+" "+
+    (bex-nx*hw).toFixed(1)+","+(bey-ny*hw).toFixed(1));
+  guide.setAttribute("x1",x1.toFixed(1));guide.setAttribute("y1",y1.toFixed(1));
+  guide.setAttribute("x2",bex.toFixed(1));guide.setAttribute("y2",bey.toFixed(1));
+}
+A.rib1Lbl=T(480,268,"$1B/yr",Object.assign({fill:GRAPH,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM,opacity:0},HALO),cam);
+A.rib1Sub=T(480,286,"the Gemini fee",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},HALO),cam);
+
+/* ============ BEAT 2: the orb shatters into the 547-dot field (1 dot = 1B requests/yr) ============ */
+var N=547;
+A.fieldG=E("g",{opacity:0},cam);
+A.dots=[];
+for(var di=0;di<N;di++){A.dots.push(E("circle",{cx:250,cy:300,r:2.6,fill:BLUE,"fill-opacity":.85,opacity:0},A.fieldG));}
+function formSpiral(cx,cy,R){var out=[];for(var i=0;i<N;i++){var rr=R*Math.sqrt((i+0.5)/N),th=i*2.39996323;out.push([cx+rr*Math.cos(th),cy+rr*Math.sin(th)]);}return out;}
+var F2=formSpiral(500,322,190);          /* the request field: spacing >=6.5 at R190 */
+var F3=formSpiral(380,330,64);           /* the coin: r = 150*sqrt(0.18), honest 18% by area */
+var F4=[];for(var fi=0;fi<N;fi++){F4.push([151+88*((fi*0.6180339887)%1),468.4+1.2*sr(fi)]);} /* the 1.7px bar */
+A.nField=note(640,196,756,162,["1.5B requests a day [D]","about 547B a year"]);
+
+/* ============ BEAT 3: the unit cost: the field packs into 18% of one cent ============ */
+A.cent=E("circle",{cx:380,cy:330,r:150,fill:"none",stroke:LINE,"stroke-width":2,opacity:0},cam);
+var CLEN=942.5;
+A.centLbl=T(380,162,"one cent, to scale (area)",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},cam);
+A.nCoin=note(335,285,206,212,["the blue disc: 18% of","one cent, by area"]);
+A.hero3=E("g",{opacity:0},cam);
+T(640,252,"$0.0018",Object.assign({fill:BLUE,"font-size":FS(40),"font-weight":"700",style:TNUM},HALO),A.hero3);
+T(642,276,"per request [E, derived]",{fill:MUT,"font-size":FS(12)},A.hero3);
+T(642,294,"at Apple's disclosed June 2024 volume",{fill:MUT,"font-size":FS(12)},A.hero3);
+A.sens3=E("g",{opacity:0},cam);
+(function(){var t=E("text",Object.assign({x:642,y:332,fill:INK,"font-size":FS(13),"font-weight":"600"},HALO),A.sens3);
+["if only 10-30% reach","Gemini: 0.6-1.8 cents per","answer—still trivial [E]"].forEach(function(s,i){var sp=E("tspan",{x:642,dy:i?16:0},t);sp.textContent=s;});})();
+A.den3=E("g",{opacity:0},cam);
+E("rect",{x:660,y:396,width:224,height:128,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.den3);
+T(676,422,"THE DENOMINATOR",{fill:MUT,"font-size":FS(11),"font-weight":"700","letter-spacing":"1"},A.den3);
+E("line",{x1:676,y1:434,x2:868,y2:434,stroke:"#ececed","stroke-width":1},A.den3);
+T(676,456,"2.5B active devices [D]",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.den3);
+T(676,482,">1B iPhones [D]",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.den3);
+T(676,508,"~500M AI-eligible [E]",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.den3);
+
+/* ============ BEAT 4: the other bill: one ruler, one scale (320px = $185B) ============ */
+var BSC=320/185;
+A.ax4=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.ax4);
+function bar4(cx,w,vB,c,val,valC,subs){
+  var h=vB*BSC,g=E("g",{opacity:0},cam);
+  var r=E("rect",{x:cx-w/2,y:470-h,width:w,height:h,rx:Math.min(3,h/2),fill:c},g);
+  r.style.transformOrigin=cx+"px 470px"; r.style.transform="scaleY(0)";
+  if(val)T(cx,470-h-12,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  subs.forEach(function(s,i){T(cx,492+i*16,s,{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},g);});
+  return {g:g,bar:r};
+}
+A.bApple=bar4(195,90,1,BLUE,"",BLUE,["Apple's Gemini fee"]);
+A.bRnd=bar4(500,110,49,GRAPH,"~$49B",INK,["Alphabet R&D,","company-wide [D]"]);
+A.bCap25=bar4(645,110,91.4,GRAPH,"$91.4B",INK,["Alphabet capex,","2025 [D]"]);
+A.bCap26=bar4(800,110,185,GRAPH,"~$185B",INK,["Alphabet capex,","2026 [guided]"]);
+A.tick19=E("g",{opacity:0},cam);
+E("line",{x1:295,y1:470,x2:295,y2:459,stroke:INK,"stroke-width":2},A.tick19);
+A.n19=note(295,459,348,316,["one Gemini model: ~$0.19B","(Gemini Ultra, 2023—last","public estimate [E])"]);
+A.ring4=E("g",{opacity:0},cam);
+E("circle",{cx:195,cy:469,r:14,fill:"none",stroke:"#f5f5f7","stroke-width":4},A.ring4);
+A.ring4B=E("circle",{cx:195,cy:469,r:14,fill:"none",stroke:BLUE,"stroke-width":2},A.ring4);
+var RLEN=88;
+A.n4=note(195,453,246,238,["Apple's $1B—barely a line.","That's the point."]);
+
+/* ============ BEAT 5-7: the two-layer anatomy ============ */
+A.surf=E("line",{x1:120,y1:300,x2:880,y2:300,stroke:INK,"stroke-width":1.5,"stroke-dasharray":"7 6",opacity:0},cam);
+A.surfA=E("g",{opacity:0},cam);
+T(132,272,"THE INTERFACE",{fill:MUT,"font-size":FS(12),"font-weight":"700","letter-spacing":"1"},A.surfA);
+T(132,290,"what the user sees",{fill:MUT,"font-size":FS(12)},A.surfA);
+A.surfB=E("g",{opacity:0},cam);
+T(132,322,"THE INFRASTRUCTURE",{fill:MUT,"font-size":FS(12),"font-weight":"700","letter-spacing":"1"},A.surfB);
+T(132,340,"who funds it",{fill:MUT,"font-size":FS(12)},A.surfB);
+A.n5=note(612,420,700,350,["stateless on Apple servers;","not labeled in Siri [R]"]);
+A.gA=E("g",{opacity:0},cam);
+E("rect",{x:-86,y:-36,width:172,height:72,rx:12,fill:"none",stroke:LINE,"stroke-dasharray":"6 5"},A.gA);
+T(0,-2,"OpenAI",{fill:MUT,"font-size":FS(14),"font-weight":"700","text-anchor":"middle"},A.gA);
+T(0,18,"ChatGPT stays",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.gA);
+A.gB=E("g",{opacity:0},cam);
+E("rect",{x:-86,y:-36,width:172,height:72,rx:12,fill:"none",stroke:LINE,"stroke-dasharray":"6 5"},A.gB);
+T(0,-2,"Anthropic",{fill:MUT,"font-size":FS(14),"font-weight":"700","text-anchor":"middle"},A.gB);
+T(0,18,"evaluated",{fill:MUT,"font-size":FS(11),"text-anchor":"middle"},A.gB);
+A.n6=note(255,484,310,536,["why Google said yes: keep","OpenAI off 2B devices [R]"]);
+A.rib2=E("g",{opacity:0},cam);
+A.rib2Body=E("polygon",{points:"0,0",fill:BLUE},A.rib2);
+A.rib2Head=E("polygon",{points:"0,0",fill:BLUE},A.rib2);
+A.rib2Guide=E("line",{x1:0,y1:0,x2:0,y2:0,stroke:"rgba(255,255,255,.55)","stroke-width":1,"stroke-dasharray":"4 5"},A.rib2);
+setRib(A.rib2Body,A.rib2Head,A.rib2Guide,580,386,580,258,40);
+A.rib2.style.transformOrigin="580px 386px";
+A.rib2Lbl=T(690,372,"~$20B/yr",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM,opacity:0},HALO),cam);
+A.rib2Sub=T(690,390,"the search default (ISA)",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},HALO),cam);
+A.n7=note(600,302,690,232,["payments a court allowed","to continue, Sept 2025 [R]"]);
+
+/* ============ BEAT 8: the diagram replicates into the 14-tile wall ============ */
+var PLAYS=["Search Default","Gemini · here","App Store","Maps","AirPods","ATT","Apple Silicon",
+           "CarPlay","Apple Pay","iMessage","Apple Watch","iCloud","MFi","Sign in"];
+function tilePos(i){return {x:58+(i%7)*128, y:170+Math.floor(i/7)*140};}
+A.tiles=E("g",{opacity:0},cam);
+A.tileEls=PLAYS.map(function(nm,i){
+  var pp=tilePos(i), g=E("g",{opacity:0},A.tiles), here=i===1;
+  E("rect",{x:pp.x,y:pp.y,width:116,height:124,rx:12,fill:here?"#e8f2fe":"#fff",stroke:here?BLUE:LINE,"stroke-width":1},g);
+  if(!here){
+    E("circle",{cx:pp.x+58,cy:pp.y+30,r:10,fill:"url(#orbBase)"},g);
+    E("ellipse",{cx:pp.x+54.5,cy:pp.y+26,rx:4,ry:2.6,fill:"#fff",opacity:.55},g);
+  }
+  E("line",{x1:pp.x+16,y1:pp.y+52,x2:pp.x+100,y2:pp.y+52,stroke:LINE,"stroke-width":1},g);
+  E("rect",{x:pp.x+36,y:pp.y+60,width:44,height:14,rx:3,fill:PALE,stroke:LINE,"stroke-width":.75},g);
+  T(pp.x+58,pp.y+104,nm,{fill:here?BLUE:INK,"font-size":FS(11.5),"font-weight":"700","text-anchor":"middle"},g);
+  return g;
+});
+var TILE1={x:tilePos(1).x+58,y:tilePos(1).y+30};
+A.orb=E("g",{opacity:0},cam);
+E("ellipse",{cx:0,cy:47,rx:38,ry:8,fill:"rgba(0,0,0,.20)",filter:"url(#fsoft)"},A.orb);
+E("circle",{cx:0,cy:0,r:50,fill:"url(#orbBase)"},A.orb);
+E("circle",{cx:0,cy:0,r:50,fill:"url(#orbRim)"},A.orb);
+E("ellipse",{cx:-17,cy:-21,rx:15,ry:9,fill:"#fff",opacity:".6",filter:"url(#fblur)"},A.orb);
+A.orbLbl=T(500,307,"Siri",{fill:"#fff","font-size":FS(17),"font-weight":"700","text-anchor":"middle",opacity:0},cam);
+
+
+/* ============ furniture: scene titles (top-left) + captions (bottom-left) ============ */
+var TITLES=["AAPL intraday, June 8, 2026","The deal: the frontier, rented","Siri requests—Apple's own disclosures",
+  "What one answer costs","The fee and the frontier, one ruler","Where Gemini actually runs",
+  "A bake-off, not a marriage","The trade: $1B out, ~$20B back","The interface playbook, 2008-2026"];
+var CAPS=[
+ ["AAPL, June 8, 2026 [R]: high $317.40 during the keynote; close $301.54 (-2%). S&P 500 +0.3% that day.",
+  "Multiple ~40x trailing vs ~26x ten-year median [R]—priced as an AI competitor. Re-verify at publication."],
+ ["Deal [R, Bloomberg/CNBC/CNN]: ~$1B/yr for a custom 1.2T-parameter Gemini; agreed Jan 12, 2026; shipped June 8.",
+  "Runs on Apple's Private Cloud Compute. Reported terms; neither company discloses them."],
+ ["1 dot = 1 billion Siri requests a year. 25B/month (2020) to 1.5B/day (WWDC 2024): ~547B/yr [D].",
+  "Volume as disclosed June 2024, pre-rebuild; the per-answer math assumes comparable volume."],
+ ["$1B / 547B requests = ~$0.0018 per answer [E, derived], at Apple's disclosed June 2024 volume.",
+  "Per device: ~$0.40/yr across 2.5B [D]; under $1 per iPhone (>1B disclosed [D]). iCloud+ runs $0.99/month."],
+ ["Alphabet [D]: R&D ~$49B (2024, company-wide); capex $91.4B (2025), ~$185B guided (2026). Apple's fee ~$1B [R].",
+  "Different ledgers, not a sum—the scale is the story. All-in AI: “more than $100B over time” (Hassabis, Apr 2024 [R])."],
+ ["Gemini runs stateless on Apple's Private Cloud Compute; nothing retained; not labeled in Siri's UI [R].",
+  "The user sees Apple. Apple keeps the brand, the interface, the relationship, the data."],
+ ["Apple evaluated OpenAI and Anthropic; Gemini won the internal bake-off [R]. The license is non-exclusive;",
+  "the ChatGPT integration remains. ~2B devices sit on the table at every renewal [R]."],
+ ["Flow width scales with the square root of dollars. Gemini fee ~$1B/yr [R]; search default ~$20B/yr [E, Bernstein].",
+  "Counterflow allowed to continue (US v. Google remedies, Sept 2025). Net: ~$19B a year, toward Apple."],
+ ["Fourteen interfaces, one strategy: kill a default, tax a path, own a prompt, rent a fab.",
+  "Keep scrolling—the doors below are real, and the site keeps score."]];
+A.titles=TITLES.map(function(s){return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  grid0:{o:0}, tick:{o:0}, hiDot:{o:0}, clDot:{o:0}, nHigh:{o:0}, nClose:{o:0}, nIves:{o:0}, nMun:{o:0},
+  shards:{o:0},
+  orb:{o:0,cx:250,cy:300,r:0}, orbLbl:{o:0,x:250,y:307},
+  blk:{o:0,x:770,y:300,k:1},
+  rib1:{o:0,x1:302,y1:300,x2:658,y2:300,w:9}, rib1Lbl:{o:0,x:480,y:268}, rib1Sub:{o:0,x:480,y:286},
+  fieldG:{o:0}, nField:{o:0},
+  cent:{o:0,d:0}, centLbl:{o:0}, nCoin:{o:0}, hero3:{o:0}, sens3:{o:0}, den3:{o:0},
+  ax4:{o:0}, bApple:{o:0}, bRnd:{o:0,gr:1}, bCap25:{o:0,gr:1}, bCap26:{o:0,gr:1},
+  tick19:{o:0}, n19:{o:0}, ring4:{o:0}, n4:{o:0},
+  surf:{o:0}, surfA:{o:0}, surfB:{o:0}, n5:{o:0},
+  gA:{o:0,x:255,y:448}, gB:{o:0,x:745,y:448}, n6:{o:0},
+  rib2:{o:0}, rib2Lbl:{o:0}, rib2Sub:{o:0}, n7:{o:0},
+  tiles:{o:0},
+  T:onehot(-1), C:onehot(-1)};}
+var Z=base();
+var S=[];
+S[0]=Object.assign(base(),{
+  grid0:{o:{v:1,win:[.08,.18]}},
+  tick:{o:{v:1,win:[.06,.12]}},
+  hiDot:{o:{v:1,win:[.4,.46]}},
+  nHigh:{o:{v:1,win:[.44,.54]}},
+  clDot:{o:{v:1,win:[.48,.54]}},
+  nClose:{o:{v:1,win:[.52,.62]}},
+  nIves:{o:{v:1,win:[.58,.68]}},
+  nMun:{o:{v:1,win:[.66,.75]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  grid0:{o:{v:0,win:[0,.18]}},
+  tick:{o:{v:0,win:[0,.1]}},
+  hiDot:{o:{v:0,win:[0,.1]}}, clDot:{o:{v:0,win:[0,.1]}},
+  nHigh:{o:{v:0,win:[0,.12]}}, nClose:{o:{v:0,win:[0,.12]}}, nIves:{o:{v:0,win:[0,.12]}}, nMun:{o:{v:0,win:[0,.12]}},
+  orb:{o:{v:1,win:[.26,.38]},cx:250,cy:300,r:{v:52,win:[.28,.56],e:"back"}},
+  orbLbl:{o:{v:1,win:[.58,.68]},x:250,y:307},
+  blk:{o:{v:1,win:[.3,.45]},x:770,y:300,k:1},
+  rib1:{o:{v:1,win:[.45,.58]},x1:302,y1:300,x2:658,y2:300,w:9},
+  rib1Lbl:{o:{v:1,win:[.56,.68]},x:480,y:268}, rib1Sub:{o:{v:1,win:[.56,.68]},x:480,y:286},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  orb:{o:{v:0,win:[0,.2]},cx:250,cy:300,r:{v:0,win:[0,.22]}},
+  orbLbl:{o:{v:0,win:[0,.08]},x:250,y:307},
+  blk:{o:{v:.12,win:[0,.3]},x:{v:815,win:[0,.3]},y:{v:112,win:[0,.3]},k:{v:.8,win:[0,.3]}},
+  rib1:{o:{v:0,win:[0,.16]},x1:302,y1:300,x2:658,y2:300,w:9},
+  rib1Lbl:{o:{v:0,win:[0,.1]},x:480,y:268}, rib1Sub:{o:{v:0,win:[0,.1]},x:480,y:286},
+  fieldG:{o:{v:1,win:[.02,.08]}},
+  nField:{o:{v:1,win:[.6,.72]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  blk:{o:{v:0,win:[0,.2]},x:815,y:112,k:.8},
+  fieldG:{o:1},
+  nField:{o:{v:0,win:[0,.14]}},
+  cent:{o:{v:1,win:[.16,.24]},d:{v:1,win:[.2,.44]}},
+  centLbl:{o:{v:1,win:[.44,.52]}},
+  nCoin:{o:{v:1,win:[.5,.6]}},
+  hero3:{o:{v:1,win:[.5,.62]}},
+  sens3:{o:{v:1,win:[.6,.7]}},
+  den3:{o:{v:1,win:[.62,.74]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  cent:{o:{v:0,win:[0,.18]},d:1}, centLbl:{o:{v:0,win:[0,.12]}}, nCoin:{o:{v:0,win:[0,.12]}},
+  hero3:{o:{v:0,win:[0,.15]}}, sens3:{o:{v:0,win:[0,.15]}}, den3:{o:{v:0,win:[0,.15]}},
+  ax4:{o:{v:1,win:[.06,.14]}},
+  bRnd:{o:{v:1,win:[.14,.22]},gr:{v:1,win:[.14,.34],e:"back"}},
+  bCap25:{o:{v:1,win:[.2,.28]},gr:{v:1,win:[.2,.4],e:"back"}},
+  bCap26:{o:{v:1,win:[.26,.34]},gr:{v:1,win:[.26,.46],e:"back"}},
+  tick19:{o:{v:1,win:[.34,.42]}},
+  n19:{o:{v:1,win:[.42,.54]}},
+  fieldG:{o:{v:0,win:[.68,.75]}},
+  bApple:{o:{v:1,win:[.52,.62]}},
+  ring4:{o:{v:1,win:[.6,.66]}},
+  n4:{o:{v:1,win:[.66,.75]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  ax4:{o:{v:0,win:[0,.2]}}, bApple:{o:{v:0,win:[0,.18]}},
+  bRnd:{o:{v:0,win:[0,.2]},gr:1}, bCap25:{o:{v:0,win:[0,.2]},gr:1}, bCap26:{o:{v:0,win:[0,.2]},gr:1},
+  tick19:{o:{v:0,win:[0,.15]}}, n19:{o:{v:0,win:[0,.15]}}, ring4:{o:{v:0,win:[0,.15]}}, n4:{o:{v:0,win:[0,.15]}},
+  surf:{o:{v:1,win:[.2,.32]}}, surfA:{o:{v:1,win:[.34,.44]}}, surfB:{o:{v:1,win:[.34,.44]}},
+  orb:{o:{v:1,win:[.3,.42]},cx:{v:500,win:[.02,.22]},cy:{v:205,win:[.02,.22]},r:{v:46,win:[.3,.52],e:"back"}},
+  orbLbl:{o:{v:1,win:[.52,.62]},x:500,y:212},
+  blk:{o:{v:1,win:[.34,.48]},x:{v:500,win:[0,.2]},y:{v:430,win:[0,.2]},k:{v:1,win:[0,.2]}},
+  rib1:{o:{v:1,win:[.5,.62]},x1:{v:500,win:[0,.3]},y1:{v:255,win:[0,.3]},x2:{v:500,win:[0,.3]},y2:{v:382,win:[0,.3]},w:9},
+  rib1Lbl:{o:{v:1,win:[.6,.7]},x:{v:548,win:[0,.3]},y:{v:330,win:[0,.3]}},
+  rib1Sub:{o:{v:1,win:[.6,.7]},x:{v:548,win:[0,.3]},y:{v:348,win:[0,.3]}},
+  n5:{o:{v:1,win:[.6,.72]}},
+  T:onehot(5), C:onehot(5)});
+S[6]=Object.assign(base(),{
+  surf:{o:1}, surfA:{o:1}, surfB:{o:1},
+  orb:{o:1,cx:500,cy:205,r:46}, orbLbl:{o:1,x:500,y:212},
+  blk:{o:1,x:500,y:430,k:1},
+  rib1:{o:1,x1:500,y1:255,x2:500,y2:382,w:9},
+  rib1Lbl:{o:1,x:548,y:330}, rib1Sub:{o:1,x:548,y:348},
+  n5:{o:{v:0,win:[0,.2]}},
+  gA:{o:{v:1,win:[.25,.38]},x:255,y:448}, gB:{o:{v:1,win:[.32,.45]},x:745,y:448},
+  n6:{o:{v:1,win:[.55,.68]}},
+  T:onehot(6), C:onehot(6)});
+S[7]=Object.assign(base(),{
+  surf:{o:1}, surfA:{o:1}, surfB:{o:1},
+  orb:{o:1,cx:500,cy:205,r:46}, orbLbl:{o:1,x:500,y:212},
+  blk:{o:1,x:500,y:430,k:1},
+  rib1:{o:1,x1:{v:420,win:[.2,.38]},y1:255,x2:{v:420,win:[.2,.38]},y2:382,w:9},
+  rib1Lbl:{o:1,x:{v:340,win:[.2,.38]},y:{v:372,win:[.2,.38]}}, rib1Sub:{o:1,x:{v:340,win:[.2,.38]},y:{v:390,win:[.2,.38]}},
+  gA:{o:{v:0,win:[0,.2]},x:255,y:448}, gB:{o:{v:0,win:[0,.2]},x:745,y:448},
+  n6:{o:{v:0,win:[0,.15]}},
+  rib2:{o:{v:1,win:[.3,.4]}},
+  rib2Lbl:{o:{v:1,win:[.52,.62]}}, rib2Sub:{o:{v:1,win:[.52,.62]}},
+  n7:{o:{v:1,win:[.62,.74]}},
+  T:onehot(7), C:onehot(7)});
+S[8]=Object.assign(base(),{
+  surf:{o:{v:0,win:[0,.18]}}, surfA:{o:{v:0,win:[0,.12]}}, surfB:{o:{v:0,win:[0,.12]}},
+  orb:{o:1,cx:{v:244,win:[.15,.45]},cy:{v:200,win:[.15,.45]},r:{v:10,win:[.15,.45]}},
+  orbLbl:{o:{v:0,win:[0,.1]},x:500,y:212},
+  blk:{o:{v:0,win:[0,.22]},x:500,y:430,k:1},
+  rib1:{o:{v:0,win:[0,.16]},x1:420,y1:255,x2:420,y2:382,w:9},
+  rib1Lbl:{o:{v:0,win:[0,.12]},x:340,y:372}, rib1Sub:{o:{v:0,win:[0,.12]},x:340,y:390},
+  rib2:{o:{v:0,win:[0,.16]}}, rib2Lbl:{o:{v:0,win:[0,.12]}}, rib2Sub:{o:{v:0,win:[0,.12]}},
+  n7:{o:{v:0,win:[0,.12]}},
+  tiles:{o:{v:1,win:[.12,.2]}},
+  T:onehot(8), C:onehot(8)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){ /* entrance progress for the 12px rise; exits/constants report settled */
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){ /* furniture: out by .18, in .22-.34 */
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+function mix(s1,s2,t){
+  var st={};
+  for(var k in s2){
+    if(k==="T"||k==="C"){var arr=[];for(var i=0;i<9;i++)arr.push(fw(s1[k][i],s2[k][i],t));st[k]=arr;continue;}
+    var o1=s1[k],o2=s2[k],r={};
+    for(var c in o2)r[c]=cv(o1[c],o2[c],t);
+    if("o" in o2)r.u=cu(o1.o,o2.o,t);
+    st[k]=r;
+  }
+  return st;
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,u){el.setAttribute("transform","translate(0 "+(12*(1-clamp(u))).toFixed(1)+")");}
+function clamp01b(x){return x<0?0:x;} /* easeOutBack overshoot kept, floored at 0 */
+A.bApple.bar.style.transform="scaleY(1)";
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  setO(A.grid0,st.grid0.o);
+  setO(A.tick,st.tick.o); dashTo(A.tick,TLEN,beat===0?eo(w(.1,.48)):1);
+  setO(A.hiDot,st.hiDot.o); setO(A.clDot,st.clDot.o);
+  setO(A.nHigh,st.nHigh.o); rise(A.nHigh,st.nHigh.u);
+  setO(A.nClose,st.nClose.o); rise(A.nClose,st.nClose.u);
+  setO(A.nIves,st.nIves.o); rise(A.nIves,st.nIves.u);
+  setO(A.nMun,st.nMun.o); rise(A.nMun,st.nMun.u);
+  setO(A.shards,beat===1?1:0);
+  if(beat===1){
+    SH.forEach(function(s,i){
+      var u=eo(clamp((PP-(.04+.018*i))/.3));
+      s.el.setAttribute("transform","translate("+((250-s.cx)*u).toFixed(1)+" "+((300-s.cy)*u).toFixed(1)+")");
+      s.el.setAttribute("opacity",(Math.min(PP*12,1)*(1-u)*.95).toFixed(3));
+    });
+  }
+  A.orb.setAttribute("transform","translate("+st.orb.cx.toFixed(1)+" "+st.orb.cy.toFixed(1)+") scale("+(st.orb.r/50).toFixed(4)+")");
+  setO(A.orb,st.orb.o);
+  A.orbLbl.setAttribute("x",st.orbLbl.x.toFixed(1));A.orbLbl.setAttribute("y",st.orbLbl.y.toFixed(1));
+  setO(A.orbLbl,st.orbLbl.o);
+  A.blk.setAttribute("transform","translate("+st.blk.x.toFixed(1)+" "+st.blk.y.toFixed(1)+") scale("+st.blk.k.toFixed(3)+")");
+  setO(A.blk,st.blk.o);
+  setRib(A.rib1Body,A.rib1Head,A.rib1Guide,st.rib1.x1,st.rib1.y1,st.rib1.x2,st.rib1.y2,st.rib1.w);
+  setO(A.rib1,st.rib1.o);
+  A.rib1Lbl.setAttribute("x",st.rib1Lbl.x.toFixed(1));A.rib1Lbl.setAttribute("y",st.rib1Lbl.y.toFixed(1));
+  setO(A.rib1Lbl,st.rib1Lbl.o);
+  A.rib1Sub.setAttribute("x",st.rib1Sub.x.toFixed(1));A.rib1Sub.setAttribute("y",st.rib1Sub.y.toFixed(1));
+  setO(A.rib1Sub,st.rib1Sub.o);
+  setO(A.fieldG,st.fieldG.o);
+  if(beat>=2&&beat<=4&&st.fieldG.o>0){
+    for(var i=0;i<N;i++){
+      var d=A.dots[i],x,y,rr=2.6,o=1,u;
+      if(beat===2){u=eo(clamp((PP-(.06+.38*(i/N)))/.26));x=lerp(250,F2[i][0],u);y=lerp(300,F2[i][1],u);o=Math.min(u*4,1);}
+      else if(beat===3){u=eo(clamp((PP-(.05+.36*(i/N)))/.24));x=lerp(F2[i][0],F3[i][0],u);y=lerp(F2[i][1],F3[i][1],u);}
+      else {u=eo(clamp((PP-(.16+.32*(i/N)))/.25));x=lerp(F3[i][0],F4[i][0],u);y=lerp(F3[i][1],F4[i][1],u)+Math.sin(u*Math.PI)*36*(1-u);rr=lerp(2.6,1.1,u);}
+      d.setAttribute("cx",x.toFixed(1));d.setAttribute("cy",y.toFixed(1));d.setAttribute("r",rr.toFixed(2));d.setAttribute("opacity",o.toFixed(3));
+    }
+  }
+  setO(A.nField,st.nField.o); rise(A.nField,st.nField.u);
+  setO(A.cent,st.cent.o); dashTo(A.cent,CLEN,st.cent.d);
+  setO(A.centLbl,st.centLbl.o);
+  setO(A.nCoin,st.nCoin.o); rise(A.nCoin,st.nCoin.u);
+  setO(A.hero3,st.hero3.o); rise(A.hero3,st.hero3.u);
+  setO(A.sens3,st.sens3.o); rise(A.sens3,st.sens3.u);
+  setO(A.den3,st.den3.o); rise(A.den3,st.den3.u);
+  setO(A.ax4,st.ax4.o);
+  setO(A.bApple.g,st.bApple.o);
+  [["bRnd",A.bRnd],["bCap25",A.bCap25],["bCap26",A.bCap26]].forEach(function(q){
+    setO(q[1].g,st[q[0]].o); q[1].bar.style.transform="scaleY("+clamp01b(st[q[0]].gr).toFixed(3)+")";
+  });
+  setO(A.tick19,st.tick19.o);
+  setO(A.n19,st.n19.o); rise(A.n19,st.n19.u);
+  setO(A.ring4,st.ring4.o); dashTo(A.ring4B,RLEN,beat===4?w(.62,.72):1);
+  setO(A.n4,st.n4.o); rise(A.n4,st.n4.u);
+  setO(A.surf,st.surf.o); setO(A.surfA,st.surfA.o); setO(A.surfB,st.surfB.o);
+  setO(A.n5,st.n5.o); rise(A.n5,st.n5.u);
+  A.gA.setAttribute("transform","translate("+st.gA.x.toFixed(1)+" "+(st.gA.y+12*(1-clamp(st.gA.u))).toFixed(1)+")");
+  setO(A.gA,st.gA.o);
+  A.gB.setAttribute("transform","translate("+st.gB.x.toFixed(1)+" "+(st.gB.y+12*(1-clamp(st.gB.u))).toFixed(1)+")");
+  setO(A.gB,st.gB.o);
+  setO(A.n6,st.n6.o); rise(A.n6,st.n6.u);
+  setO(A.rib2,st.rib2.o);
+  A.rib2.style.transform="scaleY("+(beat===7?clamp01b(eb(w(.3,.52))):(st.rib2.o>0?1:0)).toFixed(3)+")";
+  setO(A.rib2Lbl,st.rib2Lbl.o); rise(A.rib2Lbl,st.rib2Lbl.u);
+  setO(A.rib2Sub,st.rib2Sub.o);
+  setO(A.n7,st.n7.o); rise(A.n7,st.n7.u);
+  setO(A.tiles,st.tiles.o);
+  A.tileEls.forEach(function(g,i){
+    if(beat===8){
+      if(i===1){g.setAttribute("opacity",w(.15,.3).toFixed(3));g.setAttribute("transform","translate(0 0)");return;}
+      var u=eo(clamp((PP-(.18+.36*(i/13)))/.18));
+      var pp=tilePos(i),cx=pp.x+58,cy=pp.y+62;
+      g.setAttribute("opacity",u.toFixed(3));
+      g.setAttribute("transform","translate("+((TILE1.x-cx)*.35*(1-u)).toFixed(1)+" "+((tilePos(1).y+62-cy)*.35*(1-u)).toFixed(1)+")");
+    } else {g.setAttribute("opacity",1);g.setAttribute("transform","translate(0 0)");}
+  });
+  for(var f=0;f<9;f++){setO(A.titles[f],st.T[f]);setO(A.caps[f],st.C[f]);}
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:9};
+
+/* ---------------- the Door (HTML grid) + read tracking ---------------- */
+var DOOR=[
+ ["search","Search Default","the founding play","~$20B/yr—36% of Safari search-ad revenue","pried","DOJ-tested","play-search.html"],
+ ["gemini","Gemini · Siri","2026","the frontier, rented for $1B/yr","here","you are here",null],
+ ["appstore","App Store","2008","commission take ~$25–30B/yr [E]; the $1.3T is Apple-commissioned","pried","EU €500M","play-app-store.html"],
+ ["maps","Maps","2012","a year after eviction: 35M on Apple Maps, 6M on Google [R]","active","","play-maps.html"],
+ ["airpods","AirPods","2016","$18–22B/yr [E] from a deleted port—never disclosed","active","","play-airpods.html"],
+ ["att","App Tracking Transparency","2021","one prompt; Meta −$10B, its own guidance; Apple ads ×4","active","","play-att.html"],
+ ["silicon","Apple Silicon","2020","TSMC's largest customer 2017–24 [D] · zero fabs","active","","play-silicon.html"],
+ ["carplay","CarPlay","2014","~94% of new cars · zero cars built","contested","GM exiting","play-carplay.html"],
+ ["applepay","Apple Pay","2014","the NFC chip, locked—fee per tap","pried","EU-opened","play-apple-pay.html"],
+ ["imessage","iMessage","2011","the green bubble—a DOJ-named moat","pried","RCS forced","play-imessage.html"],
+ ["watch","Apple Watch","2015","~22% of 2024 shipments · the wrist interface","contested","Masimo ban + $634M","play-watch.html"],
+ ["icloud","iCloud","2011","5GB free since 2011—the upsell default","active","","play-icloud.html"],
+ ["mfi","MFi / Lightning","2012","~$4 royalty per connector","pried","EU USB-C","play-mfi.html"],
+ ["signin","Sign in with Apple","2019","identity, inserted by App Store rule","pried","relaxed 2024","play-signin.html"]
+];
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+function markExplored(id){try{var x=explored();if(x.indexOf(id)<0){x.push(id);localStorage.setItem(KEY,JSON.stringify(x));}}catch(e){}}
+markExplored("gemini"); // you entered through the Gemini act
+var grid=document.getElementById("playgrid");
+var seen=explored();
+DOOR.forEach(function(d){
+  var live=!!d[6], here=d[4]==="here";
+  var el=document.createElement(live?"a":"div");
+  el.className="card"+(live?"":" soon")+(seen.indexOf(d[0])>=0?" explored":"");
+  if(live)el.href=d[6];
+  var badge=here?'<span class="badge here">You are here</span>':(d[4]==="pried"?'<span class="badge pried">'+(d[5]||"Pried open")+'</span>':(d[4]==="contested"?'<span class="badge contested">'+(d[5]||"Contested")+'</span>':'<span class="badge active">Active</span>'));
+  el.innerHTML='<div class="yr">'+d[2]+'</div><div class="nm">'+d[1]+'</div><div class="st">'+d[3]+'</div>'+badge+
+    '<span class="go">'+(live?"Read the play →":(here?"This page":"In the playbook—soon"))+'</span><span class="done">✓ explored</span>';
+  grid.appendChild(el);
+});
+})();
+</script>
+</body>
+</html>

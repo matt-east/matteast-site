@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Deleted Port · AirPods · The Interface Playbook</title>
+<meta name="description" content="In 2016 Apple deleted the one port every phone shared and sold the replacement separately. Analysts put AirPods at $18–22 billion a year. Apple has never published the number.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The Audio Play</p>
+  <h1>The deleted port.</h1>
+  <div class="sub">In September 2016 Apple removed the one connector every phone on earth shared, and sold the replacement separately. Nine years later, analysts put AirPods at <strong>$18–22 billion a year</strong>. <strong>Apple has never published the number.</strong></div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="AirPods: the deleted jack, the undisclosed business, and the industry that followed"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">One port, <span class="it">every pocket</span>.</h2><p class="body">The 3.5mm jack was the oldest interface in consumer tech: standardized in the 1960s, royalty-free, on essentially every phone ever sold. On September 7, 2016, Apple deleted it from the iPhone 7, with three reasons that <span class="b">"really come down to one word: courage."</span> AirPods went on sale at the same keynote: <span class="b">$159, sold separately</span>. Motorola had cut the port three months earlier; nobody copied Motorola.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Capture</p><h2 class="h-big">A business hidden <span class="it">in plain sight</span>.</h2><p class="body">Apple reports AirPods inside a bucket called Wearables, Home and Accessories: <span class="b">$35.7 billion</span> last fiscal year, with Apple Watch, Beats, Vision Pro and every cable thrown in. Inside that ceiling, analysts band AirPods at <span class="b">$18–22 billion a year</span>—roughly half the segment. Bloomberg pegged 2023 above $18 billion and 2024 near $22 billion; Counterpoint's model runs lower. The estimates disagree because there is nothing official to check.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Comparison</p><h2 class="h-big">The accessory out-earns <span class="it">whole companies</span>.</h2><p class="body">Take the band's floor. The earbuds Apple sells as an iPhone add-on bring in more than Spotify, the largest music service on earth (<span class="b">$17.0 billion</span>, 2024); more than eBay ($10.3 billion); roughly double Nintendo ($7.8 billion, fiscal year to March 2025). Every number on that chart is audited except Apple's. The biggest bar is the estimate.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Ledger</p><h2 class="h-big">The market the deletion <span class="it">created</span>.</h2><p class="body">True-wireless earbuds barely existed in 2015. Apple deleted the port, shipped AirPods, and the category exploded to roughly 300 million units a year. A decade in, Apple still ships about one in four of them (<span class="b">76.5 million units</span> in 2024, per Counterpoint), three times its nearest rival, and still takes the largest share of the money. Counterpoint expects cumulative AirPods revenue to cross <span class="b">$100 billion</span> in 2026.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Lock-in</p><h2 class="h-big">Pairing is <span class="it">the moat</span>.</h2><p class="body">Inside every AirPod is an Apple-designed chip (W1, then H1, then H2) that talks to iPhones in ways plain Bluetooth doesn't: one-second pairing, automatic switching between your devices, Find My, spatial audio. Pair them with Android and they downgrade to ordinary earbuds. The accessory deepens the platform it plugs into: <span class="b">72% of American teens own AirPods</span> (Piper Sandler), and the same survey's iPhone number is 87%.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">Five years <span class="it">to zero</span>.</h2><p class="body">Google's Pixel ad, October 2016, mocked the deletion: the Pixel's jack was "satisfyingly not new." The Pixel 2 cut it twelve months later. Samsung ran ads ridiculing the dongle, then quietly pulled them as the Note 10 dropped the port in 2019. Of the eight flagship lines shipping a jack in early 2016, <span class="b">every one had deleted it by 2020</span>. Kill a default the world shares, and the world adopts your replacement.</p></div></div>
+    <div class="step" data-step="6"><div class="copy"><p class="kicker">The Gap</p><h2 class="h-big">Chart <span class="it">the silence</span>.</h2><p class="body">In nine annual reports since AirPods shipped, Apple has disclosed <span class="b">exactly zero AirPods figures</span>. The 10-K mentions them once, in a list: "The Company's line of wireless headphones includes AirPods, AirPods Pro, AirPods Max and Beats products." The closest Apple ever came to sizing the business was Tim Cook calling the whole segment "the size of a Fortune 150 company" in 2020. The silence is strategic: rivals get no target to price against, and nobody can mark the toll to market.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The deletion was the product.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="airpods">
+    <a id="exitnext" href="play-signin.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">Sign in with Apple <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: Apple 10-Ks FY2015–FY2025 [D]: Wearables, Home and Accessories net sales series ($10.1B FY15 → $41.2B FY22 → $35.7B FY25; FY15–FY18 reported as "Other Products," renamed FY19, same bucket); segment definition ("The Company's line of wireless headphones includes AirPods, AirPods Pro, AirPods Max and Beats products"); FY25 decline attributed to lower Accessories and Wearables sales. AirPods revenue band [E]: Bloomberg estimates (above $18B in 2023, ~$18B+ yearly since 2021; Bloomberg Intelligence ~$22B by FY2024); Counterpoint Apple 360 Forecast (cumulative AirPods revenue crosses $100B in 2026, +2.4% YoY), whose model implies lower annual figures—Apple discloses none, so the band is irreducibly an estimate. TWS market [E]: Counterpoint Global TWS Tracker 2024 (Apple 76.5M units, ~23% share, No. 1; Samsung 28.2M, ~8.5%; Xiaomi 26.0M; boAt 19.8M); category under 10M units (2016) to ~300M/yr (2021); Apple remains TWS revenue leader (Counterpoint, Dec 2025). Comparisons [D, filings]: Spotify FY2024 revenue €15.673B ≈ $17.0B; eBay FY2024 ~$10.3B; Nintendo FY ended March 2025 ¥1,164.9B ≈ $7.8B (company-stated USD)—a Switch-transition trough (prior FY ~$11.9B). Jack removal and cascade [R]: Apple keynote Sept 7, 2016 (Phil Schiller: "...it really comes down to one word: courage. The courage to move on, do something new, that betters all of us"); AirPods $159, shipped Dec 2016; first jack-less flagships—Moto Z (Jun 2016), iPhone 7 (Sep 2016), Xiaomi Mi 6 (Apr 2017), HTC U11 (May 2017), Huawei Mate 10 Pro and Google Pixel 2 (Oct 2017), OnePlus 6T (Nov 2018), Samsung Galaxy Note 10 (Aug 2019; S-series Feb 2020); Google's 2016 Pixel marketing ("satisfyingly not new") and Samsung's deleted anti-Apple ads as reported. Lock-in [R]: W1/H1/H2 chip timeline; Piper Sandler Taking Stock With Teens (72% of US teens own AirPods, spring 2022 high; ~70% + 25% purchase intent, fall 2024; teen iPhone ownership ~87%). Tim Cook "size of a Fortune 150 company": Q1 FY2020 earnings call (Jan 28, 2020), about the whole wearables business, not AirPods. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Deleted Port: engine v2 (skeleton per play-search). Actors created once; beats are
+   target states with per-actor timing windows {v, win:[a,b], e}. Exits complete by .35,
+   entrances run .22-.75; all windows end by .75 (poster frame). Binary rest at p=1. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015",PBLUE="#b9d7f3";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);}
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper: 2px dot at datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ BEAT 0: the universal port + the 2016 flagship row ============ */
+A.plugG=E("g",{opacity:0},cam);
+E("path",{d:"M 380 160 C 350 160 330 176 312 192",fill:"none",stroke:GRAPH,"stroke-width":4,"stroke-linecap":"round"},A.plugG);
+E("rect",{x:378,y:146,width:86,height:28,rx:7,fill:GRAPH},A.plugG);
+E("rect",{x:462,y:153,width:12,height:14,fill:GRAPH},A.plugG);
+E("rect",{x:472,y:154,width:34,height:12,rx:6,fill:GRAPH},A.plugG);
+E("rect",{x:481,y:154,width:4,height:12,fill:PALE},A.plugG);
+E("rect",{x:491,y:154,width:4,height:12,fill:PALE},A.plugG);
+E("circle",{cx:548,cy:160,r:17,fill:"#fff",stroke:GRAPH,"stroke-width":3},A.plugG);
+E("circle",{cx:548,cy:160,r:6,fill:GRAPH},A.plugG);
+T(548,200,"the 3.5mm jack",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.plugG);
+A.strike=E("path",{d:"M 572 134 L 524 186",fill:"none",stroke:RED,"stroke-width":3.5,"stroke-linecap":"round",opacity:0},cam);
+var STLEN=72;
+A.courageN=note(548,160,648,108,['"It really comes down to one word:','courage."  Phil Schiller, Sept 7, 2016'],20);
+A.rowLbl=T(150,284,"fall 2016: every major flagship ships the jack",{fill:INK,"font-size":FS(13),"font-weight":"600",opacity:0},cam);
+var PHONES=[["Galaxy S7",190],["LG G5",269],["Moto Z",348],["iPhone 7",427],["Pixel",506],["HTC 10",585],["Xperia XZ",664]];
+A.ph=PHONES.map(function(d,i){
+  var g=E("g",{opacity:0},cam),cx=d[1];
+  E("rect",{x:cx-23,y:308,width:46,height:84,rx:8,fill:"#fff",stroke:i===3?BLUE:LINE,"stroke-width":i===3?2:1.5},g);
+  E("line",{x1:cx-12,y1:318,x2:cx+12,y2:318,stroke:PALE,"stroke-width":3},g);
+  if(i===2)E("circle",{cx:cx,cy:402,r:4.5,fill:"none",stroke:INK,"stroke-width":1.5},g);
+  else E("circle",{cx:cx,cy:402,r:4.5,fill:INK},g);
+  T(cx,426,d[0],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},g);
+  return g;
+});
+A.ph.forEach(function(g,i){A["ph"+i]=g;});
+A.iStrike=E("g",{opacity:0},cam);
+E("path",{d:"M 437 392 L 417 412",fill:"none",stroke:RED,"stroke-width":2.5,"stroke-linecap":"round"},A.iStrike);
+T(427,446,"deleted",{fill:RED,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.iStrike);
+A.motoN=note(348,402,250,470,["Moto Z cut it in June 2016;","nobody followed Motorola"]);
+
+/* the persistent device: one AirPod (object craft; parks top-right between feature beats) */
+A.pod=E("g",{opacity:0},cam);
+E("ellipse",{cx:0,cy:50,rx:15,ry:4,fill:"rgba(0,0,0,0.10)"},A.pod);
+E("rect",{x:-5.5,y:6,width:11,height:38,rx:5.5,fill:"#fff",stroke:LINE,"stroke-width":1.5},A.pod);
+E("circle",{cx:0,cy:0,r:14,fill:"#fff",stroke:LINE,"stroke-width":1.5},A.pod);
+E("ellipse",{cx:4.5,cy:-3.5,rx:4.5,ry:5.5,fill:PALE},A.pod);
+A.priceG=E("g",{opacity:0},cam);
+T(835,398,"$159",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.priceG);
+T(835,416,"sold separately",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.priceG);
+
+/* ============ BEAT 1: the segment ceiling [D] + the AirPods band [E] (centerpiece) ============ */
+/* y = 470 - $B*7.111 (gridline $45B headroom). x: FY15..FY25 -> 150..880 */
+var SEG_AREA="M 150 470 L 150 398.4 L 223 390.8 L 296 378.5 L 369 346.1 L 442 295.9 L 515 252.3 L 588 197.2 L 661 176.7 L 734 186.7 L 807 206.9 L 880 216.3 L 880 470 Z";
+var SEG_LINE="M 150 398.4 L 223 390.8 L 296 378.5 L 369 346.1 L 442 295.9 L 515 252.3 L 588 197.2 L 661 176.7 L 734 186.7 L 807 206.9 L 880 216.3";
+var SEGLEN=820;
+var BAND_D="M 223 470 L 296 448.7 L 369 427.3 L 442 398.9 L 515 370.4 L 588 342 L 661 334.9 L 734 327.8 L 807 313.6 L 880 313.6 L 880 342 L 807 349.1 L 734 356.2 L 661 363.3 L 588 370.4 L 515 398.9 L 442 420.2 L 369 441.6 L 296 455.8 L 223 470 Z";
+A.grid1=E("g",{opacity:0},cam);
+[[398.9,"$10B"],[327.8,"$20B"],[256.7,"$30B"],[185.6,"$40B"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid1);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid1);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid1);
+[[150,"FY15"],[442,"FY19"],[661,"FY22"],[880,"FY25"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.grid1);
+});
+A.segA=E("g",{opacity:0},cam);
+E("path",{d:SEG_AREA,fill:PALE},A.segA);
+A.segLine=E("path",{d:SEG_LINE,fill:"none",stroke:GRAPH,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},cam);
+A.segLbl=E("g",{opacity:0},cam);
+T(872,178,"the whole segment [D]",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.segLbl);
+T(872,198,"$35.7B",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.segLbl);
+A.band1=E("path",{d:BAND_D,fill:BLUE,opacity:0},cam);
+A.hero1=E("g",{opacity:0},cam);
+T(868,288,"$18-22B",Object.assign({fill:BLUE,"font-size":FS(40),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.hero1);
+T(868,308,"AirPods, analyst band [E]",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.hero1);
+A.peakN=note(661,176.7,560,128,["the published peak: $41.2B (FY22)"]);
+A.honestN=note(296,452.2,430,524,["the estimates disagree by billions;","there is nothing official to check"]);
+
+/* ============ BEAT 2: AirPods (est.) vs entire companies ============ */
+function bar(cx,baseY,w,h,c,val,valC,sub){
+  var g=E("g",{opacity:0},cam);
+  var r=E("rect",{x:cx-w/2,y:baseY-h,width:w,height:h,rx:3,fill:c},g);
+  r.style.transformOrigin=cx+"px "+baseY+"px"; r.style.transform="scaleY(0)";
+  T(cx,baseY-h-12,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  T(cx,baseY+24,sub,{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},g);
+  return {g:g,bar:r};
+}
+A.cmpA=E("g",{opacity:0},cam);
+var cmpAr1=E("rect",{x:180,y:245,width:120,height:225,rx:3,fill:BLUE},A.cmpA);
+var cmpAr2=E("rect",{x:180,y:195,width:120,height:46,rx:3,fill:PBLUE},A.cmpA);
+cmpAr1.style.transformOrigin="240px 470px"; cmpAr1.style.transform="scaleY(0)";
+cmpAr2.style.transformOrigin="240px 470px"; cmpAr2.style.transform="scaleY(0)";
+T(240,172,"$18-22B",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.cmpA);
+T(240,494,"AirPods (est.) [E]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.cmpA);
+A.cmpS=bar(420,470,120,212.5,GRAPH,"$17.0B",INK,"Spotify, 2024 [D]");
+A.cmpE=bar(600,470,120,128.8,GRAPH,"$10.3B",INK,"eBay, 2024 [D]");
+A.cmpN=bar(760,470,120,97.5,GRAPH,"$7.8B",INK,"Nintendo, FY3/25 [D]");
+A.noteB2=note(240,195,360,132,["the only unaudited number","on this chart"],14);
+
+/* ============ BEAT 3: the TWS market (units by vendor, 2024) ============ */
+A.tws0=bar(250,470,120,306,BLUE,"76.5M (23%)",BLUE,"Apple");
+A.tws1=bar(430,470,100,112.8,GRAPH,"28.2M (8.5%)",INK,"Samsung");
+A.tws2=bar(590,470,100,104,GRAPH,"26.0M",INK,"Xiaomi");
+A.tws3=bar(750,470,100,79.2,GRAPH,"19.8M",INK,"boAt");
+A.appleN=note(280,180,400,130,["one of every four TWS units sold;","3x the runner-up (2024)"],10);
+A.cumN=E("g",{opacity:0},cam);
+T(560,236,"Counterpoint: cumulative AirPods",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600"},HALO),A.cumN);
+T(560,252,"revenue crosses $100B in 2026",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600"},HALO),A.cumN);
+
+/* ============ BEAT 4: the pairing moat ============ */
+A.ring1=E("circle",{cx:300,cy:220,r:54,fill:"none",stroke:BLUE,"stroke-width":2,opacity:0},cam);
+A.ring2=E("circle",{cx:300,cy:220,r:80,fill:"none",stroke:BLUE,"stroke-width":2,opacity:0},cam);
+var R1LEN=340,R2LEN=503;
+A.phoneG=E("g",{opacity:0},cam);
+E("rect",{x:478,y:140,width:84,height:170,rx:14,fill:"#fff",stroke:INK,"stroke-width":2},A.phoneG);
+E("line",{x1:505,y1:152,x2:535,y2:152,stroke:PALE,"stroke-width":4},A.phoneG);
+E("rect",{x:492,y:196,width:56,height:34,rx:6,fill:PALE},A.phoneG);
+A.pairN=note(520,140,610,96,["the sheet opens in about a second;","no settings, no code"],14);
+A.matrixH=E("g",{opacity:0},cam);
+T(810,160,"with iPhone",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.matrixH);
+T(905,160,"elsewhere",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.matrixH);
+var MROWS=["Instant pair","Auto-switch","Find My","Spatial audio","Firmware updates"];
+A.mr=MROWS.map(function(s,i){
+  var g=E("g",{opacity:0},cam),y=192+i*36;
+  T(655,y+4,s,{fill:INK,"font-size":FS(13),"font-weight":"600"},g);
+  E("circle",{cx:810,cy:y,r:5.5,fill:BLUE},g);
+  E("circle",{cx:905,cy:y,r:5.5,fill:"none",stroke:MUT,"stroke-width":1.8},g);
+  return g;
+});
+A.mr.forEach(function(g,i){A["mr"+i]=g;});
+A.mrKey=T(655,388,"filled = works; hollow = lost on Android",{fill:MUT,"font-size":FS(12),opacity:0},cam);
+A.chips=E("g",{opacity:0},cam);
+[["W1  2016",300],["H1  2019",420],["H2  2022",540]].forEach(function(d){
+  E("rect",{x:d[1]-52,y:452,width:104,height:26,rx:13,fill:"#fff",stroke:LINE,"stroke-width":1},A.chips);
+  T(d[1],469,d[0],{fill:INK,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.chips);
+});
+T(420,440,"the Apple-only radio chip, three generations",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.chips);
+A.teenN=E("g",{opacity:0},cam);
+T(655,430,"72% of US teens own AirPods",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700"},HALO),A.teenN);
+T(655,450,"(Piper Sandler, spring 2022; iPhone: 87%)",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.teenN);
+/* ============ BEAT 5: flagship lines still shipping a jack, 2016-2020 ============ */
+/* x = 150 + months-since-Jan-2016 * 12.166; y = 470 - count*37 */
+var STEP_D="M 150 174 L 217 174 L 217 211 L 250 211 L 250 248 L 336 248 L 336 285 L 348 285 L 348 322 L 408 322 L 408 359 L 416 359 L 416 396 L 570 396 L 570 433 L 679 433 L 679 470 L 880 470";
+var STEPLEN=1080;
+A.ax5=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.ax5);
+[[150,"2016"],[296,"2017"],[442,"2018"],[588,"2019"],[734,"2020"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.ax5);
+});
+[[174,"8"],[322,"4"],[470,"0"]].forEach(function(d){
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.ax5);
+});
+T(138,154,"lines with a jack",{fill:MUT,"font-size":FS(12),"text-anchor":"end"},A.ax5);
+A.step5=E("path",{d:STEP_D,fill:"none",stroke:GRAPH,"stroke-width":3,"stroke-linejoin":"round",opacity:0},cam);
+A.evL=E("g",{opacity:0},cam);
+[[217,192.5],[250,229.5],[336,266.5],[348,303.5],[408,340.5],[416,377.5],[570,414.5],[679,451.5]].forEach(function(d){
+  E("circle",{cx:d[0],cy:d[1],r:3.5,fill:GRAPH},A.evL);
+});
+[[225,190,"Moto Z",MUT],[258,232,"iPhone 7",INK],[344,270,"Mi 6",MUT],[356,306,"U11",MUT],[424,348,"Mate 10 Pro + Pixel 2",MUT],[578,418,"OnePlus 6T",MUT],[671,452,"Galaxy Note 10",MUT]].forEach(function(d){
+  var a={fill:d[3],"font-size":FS(12),"font-weight":d[3]===INK?"600":"400"};
+  if(d[2]==="Galaxy Note 10")a["text-anchor"]="end";
+  T(d[0],d[1],d[2],Object.assign(a,HALO),A.evL);
+});
+A.zeroDot=E("circle",{cx:679,cy:470,r:5,fill:RED,opacity:0},cam);
+A.zeroLbl=T(872,452,"0 of 8 by 2020",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM,opacity:0},HALO),cam);
+A.pixN=note(259,211,470,140,["Pixel 1 ad, Oct 2016: a jack,","'satisfyingly not new.'  Cut a year later."],10);
+A.samN=note(679,470,724,388,["Samsung mocked the dongle in ads,","then quietly pulled the ads (2019)"],12);
+
+/* ============ BEAT 6: the disclosure gap ============ */
+A.card6=E("g",{opacity:0},cam);
+E("rect",{x:150,y:130,width:540,height:178,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.card6);
+T(174,162,"Apple 10-K, FY2025, segment note [D]:",{fill:MUT,"font-size":FS(12)},A.card6);
+T(174,194,'"The Company\'s line of wireless',{fill:INK,"font-size":FS(15),"font-weight":"600"},A.card6);
+T(174,216,'headphones includes AirPods, AirPods',{fill:INK,"font-size":FS(15),"font-weight":"600"},A.card6);
+T(174,238,'Pro, AirPods Max and Beats products."',{fill:INK,"font-size":FS(15),"font-weight":"600"},A.card6);
+T(174,284,"That list is the entire disclosure. No units. No revenue.",{fill:MUT,"font-size":FS(12)},A.card6);
+A.tally6=E("g",{opacity:0},cam);
+T(730,178,"nine annual reports",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.tally6);
+T(730,202,"0 figures",Object.assign({fill:RED,"font-size":FS(21),"font-weight":"700",style:TNUM},HALO),A.tally6);
+A.strip6=E("g",{opacity:0},cam);
+T(150,352,"AirPods revenue, by fiscal year, as disclosed by Apple:",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.strip6);
+for(var fy=0;fy<9;fy++){
+  var sx=190+fy*77.5;
+  E("line",{x1:sx-9,y1:396,x2:sx+9,y2:396,stroke:MUT,"stroke-width":2.5},A.strip6);
+  T(sx,432,"FY"+(17+fy),{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.strip6);
+}
+A.gapRing=E("circle",{cx:810,cy:396,r:14,fill:"none",stroke:RED,"stroke-width":2,opacity:0},cam);
+var GRLEN=88;
+A.cookN=E("g",{opacity:0},cam);
+T(150,506,'The closest Apple came: "the size of a Fortune 150 company."',Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600"},HALO),A.cookN);
+T(150,526,"Tim Cook, January 2020, about the whole segment, not AirPods.",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.cookN);
+
+/* ============ furniture: scene titles (top-left) + captions (bottom-left) ============ */
+var TITLES=["September 7, 2016","Wearables, Home and Accessories, FY2015-FY2025",
+  "AirPods (est.) vs. entire companies","True-wireless units by vendor, 2024","The pairing moat",
+  "Flagship lines still shipping a jack, 2016-2020","AirPods in Apple's annual reports"];
+var CAPS=[
+ ["Sept 7, 2016: iPhone 7 ships without the 3.5mm jack; AirPods announced, $159, separate.",
+  "Moto Z cut the port in June 2016, three months earlier; the industry followed Apple."],
+ ["Segment: Apple 10-Ks FY2015-25 [D]; FY15-18 reported as 'Other Products' (renamed FY19).",
+  "Band [E]: Bloomberg ~$18B (2023), ~$22B (FY24); Counterpoint runs lower. Apple: nothing."],
+ ["AirPods band [E]. Spotify EUR 15.67B = ~$17.0B (2024) [D]; eBay ~$10.3B (2024) [D].",
+  "Nintendo $7.8B, FY to Mar 2025 [D], a Switch-transition trough; prior FY ~$11.9B."],
+ ["Counterpoint Global TWS Tracker, 2024 [E]: Apple 76.5M units (23%); Samsung 28.2M (8.5%).",
+  "Market [E]: under 10M units (2016) to ~300M a year (2021); Apple still leads TWS revenue."],
+ ["Chips: W1 2016, H1 2019, H2 2022 [R]. On Android, AirPods pair as generic Bluetooth.",
+  "Piper Sandler [R]: 72% of US teens own AirPods (spring 2022); 25% more plan to buy (2024)."],
+ ["First jackless flagship per line [R]: Moto Z 6/16; iPhone 7 9/16; Mi 6 4/17; U11 5/17.",
+  "Mate 10 Pro + Pixel 2 10/17; OnePlus 6T 11/18; Note 10 8/19; Galaxy S-series 2/20."],
+ ["Quote: Apple 10-K FY2025 segment note [D]. Cook 'Fortune 150': Q1 FY20 call, Jan 2020 [R].",
+  "Nine annual reports since launch (FY17-25): zero AirPods figures disclosed in any of them."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  plugG:{o:0}, strike:{o:0}, courageN:{o:0}, rowLbl:{o:0},
+  ph0:{o:0},ph1:{o:0},ph2:{o:0},ph3:{o:0},ph4:{o:0},ph5:{o:0},ph6:{o:0},
+  iStrike:{o:0}, motoN:{o:0},
+  pod:{o:1,x:915,y:75,k:.6}, priceG:{o:0},
+  grid1:{o:0}, segA:{o:0}, segLine:{o:0}, segLbl:{o:0}, band1:{o:0}, hero1:{o:0}, peakN:{o:0}, honestN:{o:0},
+  cmpA:{o:0,gr:1}, cmpS:{o:0,gr:1}, cmpE:{o:0,gr:1}, cmpN:{o:0,gr:1}, noteB2:{o:0},
+  tws0:{o:0,gr:1}, tws1:{o:0,gr:1}, tws2:{o:0,gr:1}, tws3:{o:0,gr:1}, appleN:{o:0}, cumN:{o:0},
+  ring1:{o:0}, ring2:{o:0}, phoneG:{o:0}, pairN:{o:0}, matrixH:{o:0},
+  mr0:{o:0},mr1:{o:0},mr2:{o:0},mr3:{o:0},mr4:{o:0}, mrKey:{o:0}, chips:{o:0}, teenN:{o:0},
+  ax5:{o:0}, step5:{o:0}, evL:{o:0}, zeroDot:{o:0}, zeroLbl:{o:0}, pixN:{o:0}, samN:{o:0},
+  card6:{o:0}, tally6:{o:0}, strip6:{o:0}, gapRing:{o:0}, cookN:{o:0},
+  T:[0,0,0,0,0,0,0], C:[0,0,0,0,0,0,0]};}
+var Z=base();
+Z.pod={o:0,x:835,y:330,k:1};
+var S=[];
+S[0]=Object.assign(base(),{
+  plugG:{o:{v:1,win:[.1,.22]}},
+  rowLbl:{o:{v:1,win:[.14,.24]}},
+  ph0:{o:{v:1,win:[.14,.26]}}, ph1:{o:{v:1,win:[.17,.29]}}, ph2:{o:{v:1,win:[.2,.32]}},
+  ph3:{o:{v:1,win:[.23,.35]}}, ph4:{o:{v:1,win:[.26,.38]}}, ph5:{o:{v:1,win:[.29,.41]}}, ph6:{o:{v:1,win:[.32,.44]}},
+  courageN:{o:{v:1,win:[.3,.42]}},
+  strike:{o:{v:1,win:[.5,.56]}},
+  iStrike:{o:{v:1,win:[.52,.62]}},
+  motoN:{o:{v:1,win:[.58,.68]}},
+  pod:{o:{v:1,win:[.62,.72]},x:835,y:330,k:1},
+  priceG:{o:{v:1,win:[.66,.75]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  pod:{o:1,x:{v:915,win:[.15,.35]},y:{v:75,win:[.15,.35]},k:{v:.6,win:[.15,.35]}},
+  grid1:{o:{v:1,win:[.1,.2]}},
+  segA:{o:{v:1,win:[.14,.26]}},
+  segLine:{o:{v:1,win:[.14,.2]}},
+  segLbl:{o:{v:1,win:[.42,.52]}},
+  band1:{o:{v:1,win:[.48,.6]}},
+  hero1:{o:{v:1,win:[.6,.72]}},
+  peakN:{o:{v:1,win:[.52,.62]}},
+  honestN:{o:{v:1,win:[.64,.75]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  cmpA:{o:{v:1,win:[.2,.28]},gr:{v:1,win:[.2,.4],e:"back"}},
+  cmpS:{o:{v:1,win:[.27,.35]},gr:{v:1,win:[.27,.47],e:"back"}},
+  cmpE:{o:{v:1,win:[.34,.42]},gr:{v:1,win:[.34,.54],e:"back"}},
+  cmpN:{o:{v:1,win:[.41,.49]},gr:{v:1,win:[.41,.61],e:"back"}},
+  noteB2:{o:{v:1,win:[.62,.74]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  tws0:{o:{v:1,win:[.2,.28]},gr:{v:1,win:[.2,.4],e:"back"}},
+  tws1:{o:{v:1,win:[.27,.35]},gr:{v:1,win:[.27,.47],e:"back"}},
+  tws2:{o:{v:1,win:[.34,.42]},gr:{v:1,win:[.34,.54],e:"back"}},
+  tws3:{o:{v:1,win:[.41,.49]},gr:{v:1,win:[.41,.61],e:"back"}},
+  appleN:{o:{v:1,win:[.54,.64]}},
+  cumN:{o:{v:1,win:[.64,.75]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  pod:{o:1,x:{v:300,win:[.2,.4]},y:{v:220,win:[.2,.4]},k:{v:1.6,win:[.2,.4]}},
+  ring1:{o:{v:1,win:[.3,.36]}}, ring2:{o:{v:1,win:[.36,.42]}},
+  phoneG:{o:{v:1,win:[.24,.36]}},
+  pairN:{o:{v:1,win:[.44,.54]}},
+  matrixH:{o:{v:1,win:[.4,.48]}},
+  mr0:{o:{v:1,win:[.44,.52]}}, mr1:{o:{v:1,win:[.48,.56]}}, mr2:{o:{v:1,win:[.52,.6]}},
+  mr3:{o:{v:1,win:[.56,.64]}}, mr4:{o:{v:1,win:[.6,.68]}},
+  mrKey:{o:{v:1,win:[.64,.72]}},
+  chips:{o:{v:1,win:[.56,.66]}},
+  teenN:{o:{v:1,win:[.66,.75]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  pod:{o:1,x:{v:915,win:[.12,.3]},y:{v:75,win:[.12,.3]},k:{v:.6,win:[.12,.3]}},
+  ax5:{o:{v:1,win:[.14,.24]}},
+  step5:{o:{v:1,win:[.2,.28]}},
+  evL:{o:{v:1,win:[.54,.66]}},
+  zeroDot:{o:{v:1,win:[.58,.64]}},
+  zeroLbl:{o:{v:1,win:[.62,.7]}},
+  pixN:{o:{v:1,win:[.6,.7]}},
+  samN:{o:{v:1,win:[.66,.75]}},
+  T:onehot(5), C:onehot(5)});
+S[6]=Object.assign(base(),{
+  card6:{o:{v:1,win:[.18,.32]}},
+  tally6:{o:{v:1,win:[.34,.44]}},
+  strip6:{o:{v:1,win:[.4,.52]}},
+  gapRing:{o:{v:1,win:[.56,.64]}},
+  cookN:{o:{v:1,win:[.62,.74]}},
+  T:onehot(6), C:onehot(6)});
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){ /* furniture: out by .18, in .22-.34 */
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+var OKEYS=["plugG","strike","courageN","rowLbl","ph0","ph1","ph2","ph3","ph4","ph5","ph6",
+  "iStrike","motoN","priceG","grid1","segA","segLine","segLbl","band1","hero1","peakN","honestN",
+  "noteB2","appleN","cumN","ring1","ring2","phoneG","pairN","matrixH","mr0","mr1","mr2","mr3","mr4",
+  "mrKey","chips","teenN","ax5","step5","evL","zeroDot","zeroLbl","pixN","samN",
+  "card6","tally6","strip6","gapRing","cookN"];
+var GKEYS=["cmpA","cmpS","cmpE","cmpN","tws0","tws1","tws2","tws3"];
+var RISE={courageN:1,motoN:1,priceG:1,segLbl:1,hero1:1,peakN:1,honestN:1,noteB2:1,appleN:1,cumN:1,
+  pairN:1,teenN:1,pixN:1,samN:1,zeroLbl:1,tally6:1,cookN:1,mrKey:1};
+function mix(s1,s2,t){
+  var st={};
+  OKEYS.forEach(function(k){st[k]={o:cv(s1[k].o,s2[k].o,t),u:cu(s1[k].o,s2[k].o,t)};});
+  GKEYS.forEach(function(k){st[k]={o:cv(s1[k].o,s2[k].o,t),gr:cv(s1[k].gr,s2[k].gr,t)};});
+  st.pod={o:cv(s1.pod.o,s2.pod.o,t),x:cv(s1.pod.x,s2.pod.x,t),y:cv(s1.pod.y,s2.pod.y,t),k:cv(s1.pod.k,s2.pod.k,t)};
+  st.T=[];st.C=[];
+  for(var i=0;i<7;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function clamp01b(x){return x<0?0:x;}
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  OKEYS.forEach(function(k){
+    setO(A[k],st[k].o);
+    if(RISE[k])rise(A[k],st[k].u);
+  });
+  GKEYS.forEach(function(k){
+    var d=A[k];
+    setO(d.g||d,st[k].o);
+    var r=(d.bar)?d.bar:null;
+    if(r)r.style.transform="scaleY("+clamp01b(st[k].gr).toFixed(3)+")";
+  });
+  cmpAr1.style.transform="scaleY("+clamp01b(st.cmpA.gr).toFixed(3)+")";
+  cmpAr2.style.transform="scaleY("+clamp01b(st.cmpA.gr).toFixed(3)+")";
+  A.pod.setAttribute("transform","translate("+st.pod.x.toFixed(1)+" "+st.pod.y.toFixed(1)+") scale("+st.pod.k.toFixed(3)+")");
+  setO(A.pod,st.pod.o);
+  dashTo(A.strike,STLEN,beat===0?eo(w(.5,.6)):(st.strike.o>0?1:0));
+  dashTo(A.segLine,SEGLEN,beat===1?eo(w(.16,.44)):1);
+  dashTo(A.step5,STEPLEN,beat===5?eo(w(.24,.6)):1);
+  dashTo(A.ring1,R1LEN,beat===4?eo(w(.3,.5)):1);
+  dashTo(A.ring2,R2LEN,beat===4?eo(w(.36,.56)):1);
+  dashTo(A.gapRing,GRLEN,beat===6?eo(w(.56,.66)):1);
+  for(var i=0;i<7;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:7};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("airpods")<0){x.push("airpods");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>

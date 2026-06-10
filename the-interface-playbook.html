@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Interface Playbook—every play, every series, every source</title>
+<meta name="description" content="Fourteen interface monopolies, one strategy: own the interface, let someone else fund the infrastructure. The reference layer for Competition Is for Losers.">
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5}
+  a{color:var(--blue)}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 5vw}
+  header.top{padding:64px 0 12px; position:relative}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  h1{font-size:clamp(2rem,4.6vw,3.6rem); font-weight:700; letter-spacing:-.03em; line-height:1.05; margin:0; max-width:18ch}
+  .lede{color:var(--mut); max-width:680px; font-size:clamp(1rem,1.3vw,1.18rem); margin-top:18px}
+  .lede strong{color:var(--ink); font-weight:600}
+  .navrow{display:flex; gap:12px; margin-top:22px; flex-wrap:wrap}
+  .navrow a{display:inline-block; padding:10px 18px; border:1px solid var(--line); border-radius:999px; color:var(--ink); text-decoration:none; font-size:.88rem; font-weight:600}
+  .navrow a:hover{border-color:var(--blue); color:var(--blue)}
+  .navrow a.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  /* dashboard */
+  .dash{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:44px 0 8px}
+  .stat{background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px}
+  .stat .v{font-size:clamp(1.6rem,2.6vw,2.3rem); font-weight:700; letter-spacing:-.02em}
+  .stat .v.b{color:var(--blue)} .stat .v.g{color:var(--graphite)}
+  .stat .k{color:var(--mut); font-size:.86rem; margin-top:6px; line-height:1.45}
+  .ratio{color:var(--mut); font-size:.95rem; margin:14px 2px 0}
+  .ratio strong{color:var(--ink)}
+  /* sections */
+  section{margin:64px 0}
+  h2{font-size:clamp(1.4rem,2.4vw,2rem); font-weight:700; letter-spacing:-.02em; margin:0 0 6px}
+  .sub{color:var(--mut); font-size:.95rem; margin:0 0 22px; max-width:640px}
+  .chartcard{background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px}
+  .chartcard svg{width:100%; height:auto; display:block}
+  .legend{display:flex; gap:18px; flex-wrap:wrap; margin-top:12px; font-size:.82rem; color:var(--mut)}
+  .legend span{display:inline-flex; align-items:center; gap:7px}
+  .sw{width:18px; height:4px; border-radius:2px; display:inline-block}
+  /* controls */
+  .controls{display:flex; gap:10px; flex-wrap:wrap; margin:0 0 18px}
+  .controls button{font:inherit; font-size:.84rem; font-weight:600; padding:9px 16px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; min-height:40px}
+  .controls button:hover{border-color:var(--blue); color:var(--blue)}
+  .controls button.on{background:var(--ink); border-color:var(--ink); color:#fff}
+  .meter{margin-left:auto; color:var(--mut); font-size:.86rem; align-self:center}
+  /* cards */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:14px}
+  .card{position:relative; background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px; display:flex; flex-direction:column; gap:8px; color:var(--ink); text-decoration:none; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
+  a.card:hover{transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,.07); border-color:var(--blue)}
+  .card .yr{font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:700}
+  .card .nm{font-size:1.05rem; font-weight:700; letter-spacing:-.01em; padding-right:64px}
+  .card .mv{font-size:.84rem; color:var(--mut); line-height:1.45; min-height:38px}
+  .card .cap{font-size:.86rem; font-weight:600}
+  .card .cap .e{color:var(--faint); font-weight:400; font-size:.76rem}
+  .card svg{width:100%; height:44px; display:block}
+  .card .nosrs{height:44px; display:flex; align-items:center; color:var(--faint); font-size:.76rem; border-top:1px dashed var(--line); border-bottom:1px dashed var(--line)}
+  .badge{position:absolute; top:14px; right:14px; font-size:.6rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:999px}
+  .badge.active{background:#e8f2fe; color:var(--blue)}
+  .badge.pried{background:#fdecec; color:var(--red)}
+  .badge.contested{background:#fff3e0; color:#b15c00}
+  .badge.here{background:var(--blue); color:#fff}
+  .card .foot{display:flex; justify-content:space-between; align-items:center; margin-top:2px}
+  .card .go{font-size:.8rem; font-weight:700; color:var(--blue)}
+  .card.soon .go{color:var(--faint); font-weight:600}
+  .card .done{color:var(--blue); font-weight:700; font-size:.78rem; opacity:0}
+  .card.explored .done{opacity:1}
+  /* the tell */
+  .tell{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .tellcol{background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px; min-height:240px}
+  .tellcol h3{margin:0; font-size:1.02rem; letter-spacing:-.01em}
+  .tellcol .n{font-size:clamp(2.2rem,4vw,3.2rem); font-weight:700; letter-spacing:-.03em; margin:8px 0 12px}
+  .tellcol.zero .n{color:var(--faint)}
+  .tellcol.state .n{color:var(--red)}
+  .tellcol .empty{color:var(--faint); font-size:.92rem; border:1px dashed var(--line); border-radius:12px; padding:26px 18px; text-align:center; margin-top:8px}
+  .tellcol .defn{color:var(--mut); font-size:.8rem; line-height:1.6; margin:12px 2px 0}
+  .chiplist{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+  .chip{font-size:.76rem; font-weight:600; background:#fdecec; color:var(--red); border-radius:999px; padding:5px 11px}
+  .tellnote{grid-column:1/-1; color:var(--mut); font-size:.95rem; margin-top:4px}
+  .tellnote strong{color:var(--ink)}
+  /* method */
+  .method{background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px; font-size:.9rem; color:var(--mut); line-height:1.65}
+  .method b{color:var(--ink)}
+  footer{border-top:1px solid var(--line); padding:36px 0 70px; color:var(--mut); font-size:.82rem; line-height:1.65; margin-top:70px}
+  .byline{color:var(--faint); font-size:.8rem; margin-top:10px}
+  @media (max-width:760px){ .tell{grid-template-columns:1fr} .meter{margin-left:0} }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <p class="kicker"><a href="competition-is-for-losers.html" style="text-decoration:none">Competition Is for Losers</a> · the reference layer</p>
+  <h1>The Interface Playbook</h1>
+  <p class="lede">Fourteen plays, one strategy: <strong>own the interface, let someone else fund the infrastructure</strong>—then rent it, tax it, or replace it. Every play below is sourced and tagged; deep-dive essays publish serially. Read in any order. The site keeps score.</p>
+  <div class="navrow">
+    <a class="primary" href="competition-is-for-losers.html">Start with the argument—the Gemini act →</a>
+    <a href="play-search.html">The founding play—the Search toll →</a>
+    <a href="the-score.html">The verdict →</a>
+  </div>
+</header>
+
+<section>
+  <div class="dash">
+    <div class="stat"><div class="v b">$144.9B</div><div class="k">Apple's "interface rent," FY2025—Services $109.2B + Wearables/Home/Accessories $35.7B <b>[D]</b></div></div>
+    <div class="stat"><div class="v g">$12.7B</div><div class="k">Apple's entire FY2025 capital expenditure <b>[D]</b>—the infrastructure it actually builds</div></div>
+    <div class="stat"><div class="v g">~$710B</div><div class="k">Big Four 2026 AI/infra capex—Amazon $200B · Microsoft $190B · Alphabet $185B · Meta $135B <b>[R/guided]</b></div></div>
+  </div>
+  <p class="ratio">Apple spends <strong>~1/55th of the war</strong> it sits on the toll side of—search ($20B in), AI (rents the frontier for $1B), audio ($26B), software ($1.3T routed).</p>
+</section>
+
+<section>
+  <h2>The master ledger, 2014 → 2026</h2>
+  <p class="sub">The infrastructure war explodes; the toll climbs twenty-fold; Apple's own spending barely moves. Three lines, one asymmetry.</p>
+  <div class="chartcard">
+    <svg id="ledger" viewBox="0 0 960 380" role="img" aria-label="Alphabet capex, Apple R&D, and the Google-to-Apple payment, 2014 to 2026"></svg>
+    <div class="legend">
+      <span><i class="sw" style="background:#4a4a52"></i>Alphabet capex—$11B → ~$185B (2026 guided)</span>
+      <span><i class="sw" style="background:#9a9aa2"></i>Apple R&amp;D—$6B → $34.6B</span>
+      <span><i class="sw" style="background:#0071e3"></i>Google → Apple—$1B → ~$20B/yr</span>
+      <span><i class="sw" style="background:#7ec8ff"></i>Apple → Google (Gemini)—$1B, 2026</span>
+    </div>
+  </div>
+</section>
+
+<section id="plays">
+  <h2>The fourteen plays</h2>
+  <p class="sub">Sort them your way. Badges mark who, if anyone, managed to challenge the position—note who it never is.</p>
+  <div class="controls">
+    <button data-sort="chrono">Chronological</button>
+    <button data-sort="money">Follow the money</button>
+    <button data-sort="status">By status</button>
+    <span class="meter" id="meter">Plays explored: — of 14</span>
+  </div>
+  <p class="sub" id="tourline" hidden></p>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section>
+  <h2>The tell</h2>
+  <p class="sub">If these positions were ordinary competitive advantages, competitors would erode them. Count who actually has.</p>
+  <div class="tell">
+    <div class="tellcol zero">
+      <h3>Broken by competitors</h3>
+      <div class="n">0</div>
+      <div class="empty">No rival default, no rival store, no rival standard has displaced an Apple interface position at scale. The column is the argument.</div>
+      <p class="defn">"Broken" means displaced head-on; substitution is live—GM ripping out CarPlay, AI search denting Safari, Watch share slipping—and the zero counts only displacement.</p>
+    </div>
+    <div class="tellcol state">
+      <h3>Challenged by the state</h3>
+      <div class="n">8+</div>
+      <div class="chiplist">
+        <span class="chip">DOJ—search default case (payments survived, 2025)</span>
+        <span class="chip">DOJ v. Apple—iMessage &amp; NFC named (2024)</span>
+        <span class="chip">EU DMA—€500M App Store fine (2025)</span>
+        <span class="chip">EU—NFC forced open (2024)</span>
+        <span class="chip">EU—USB-C mandate killed Lightning (2024)</span>
+        <span class="chip">EU—browser/search choice screens (2024)</span>
+        <span class="chip">RCS adopted under regulatory pressure (2024)</span>
+        <span class="chip">ITC—Watch sensor import ban (Masimo)</span>
+      </div>
+    </div>
+    <p class="tellnote"><strong>"Competition is for losers."</strong> — Peter Thiel. The only force that reaches an interface monopoly is the state—and in the biggest case on the list, even the state let the payments continue.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Method &amp; tags</h2>
+  <div class="method">
+    <b>[D]</b> disclosed—SEC filings, official Apple/Alphabet statements, court rulings. · <b>[R]</b> reported—named outlets or sworn testimony. · <b>[E]</b> estimated—analyst or derived figures, stated as such.<br><br>
+    Two figures in this project are <b>irreducibly estimates</b> and are never presented as fact: Safari's share of Google's query volume (~half of mobile, ~a fifth of total), and MFi program totals (only the ~$4/connector royalty is reported). Where Apple discloses nothing (iMessage usage, iCloud revenue, Apple Pay economics), the gap is charted as a finding. Time-series and citations for each play live in its essay; market figures are re-verified the week of publication.
+  </div>
+</section>
+
+<footer>
+  Core sources: Apple 10-K FY2019–FY2025; Alphabet 10-K + 2026 guidance; DOJ <em>US v. Google</em> (2024 ruling, 2025 remedies, trial exhibits); DOJ v. Apple (2024); EU DMA decisions (2024–25); Bloomberg / CNBC / CNN (Gemini deal, Jan–Jun 2026); Bernstein (ISA series); Mozilla annual reports; Stanford AI Index; Epic v. Google exhibits; vendor/analyst series tagged [E] per play.
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- master ledger chart ---------- */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("ledger");
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+var YRS=[2014,2017,2020,2021,2022,2023,2024,2025,2026];
+var CAPEX=[11.0,13.2,22.3,24.6,31.5,32.3,52.5,91.4,185];
+var RND=[6.0,11.6,18.75,21.91,26.25,29.92,31.37,34.55,null];
+var ISA=[1,3,10,18,19,20,20,20,20];
+function x(y){return 70+(y-2014)*(820/12);}
+function yv(v){return 330-v*(290/190);}
+[0,50,100,150,185].forEach(function(v){E("line",{x1:60,y1:yv(v),x2:930,y2:yv(v),stroke:"#ececf0"},svg);T(54,yv(v)+4,"$"+v+"B",{fill:"#a1a1a6","font-size":"11","text-anchor":"end"},svg);});
+YRS.forEach(function(y){if(y%3===2||y===2014||y===2026)T(x(y),352,String(y),{fill:"#a1a1a6","font-size":"11","text-anchor":"middle"},svg);});
+function line(vals,color,w,dashLast){
+  var d="",prev=null;
+  vals.forEach(function(v,i){if(v==null)return;d+=(prev==null?"M ":"L ")+x(YRS[i]).toFixed(1)+" "+yv(v).toFixed(1)+" ";prev=v;});
+  E("path",{d:d,fill:"none",stroke:color,"stroke-width":w,"stroke-linejoin":"round"},svg);
+}
+line(CAPEX,"#4a4a52",3.5);
+line(RND,"#9a9aa2",3);
+line(ISA,"#0071e3",3.5);
+E("circle",{cx:x(2026),cy:yv(185),r:4,fill:"#4a4a52"},svg);
+T(x(2026)-8,yv(185)-10,"~$185B (guided)",{fill:"#4a4a52","font-size":"12","font-weight":"700","text-anchor":"end"},svg);
+T(x(2025)-6,yv(20)+24,"~$20B → Apple",{fill:"#0071e3","font-size":"12","font-weight":"700","text-anchor":"end"},svg);
+T(x(2024)-10,yv(34.55)-22,"Apple R&D $34.6B",{fill:"#7a7a82","font-size":"11.5","text-anchor":"end"},svg);
+E("circle",{cx:x(2026),cy:yv(1),r:5,fill:"#7ec8ff"},svg);
+
+/* ---------- the fourteen plays ---------- */
+var PLAYS=[
+ {id:"search",  yr:2002, name:"Search Default",   mv:"Sell Safari's default-search slot; take 36% of the ad revenue it routes.", cap:"~$20B/yr in", capN:20, e:"[R/trial]", st:"pried", stLbl:"DOJ-tested · survived", srs:[1,3,10,18,19,20,20,20], live:"play-search.html"},
+ {id:"gemini",  yr:2026, name:"Gemini · Siri",    mv:"Rent the frontier model behind the assistant; keep the brand, the user, the data.", cap:"$1B/yr out—for a >$100B program", capN:1, e:"[R]", st:"active", stLbl:"", srs:[52.5,91.4,185], srsLbl:"the war it rents instead", live:"competition-is-for-losers.html"},
+ {id:"appstore",yr:2008, name:"App Store",        mv:"Own the only install path on iOS; commission digital goods up to 30%.", cap:"commission take ~$25–30B/yr", capN:27, e:"[E; ecosystem $1.3T is Apple-commissioned]", st:"pried", stLbl:"EU €500M · US contempt", srs:[519,643,1022,1100,1300], srsLbl:"ecosystem billings, $B [R, Apple-commissioned]", live:"play-app-store.html"},
+ {id:"icloud",  yr:2011, name:"iCloud",           mv:"Set the free-storage default at 5GB (since 2011); charge to escape it.", cap:"est. $6–12B/yr band—last reported figure is 2019-era", capN:9, e:"[E]", st:"active", stLbl:"", srs:null, nosrs:"Apple discloses no iCloud revenue—and rents the underlying storage (~$1.5B+/yr to AWS et al.)", live:"play-icloud.html"},
+ {id:"imessage",yr:2011, name:"iMessage",         mv:"Keep the default messenger iOS-only; let green bubbles do the retention work.", cap:"teen iPhone share 40%→88% (2012–25)", capN:0, e:"[R, Piper Sandler]", st:"pried", stLbl:"RCS forced · 2024", srs:[40,48,66,69,74,78,82,83,85,88,87,85,88], srsLbl:"US teen iPhone share, % [R]", live:"play-imessage.html"},
+ {id:"maps",    yr:2012, name:"Maps",             mv:"Evict the Google default; own the map surface on every iPhone.", cap:"a year later: 35M Apple Maps, 6M Google", capN:0, e:"[R, comScore]", st:"active", stLbl:"", srs:[81,59], srsLbl:"Google Maps US mobile users at eviction, M [R]", live:"play-maps.html"},
+ {id:"mfi",     yr:2012, name:"MFi / Lightning",  mv:"Own the connector; license it at ~$4 per plug.", cap:"~$4/connector royalty", capN:1, e:"[R/E]", st:"pried", stLbl:"EU USB-C · ended 2024", srs:null, nosrs:"Program totals undisclosed—only the royalty rate is reported", live:"play-mfi.html"},
+ {id:"applepay",yr:2014, name:"Apple Pay",        mv:"Lock the iPhone's NFC chip to Apple Wallet; charge banks per tap.", cap:"~0.15% of credit taps", capN:1, e:"[R]", st:"pried", stLbl:"EU opened NFC · 2024", srs:[2,5,9,13,16], srsLbl:"share of US in-store wallet spend, % [R, Worldpay]", live:"play-apple-pay.html"},
+ {id:"carplay", yr:2014, name:"CarPlay",          mv:"Own the driver's screen inside cars Apple doesn't build.", cap:"~94% of new cars", capN:0, e:"[R/E]", st:"contested", stLbl:"GM exiting", srs:[5,50,80,94], srsLbl:"% of new cars [E]", live:"play-carplay.html"},
+ {id:"watch",   yr:2015, name:"Apple Watch",      mv:"Own the wrist and its health sensors; pair with iPhone only.", cap:"~22% of smartwatch shipments (2024)", capN:14, e:"[R, Counterpoint]", st:"contested", stLbl:"Masimo ban + $634M", srs:[8.5,11.6,17.7,22.5,28.4,31.1,39.4,53.9,38,31], srsLbl:"units shipped, M [E]—share slipping", live:"play-watch.html"},
+ {id:"airpods", yr:2016, name:"AirPods",          mv:"Delete the universal 3.5mm jack; sell the proprietary replacement.", cap:"~$18–22B/yr—never disclosed", capN:20, e:"[E band]", st:"active", stLbl:"", srs:[24.5,30.6,38.4,41.2,39.9,37.0,35.7], srsLbl:"Wearables segment ceiling, $B [D]—AirPods inside, undisclosed", live:"play-airpods.html"},
+ {id:"signin",  yr:2019, name:"Sign in with Apple", mv:"Force the identity option wherever rivals' logins appear (rule 4.8).", cap:"a 1,596-day identity mandate", capN:0, e:"[D, derived]", st:"pried", stLbl:"relaxed · 2024", srs:null, nosrs:"Adoption never disclosed—mandated Sept 2019 to Jan 2024, then relaxed", live:"play-signin.html"},
+ {id:"silicon", yr:2020, name:"Apple Silicon",    mv:"Design the chip; rent the world's most expensive fabs instead of building one.", cap:"TSMC's largest customer 2017–24 · 0 fabs", capN:0, e:"[D, 20-F]", st:"active", stLbl:"", srs:[23,22,23,25,26,23,25,22,17], srsLbl:"% of TSMC revenue [D, 20-F]—2025: Nvidia passes Apple", live:"play-silicon.html"},
+ {id:"att",     yr:2021, name:"App Tracking Transparency", mv:"Own the consent prompt; flip one default and reroute an industry.", cap:"Meta −$10B (own guidance) · Apple ads ×4", capN:5, e:"[R]", st:"active", stLbl:"", srs:[1.09,3.7,4.7,10], srsLbl:"Apple Ads revenue, $B [R/E]", live:"play-att.html"}
+];
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+var grid=document.getElementById("grid");
+function spark(s){
+  var w=220,h=40,min=Math.min.apply(null,s),max=Math.max.apply(null,s);
+  var pts=s.map(function(v,i){return (i*(w-10)/(s.length-1)+5).toFixed(1)+","+(h-4-((v-min)/((max-min)||1))*(h-10)).toFixed(1);}).join(" ");
+  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><polyline points="'+pts+'" fill="none" stroke="#0071e3" stroke-width="2.2"/><circle cx="'+(w-5)+'" cy="'+(h-4-((s[s.length-1]-min)/((max-min)||1))*(h-10)).toFixed(1)+'" r="3" fill="#0071e3"/></svg>';
+}
+function render(order){
+  grid.innerHTML="";
+  var seen=explored();
+  order.forEach(function(p){
+    var live=!!p.live, here=p.id==="gemini";
+    var el=document.createElement(live?"a":"div");
+    el.className="card"+(live?"":" soon")+(seen.indexOf(p.id)>=0?" explored":"");
+    if(live)el.href=p.live;
+    var badge=p.st==="pried"?'<span class="badge pried">'+p.stLbl+'</span>'
+            :p.st==="contested"?'<span class="badge contested">'+p.stLbl+'</span>'
+            :'<span class="badge active">Active</span>';
+    var srs=p.srs?spark(p.srs):'<div class="nosrs">'+p.nosrs+'</div>';
+    var srsCaption=p.srsLbl?'<div style="font-size:.68rem;color:#a1a1a6;margin-top:-4px">'+p.srsLbl+'</div>':'';
+    el.innerHTML='<div class="yr">'+p.yr+'</div><div class="nm">'+p.name+'</div>'+badge+
+      '<div class="mv">'+p.mv+'</div><div class="cap">'+p.cap+' <span class="e">'+p.e+'</span></div>'+srs+srsCaption+
+      '<div class="foot"><span class="go">'+(live?(p.id==="gemini"?"The gateway essay →":"Read the play →"):"Essay in research—publishing serially")+'</span><span class="done">✓ explored</span></div>';
+    grid.appendChild(el);
+  });
+  document.getElementById("meter").textContent="Plays explored: "+seen.length+" of 14";
+}
+var SORTS={
+  chrono:function(a,b){return a.yr-b.yr;},
+  money:function(a,b){return b.capN-a.capN;},
+  status:function(a,b){var o={active:0,contested:1,pried:2};return o[a.st]-o[b.st]||a.yr-b.yr;}
+};
+var btns=Array.prototype.slice.call(document.querySelectorAll(".controls button"));
+function sortBy(k){render(PLAYS.slice().sort(SORTS[k]));btns.forEach(function(b){b.classList.toggle("on",b.getAttribute("data-sort")===k);});}
+btns.forEach(function(b){b.addEventListener("click",function(){sortBy(b.getAttribute("data-sort"));});});
+var tour=(location.search.match(/tour=(\w+)/)||[])[1];
+sortBy(tour==="money"?"money":"chrono");
+})();
+</script>
+<script src="playbook-nav.js"></script>
+<script>
+(function(){
+  var t=window.cifNav&&cifNav.tour();
+  var el=document.getElementById("tourline");
+  if(!t||!el)return;
+  var seen=[];try{seen=JSON.parse(localStorage.getItem("cifl.explored")||"[]");}catch(e){}
+  var ord=cifNav.order(t),nid=null;
+  for(var i=0;i<ord.length;i++){if(seen.indexOf(ord[i])<0){nid=ord[i];break;}}
+  el.hidden=false;
+  el.innerHTML='Tour active: <b>'+(t==="money"?"follow the money":"chronological")+'</b>'+
+    (nid?' &middot; continue with <a href="'+cifNav.FILE[nid]+'?tour='+t+'">'+cifNav.NAME[nid]+' &rarr;</a>':' &middot; every play explored')+
+    ' &middot; <a href="#" id="endtour">end tour</a>';
+  document.getElementById("endtour").addEventListener("click",function(e){e.preventDefault();cifNav.endTour();el.hidden=true;});
+})();
+</script>
+</body>
+</html>

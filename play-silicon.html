@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero Fabs · Apple Silicon · The Interface Playbook</title>
+<meta name="description" content="Apple designs the chip and owns none of the factories that print it. For a decade one customer was about a quarter of TSMC's revenue—disclosed in its filings—first in line at every node.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The Deepest Play</p>
+  <h1>Zero fabs, first in line.</h1>
+  <div class="sub">Apple designs the most consequential chip in consumer technology and owns <strong>none of the factories that print it</strong>. For most of a decade one customer was about a quarter of TSMC's revenue&mdash;disclosed in TSMC's own filings&mdash;and <strong>first in line at every new node</strong>, without spending a dollar on a fab.</div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="Apple Silicon: the wafer, the concentration ledger, and the queue"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">The one layer Apple <span class="it">refuses</span> to outsource.</h2><p class="body">Apple buys its displays from Samsung, its memory from SK Hynix, its glass from Corning. The chip is different. Since the A4 in 2010, every iPhone's brain has been designed in Cupertino; the A17 Pro packs <span class="b">19 billion transistors</span>. The system-on-a-chip is the boundary where silicon meets iOS&mdash;and Apple owns the boundary.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Inversion</p><h2 class="h-big">The factories belong to <span class="it">someone else</span>.</h2><p class="body">Apple owns zero chip fabs. TSMC, which prints every Apple processor, spent about <span class="b">$40 billion</span> on plants and equipment in 2025, against Apple's $12.7 billion for everything it builds, and has set a $52&ndash;56 billion plan for 2026. The most capital-intensive manufacturing on earth keeps getting built&mdash;just never on Apple's balance sheet.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Capture</p><h2 class="h-big">One customer, a <span class="it">quarter</span> of TSMC.</h2><p class="body">This is not an analyst guess. TSMC's own SEC filings disclose that its largest customer (unnamed in the filings; analysts have long identified Apple) reached <span class="b">26% of net revenue in 2021</span> and held near a quarter for most of a decade. The world's most important manufacturer ran a quarter of its business on one design shop's orders&mdash;and built its roadmap around them.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Queue</p><h2 class="h-big">First in line at <span class="it">every</span> node.</h2><p class="body">Since 2018, Apple has shipped first at each new frontier: 7-nanometer with the A12, 5nm with the A14 in 2020, 3nm with the A17 Pro in 2023, and <span class="b">2nm expected this fall</span>. Reports put Apple's share of initial 3nm capacity near 90%; rivals' first 3nm phone chips arrived about a year later. The front of the queue is the product.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Comparison</p><h2 class="h-big">The seat Apple <span class="it">never</span> paid for.</h2><p class="body">A single leading-edge fab now runs <span class="b">$20&ndash;30 billion</span>&mdash;roughly two years of Apple's entire capital budget. TSMC's Arizona site alone is a $65 billion, three-fab commitment. Apple's count of fabs owned: zero. It skips the bill and still ships first. That is the privilege of being the order book.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Ledger</p><h2 class="h-big">Then the play got <span class="it">copied</span>.</h2><p class="body">Over the decade TSMC poured roughly $238 billion into capex; Apple spent about $122 billion across everything it builds, and $0 on fabs. In 2025 the queue got a new front: <span class="b">Nvidia became TSMC's largest customer at 19%</span>, with Apple second at 17%. Note what won&mdash;not a fab owner, but another company that designs the chip and rents the infrastructure.</p></div></div>
+    <div class="step" data-step="6"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">When Intel stumbled, Apple didn't buy a <span class="it">fab</span>.</h2><p class="body">Intel spent the late 2010s missing its own roadmap. Apple's answer, June 2020: the Mac would move to Apple's chips within about two years. First M1 Macs that November; the last Intel Mac was replaced by <span class="b">June 2023</span>. Apple swapped the brain of an entire computer line without pouring a yard of concrete&mdash;it redirected a supplier's roadmap instead. Design is the interface. Fabrication is infrastructure, owned by whoever competes hardest to build it for you.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The deepest play runs on rented ground.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="silicon">
+    <a id="exitnext" href="play-att.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">App Tracking Transparency <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: TSMC Form 20-F filings and annual reports [D] (customers unnamed; analysts identify Apple: Taipei Times, TechSoda): largest customer = 23% (2017), 22% (2018), 23% (2019), 25% (2020), 26% (2021), 23% (2022), 25% (2023), 22% (2024) of net revenue; second-largest 12% in 2024 (analysts: Nvidia); 2021 amount NT$405.4B (~$14.3B). 2025 [D, TSMC data via DigiTimes, Jan 2026]: largest customer 19% (analysts: Nvidia, NT$726.97B ~ $23.4B), Apple second at ~17%. TSMC capex actuals 2015&ndash;2025 (~$8.1B to ~$39.9B; NT$1,272.4B in 2025) and 2026 plan of $52&ndash;56B [D, TSMC earnings releases / 20-F]. Apple 10-K capex FY2015&ndash;FY2025: $7.3&ndash;13.3B a year; FY25 $12.72B [D]. Node firsts [R, keynotes/TSMC]: A12 first 7nm to ship in a phone (Sept 2018), A14 first 5nm (2020), A17 Pro first 3nm (Sept 2023; 19B transistors, Apple), 2nm (A20) expected fall 2026; rivals' first 3nm phone chips late 2024; ~90% of initial 3nm capacity reportedly booked by Apple (Nikkei et al.). Leading-edge fab cost $20&ndash;30B [R]; TSMC Arizona $65B for three fabs [D, TSMC, Apr 2024]. Mac transition [D, Apple]: announced June 22, 2020 ("about two years"); first M1 Macs Nov 10, 2020; final Intel model replaced June 5, 2023. TSMC 2024 annual report: customers prepaid NT$291.1B to reserve capacity [D]; Apple's wafer prices and prepayment terms are not disclosed by either company. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* Zero Fabs: engine v2 (per play-search reference). Actors created once; beats are target states
+   with per-actor timing windows {v, win:[a,b], e}. Exits complete by .35; entrances run .22-.75;
+   all windows end by .75 (poster frame). Binary rest at p=1 (one designated context-ghost max). */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);}
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* annotation helper: 2px dot, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ THE WAFER (persistent device) ============ */
+/* local space: center (0,0), r=175; wedge = the disclosed share, drawn beat 2 onward */
+var defs=E("defs",{},svg);
+var clip=E("clipPath",{id:"wclip"},defs);
+E("circle",{cx:0,cy:0,r:172},clip);
+A.wafer=E("g",{},cam);
+E("circle",{cx:0,cy:0,r:175,fill:"#fff",stroke:LINE,"stroke-width":2},A.wafer);
+var wgrid=E("g",{"clip-path":"url(#wclip)"},A.wafer);
+(function(){var i;for(i=-4;i<=4;i++){
+  E("line",{x1:i*35+17.5,y1:-175,x2:i*35+17.5,y2:175,stroke:"#dcdce1","stroke-width":1},wgrid);
+  E("line",{x1:-175,y1:i*35+17.5,x2:175,y2:i*35+17.5,stroke:"#dcdce1","stroke-width":1},wgrid);
+}})();
+E("line",{x1:-30,y1:173,x2:30,y2:173,stroke:LINE,"stroke-width":3},A.wafer); /* notch chord */
+A.wedge=E("path",{d:"M 0 0 L 0 -175 A 175 175 0 0 1 0 -175 Z",fill:BLUE,"fill-opacity":.2,stroke:BLUE,"stroke-width":2,opacity:0},A.wafer);
+A.die=E("rect",{x:17.5,y:-52.5,width:35,height:35,fill:"none",stroke:BLUE,"stroke-width":2.5,opacity:0},A.wafer);
+function sector(a){ /* sweep a degrees from 12 o'clock */
+  var r=175,rad=(a-90)*Math.PI/180,x=r*Math.cos(rad),y=r*Math.sin(rad);
+  return "M 0 0 L 0 -175 A 175 175 0 "+(a>180?1:0)+" 1 "+x.toFixed(1)+" "+y.toFixed(1)+" Z";
+}
+
+/* ============ BEAT 0: the SoC floorplan (the designed object) ============ */
+A.fpLink=E("path",{d:"M 372 258 L 480 258 L 480 290 L 556 290",fill:"none",stroke:MUT,"stroke-width":1,"stroke-dasharray":"4 4",opacity:0},cam);
+A.fpTop=E("g",{opacity:0},cam);
+E("line",{x1:530,y1:104,x2:930,y2:104,stroke:GRAPH,"stroke-width":1.5},A.fpTop);
+E("line",{x1:720,y1:108,x2:720,y2:146,stroke:MUT,"stroke-width":1,"stroke-dasharray":"3 4"},A.fpTop);
+T(930,94,"iOS sits on top",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.fpTop);
+A.fpCard=E("g",{opacity:0},cam);
+E("rect",{x:560,y:150,width:320,height:284,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.fpCard);
+var FPB=[[16,16,132,92,"CPU"],[160,16,144,128,"GPU"],[16,120,132,72,"Neural Engine"],[160,156,144,64,"System cache"],[16,204,132,64,"Media engine"],[160,232,144,48,"I/O"]];
+A.fpBlocks=FPB.map(function(b){
+  var g=E("g",{opacity:0},cam);
+  E("rect",{x:560+b[0],y:150+b[1],width:b[2],height:b[3],rx:3,fill:PALE},g);
+  T(560+b[0]+b[2]/2,150+b[1]+b[3]/2+5,b[4],{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},g);
+  return g;
+});
+A.fpSub=T(560,460,"designed in Cupertino; printed on the wafer at left",{fill:MUT,"font-size":FS(12),opacity:0},cam);
+A.noteB0=note(318,262,230,140,["19 billion transistors","in the A17 Pro [D]"]);
+A.dieLblA=T(310,205,"one die",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600",opacity:0},HALO),cam);
+
+/* ============ BEAT 1: capex, TSMC vs Apple, 2015-2025 ============ */
+/* x: 2015..2025 -> 150..880 (step 73); y: $0=470, $10B=75px */
+var TS_PTS=[[150,409.3],[223,393.5],[296,388.3],[369,391.3],[442,358.3],[515,341],[588,245],[661,197.8],[734,242],[807,246.5],[880,170.8]];
+var AP_PTS=[[150,386],[223,374.8],[296,376.3],[369,370.3],[442,391.3],[515,415.3],[588,386.8],[661,389.8],[734,387.5],[807,399.5],[880,374.8]];
+function pline(P){return P.map(function(p,i){return (i?"L ":"M ")+p[0]+" "+p[1];}).join(" ");}
+A.cxGrid=E("g",{opacity:0},cam);
+[[395,"$10B"],[320,"$20B"],[245,"$30B"],[170,"$40B"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.cxGrid);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.cxGrid);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.cxGrid);
+[[150,"2015"],[515,"2020"],[880,"2025"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.cxGrid);
+});
+A.tsmcArea=E("path",{d:"M 150 470 "+pline(TS_PTS).replace("M","L")+" L 880 470 Z",fill:PALE,opacity:0},cam);
+A.tsmcLine=E("path",{d:pline(TS_PTS),fill:"none",stroke:GRAPH,"stroke-width":3,"stroke-linejoin":"round",opacity:0},cam);
+var TSLEN=820;
+A.aaplLine=E("path",{d:pline(AP_PTS),fill:"none",stroke:BLUE,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},cam);
+var APLEN=760;
+A.tsmcEnd=E("g",{opacity:0},cam);
+T(888,168,"TSMC ~$40B",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.tsmcEnd);
+T(888,186,"capex, 2025",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.tsmcEnd);
+A.aaplEnd=E("g",{opacity:0},cam);
+T(888,372,"Apple $12.7B",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.aaplEnd);
+T(888,390,"capex, FY25 (all of it)",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.aaplEnd);
+A.noteB1=note(807,246.5,700,302,["the supplier outspends","the customer 3-to-1"]);
+A.planB1=note(880,170.8,790,120,["2026 plan: $52-56B [D]"]);
+
+/* ============ BEATS 2+5: the concentration ledger (the [D] series) ============ */
+/* x: 2014..2025 -> 150..880 (step 66.36); y: 470 - pct*10 */
+var PC=[[349.1,240],[415.5,250],[481.8,240],[548.2,220],[614.5,210],[680.9,240],[747.3,220],[813.6,250]];
+A.pcGrid=E("g",{opacity:0},cam);
+[[370,"10%"],[270,"20%"],[170,"30%"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.pcGrid);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.pcGrid);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.pcGrid);
+[[150,"2014"],[349.1,"2017"],[548.2,"2020"],[747.3,"2023"],[880,"2025"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.pcGrid);
+});
+A.lead=E("path",{d:"M 150 440 C 220 420 290 330 349.1 240",fill:"none",stroke:MUT,"stroke-width":1.5,"stroke-dasharray":"3 6",opacity:0},cam);
+A.pcLine=E("path",{d:pline(PC),fill:"none",stroke:BLUE,"stroke-width":3.5,"stroke-linejoin":"round",opacity:0},cam);
+var PCLEN=500;
+A.peak=E("g",{opacity:0},cam);
+E("circle",{cx:614.5,cy:210,r:5,fill:BLUE},A.peak);
+E("circle",{cx:614.5,cy:210,r:11,fill:"none",stroke:"#f5f5f7","stroke-width":4},A.peak);
+A.peakRing=E("circle",{cx:614.5,cy:210,r:11,fill:"none",stroke:BLUE,"stroke-width":2,opacity:0},cam);
+var PKLEN=72;
+A.hero2=E("g",{opacity:0},cam);
+T(560,168,"26%",Object.assign({fill:BLUE,"font-size":FS(40),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.hero2);
+T(560,190,"of TSMC's net revenue, 2021:",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.hero2);
+T(560,206,"its largest customer",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.hero2);
+A.badge=E("g",{opacity:0},cam);
+E("rect",{x:40,y:74,width:268,height:28,rx:999,fill:"#fff",stroke:BLUE,"stroke-width":1.5},A.badge);
+T(54,93,"disclosed in TSMC's 20-F filings [D]",{fill:BLUE,"font-size":FS(12),"font-weight":"700"},A.badge);
+A.noteA8=note(150,440,236,516,["2014: the A8, Apple's first","TSMC iPhone chip"]);
+A.noteUn=note(415.5,250,300,300,["the filings name no one;","analysts' answer: Apple"]);
+/* beat 5 additions */
+A.pcFall=E("path",{d:"M 813.6 250 L 880 300",fill:"none",stroke:RED,"stroke-width":3.5,"stroke-linecap":"round",opacity:0},cam);
+var PFLEN=90;
+A.fallDot=E("circle",{cx:880,cy:300,r:5,fill:RED,opacity:0},cam);
+A.fallLbl=T(888,304,"17%",Object.assign({fill:RED,"font-size":FS(15),"font-weight":"700",style:TNUM,opacity:0},HALO),cam);
+A.fallSub=T(888,322,"Apple, now second",Object.assign({fill:MUT,"font-size":FS(12),opacity:0},HALO),cam);
+A.nvDot=E("circle",{cx:880,cy:280,r:5,fill:GRAPH,opacity:0},cam);
+A.noteNv=note(880,280,720,148,["2025: Nvidia takes the front,","19% [D]. Fabs owned: also zero."],10);
+A.tally5=E("g",{opacity:0},cam);
+T(150,120,"the decade's capex bill [D]:",{fill:MUT,"font-size":FS(12)},A.tally5);
+T(150,142,"TSMC ~$238B",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.tally5);
+T(150,162,"Apple ~$122B, none of it fabs",Object.assign({fill:MUT,"font-size":FS(13),"font-weight":"600"},HALO),A.tally5);
+
+/* ============ BEAT 3: the queue (node firsts) ============ */
+var QS=[[160,"20nm","A8","2014",0],[275,"16nm","A9","2015",0],[390,"10nm","A11","2017",0],
+        [505,"7nm","A12","2018",1],[620,"5nm","A14","2020",1],[735,"3nm","A17 Pro","2023",1],[850,"2nm","A20 exp.","2026",2]];
+A.qLane=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:320,x2:880,y2:320,stroke:LINE,"stroke-width":1.5},A.qLane);
+A.qSt=QS.map(function(s){
+  var g=E("g",{opacity:0},cam);
+  E("rect",{x:s[0]-8,y:312,width:16,height:16,rx:3,fill:s[4]?BLUE:GRAPH},g);
+  T(s[0],296,s[1],Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  T(s[0],352,s[2],{fill:s[4]?BLUE:MUT,"font-size":FS(12),"font-weight":s[4]?"700":"400","text-anchor":"middle"},g);
+  T(s[0],370,s[3],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},g);
+  return g;
+});
+A.qRings=QS.map(function(s){
+  if(!s[4])return null;
+  var r=E("circle",{cx:s[0],cy:320,r:17,fill:"none",stroke:BLUE,"stroke-width":2,opacity:0,"stroke-dasharray":s[4]===2?"4 4":"none"},cam);
+  return r;
+});
+A.qFirst=E("g",{opacity:0},cam);
+T(620,254,"first in the world to ship",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.qFirst);
+E("path",{d:"M 620 262 L 620 299",fill:"none",stroke:BLUE,"stroke-width":1},A.qFirst);
+A.note3a=note(716,322,560,424,["~90% of initial 3nm capacity:","reported booked by Apple [R]"]);
+A.note3b=note(850,304,830,220,["expected first on 2nm,","fall 2026 [R]"]);
+A.qBehind=T(735,448,"rivals' first 3nm phones: late 2024",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},cam);
+
+/* ============ BEAT 4: the comparison bars ============ */
+/* y = 470 - $B*6 */
+function cbar(cx,h,c,val,valC,sub1,sub2){
+  var g=E("g",{opacity:0},cam);
+  var r=E("rect",{x:cx-75,y:470-h,width:150,height:h,rx:3,fill:c},g);
+  r.style.transformOrigin=cx+"px 470px"; r.style.transform="scaleY(0)";
+  T(cx,470-h-14,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  T(cx,494,sub1,{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},g);
+  T(cx,512,sub2,{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},g);
+  return {g:g,bar:r};
+}
+A.fabBar=cbar(280,150,GRAPH,"$20-30B","#1d1d1f","one leading-edge fab","estimate [R]");
+A.fabWhisk=E("g",{opacity:0},cam);
+E("line",{x1:280,y1:350,x2:280,y2:290,stroke:INK,"stroke-width":1.5},A.fabWhisk);
+E("line",{x1:268,y1:350,x2:292,y2:350,stroke:INK,"stroke-width":1.5},A.fabWhisk);
+E("line",{x1:268,y1:290,x2:292,y2:290,stroke:INK,"stroke-width":1.5},A.fabWhisk);
+A.capBar=cbar(500,76.2,BLUE,"$12.7B",BLUE,"Apple capex, FY25","everything it builds [D]");
+A.planBar=cbar(720,312,GRAPH,"$52-56B","#1d1d1f","TSMC capex plan, 2026","[D, guidance]");
+A.planWhisk=E("g",{opacity:0},cam);
+E("line",{x1:720,y1:158,x2:720,y2:134,stroke:INK,"stroke-width":1.5},A.planWhisk);
+E("line",{x1:708,y1:134,x2:732,y2:134,stroke:INK,"stroke-width":1.5},A.planWhisk);
+A.zeroTick=E("g",{opacity:0},cam);
+E("line",{x1:880,y1:470,x2:880,y2:464,stroke:RED,"stroke-width":3},A.zeroTick);
+T(880,494,"fabs Apple owns",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.zeroTick);
+T(880,512,"$0",{fill:RED,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},A.zeroTick);
+A.noteB4=note(358,340,430,214,["about two years of Apple's","entire capital budget"]);
+
+/* ============ BEAT 6: the Mac changes brains ============ */
+/* x: 2006..2026 -> 150..880 (36.5/yr) */
+A.macBase=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:412,x2:880,y2:412,stroke:LINE,"stroke-width":1.5},A.macBase);
+[[150,"2006"],[442,"2014"],[661,"2020"],[880,"2026"]].forEach(function(d){
+  T(d[0],434,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.macBase);
+});
+A.macIntel=E("rect",{x:150,y:330,width:621,height:26,rx:3,fill:GRAPH,opacity:0},cam);
+A.macIntelL=T(400,322,"Intel inside the Mac, 2006-2023",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600",opacity:0},HALO),cam);
+A.macAS=E("rect",{x:661,y:366,width:219,height:26,rx:3,fill:BLUE,opacity:0},cam);
+A.macASL=T(880,322,"Apple Silicon, 2020-",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600","text-anchor":"end",opacity:0},HALO),cam);
+A.noteM1a=note(661,392,560,470,["Jun 22, 2020: the move announced;","'about two years' [D]"]);
+A.noteM1b=note(675,392,700,464,["Nov 10, 2020:","first M1 Macs"],10);
+A.noteM1c=note(771,330,810,260,["Jun 5, 2023: the last","Intel Mac replaced"],10);
+A.dieLblM=T(370,120,"M1: the Mac's new brain, same wafer",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600",opacity:0},HALO),cam);
+
+/* ============ furniture ============ */
+var TITLES=["The system on a chip","Capital expenditure: TSMC vs. Apple, 2015-2025",
+  "TSMC revenue from its largest customer","First to each node, 2014-2026",
+  "What a seat at the front would cost","The decade, closed out: 2025","The Mac changes brains, 2020-2023"];
+var CAPS=[
+ ["A-series SoCs designed in-house since the A4 (2010); A17 Pro: 19B transistors [D, Apple].",
+  "Block diagram simplified. Apple buys displays, memory, modems; the SoC it designs itself."],
+ ["TSMC capex actuals: ~$8.1B (2015) to ~$39.9B (2025); 2026 plan $52-56B [D, TSMC].",
+  "Apple capex $7.3-13.3B/yr, FY2015-25 [D, 10-Ks]; Apple's line covers everything it builds."],
+ ["Largest-customer share of net revenue, per TSMC 20-F filings [D]: 23-26% across 2017-2024.",
+  "TSMC names no customer; analysts identify Apple. Years before 2017 not charted [R]."],
+ ["Ship-first dates [R, keynotes]: A12 7nm (Sept 2018), A14 5nm (2020), A17 Pro 3nm (2023).",
+  "2nm expected fall 2026 [R]. Apple's 3nm head start over rival phone chips: about a year."],
+ ["Leading-edge fab cost $20-30B [R]; TSMC Arizona: $65B for three fabs [D, TSMC].",
+  "Apple FY25 capex $12.72B, company-wide [D]. Wafer prices and prepayments: undisclosed."],
+ ["2025 [D, TSMC data]: largest customer 19% (analysts: Nvidia); Apple second at ~17%.",
+  "Apple's wafer bill still grew; the denominator exploded. The new No. 1 is also fabless."],
+ ["Announced June 22, 2020; first M1 Macs Nov 10, 2020; last Intel Mac replaced June 5, 2023 [D].",
+  "Context: Intel disclosed a further 7nm slip in July 2020, weeks after Apple's announcement."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  wafer:{x:300,y:310,k:1,wg:1,die:1},
+  fpLink:{o:0}, fpTop:{o:0}, fpCard:{o:0}, fpB:[0,0,0,0,0,0], fpSub:{o:0}, noteB0:{o:0}, dieLblA:{o:0},
+  cxGrid:{o:0}, tsmcArea:{o:0}, tsmcLine:{o:0}, aaplLine:{o:0}, tsmcEnd:{o:0}, aaplEnd:{o:0}, noteB1:{o:0}, planB1:{o:0},
+  pcGrid:{o:0}, lead:{o:0}, pcLine:{o:0}, peak:{o:0}, peakRing:{o:0}, hero2:{o:0}, badge:{o:0}, noteA8:{o:0}, noteUn:{o:0},
+  pcFall:{o:0}, fallDot:{o:0}, fallLbl:{o:0}, fallSub:{o:0}, nvDot:{o:0}, noteNv:{o:0}, tally5:{o:0},
+  qLane:{o:0}, qS:[0,0,0,0,0,0,0], qR:[0,0,0,0,0,0,0], qFirst:{o:0}, note3a:{o:0}, note3b:{o:0}, qBehind:{o:0},
+  fabBar:{o:0,gr:1}, fabWhisk:{o:0}, capBar:{o:0,gr:1}, planBar:{o:0,gr:1}, planWhisk:{o:0}, zeroTick:{o:0}, noteB4:{o:0},
+  macBase:{o:0}, macIntel:{o:0}, macIntelL:{o:0}, macAS:{o:0}, macASL:{o:0},
+  noteM1a:{o:0}, noteM1b:{o:0}, noteM1c:{o:0}, dieLblM:{o:0},
+  T:[0,0,0,0,0,0,0], C:[0,0,0,0,0,0,0]};}
+var Z=base();
+Z.wafer={x:300,y:310,k:1,wg:0,die:0};
+var PARK={x:920,y:88,k:.22};
+var S=[];
+S[0]=Object.assign(base(),{
+  wafer:{x:300,y:310,k:1,wg:0,die:{v:1,win:[.18,.26]}},
+  dieLblA:{o:{v:1,win:[.24,.32]}},
+  fpLink:{o:{v:1,win:[.26,.36]}},
+  fpCard:{o:{v:1,win:[.3,.4]}},
+  fpB:[{v:1,win:[.34,.42]},{v:1,win:[.38,.46]},{v:1,win:[.42,.5]},{v:1,win:[.46,.54]},{v:1,win:[.5,.58]},{v:1,win:[.54,.62]}],
+  fpTop:{o:{v:1,win:[.58,.66]}},
+  fpSub:{o:{v:1,win:[.6,.68]}},
+  noteB0:{o:{v:1,win:[.66,.75]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  wafer:{x:{v:PARK.x,win:[.06,.26]},y:{v:PARK.y,win:[.06,.26]},k:{v:PARK.k,win:[.06,.26]},wg:0,die:0},
+  cxGrid:{o:{v:1,win:[.14,.22]}},
+  aaplLine:{o:{v:1,win:[.18,.26]}},
+  tsmcArea:{o:{v:1,win:[.34,.5]}},
+  tsmcLine:{o:{v:1,win:[.3,.38]}},
+  tsmcEnd:{o:{v:1,win:[.56,.64]}},
+  aaplEnd:{o:{v:1,win:[.5,.58]}},
+  noteB1:{o:{v:1,win:[.62,.72]}},
+  planB1:{o:{v:1,win:[.66,.75]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  wafer:{x:{v:790,win:[.4,.6]},y:{v:130,win:[.4,.6]},k:{v:.48,win:[.4,.6]},wg:{v:1,win:[.45,.65]},die:0},
+  pcGrid:{o:{v:1,win:[.12,.2]}},
+  lead:{o:{v:1,win:[.18,.26]}},
+  noteA8:{o:{v:1,win:[.26,.36]}},
+  pcLine:{o:{v:1,win:[.22,.3]}},
+  noteUn:{o:{v:1,win:[.6,.7]}},
+  peak:{o:{v:1,win:[.56,.62]}},
+  peakRing:{o:{v:1,win:[.58,.66]}},
+  hero2:{o:{v:1,win:[.62,.72]}},
+  badge:{o:{v:1,win:[.5,.6]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  wafer:Object.assign({},PARK,{x:{v:PARK.x,win:[.06,.24]},y:{v:PARK.y,win:[.06,.24]},k:{v:PARK.k,win:[.06,.24]},wg:1,die:0}),
+  pcLine:{o:{v:.12,win:[0,.3]}},
+  qLane:{o:{v:1,win:[.14,.22]}},
+  qS:[{v:1,win:[.2,.28]},{v:1,win:[.24,.32]},{v:1,win:[.28,.36]},{v:1,win:[.32,.4]},{v:1,win:[.36,.44]},{v:1,win:[.4,.48]},{v:1,win:[.44,.52]}],
+  qR:[0,0,0,{v:1,win:[.5,.58]},{v:1,win:[.53,.61]},{v:1,win:[.56,.64]},{v:1,win:[.6,.68]}],
+  qFirst:{o:{v:1,win:[.52,.6]}},
+  note3a:{o:{v:1,win:[.64,.72]}},
+  note3b:{o:{v:1,win:[.66,.75]}},
+  qBehind:{o:{v:1,win:[.68,.75]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  wafer:Object.assign({},PARK,{wg:1,die:0}),
+  pcLine:{o:.12},
+  fabBar:{o:{v:1,win:[.2,.28]},gr:{v:1,win:[.2,.4],e:"back"}},
+  fabWhisk:{o:{v:1,win:[.4,.48]}},
+  capBar:{o:{v:1,win:[.3,.38]},gr:{v:1,win:[.3,.5],e:"back"}},
+  planBar:{o:{v:1,win:[.4,.48]},gr:{v:1,win:[.4,.6],e:"back"}},
+  planWhisk:{o:{v:1,win:[.58,.64]}},
+  zeroTick:{o:{v:1,win:[.62,.7]}},
+  noteB4:{o:{v:1,win:[.68,.75]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  wafer:Object.assign({},PARK,{wg:1,die:0}),
+  pcGrid:{o:{v:1,win:[.1,.2]}},
+  pcLine:{o:{v:1,win:[.1,.2]}},
+  peak:{o:{v:1,win:[.1,.2]}},
+  pcFall:{o:{v:1,win:[.3,.36]}},
+  fallDot:{o:{v:1,win:[.46,.54]}},
+  fallLbl:{o:{v:1,win:[.48,.56]}},
+  fallSub:{o:{v:1,win:[.5,.58]}},
+  nvDot:{o:{v:1,win:[.52,.6]}},
+  noteNv:{o:{v:1,win:[.58,.68]}},
+  tally5:{o:{v:1,win:[.66,.75]}},
+  T:onehot(5), C:onehot(5)});
+S[6]=Object.assign(base(),{
+  wafer:{x:{v:250,win:[.1,.3]},y:{v:210,win:[.1,.3]},k:{v:.62,win:[.1,.3]},wg:1,die:{v:1,win:[.28,.36]}},
+  dieLblM:{o:{v:1,win:[.32,.4]}},
+  macBase:{o:{v:1,win:[.16,.24]}},
+  macIntel:{o:{v:1,win:[.2,.28]}},
+  macIntelL:{o:{v:1,win:[.24,.32]}},
+  macAS:{o:{v:1,win:[.34,.42]}},
+  macASL:{o:{v:1,win:[.38,.46]}},
+  noteM1a:{o:{v:1,win:[.46,.56]}},
+  noteM1b:{o:{v:1,win:[.54,.62]}},
+  noteM1c:{o:{v:1,win:[.6,.68]}},
+  T:onehot(6), C:onehot(6)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+function mix(s1,s2,t){
+  function c(ak,ck){return cv(s1[ak][ck],s2[ak][ck],t);}
+  function u(ak,ck){return cu(s1[ak][ck],s2[ak][ck],t);}
+  var st={
+    wafer:{x:c("wafer","x"),y:c("wafer","y"),k:c("wafer","k"),wg:c("wafer","wg"),die:c("wafer","die")},
+    fpLink:{o:c("fpLink","o")}, fpTop:{o:c("fpTop","o")}, fpCard:{o:c("fpCard","o")},
+    fpB:[],
+    fpSub:{o:c("fpSub","o")}, noteB0:{o:c("noteB0","o"),u:u("noteB0","o")}, dieLblA:{o:c("dieLblA","o")},
+    cxGrid:{o:c("cxGrid","o")}, tsmcArea:{o:c("tsmcArea","o")}, tsmcLine:{o:c("tsmcLine","o")},
+    aaplLine:{o:c("aaplLine","o")}, tsmcEnd:{o:c("tsmcEnd","o"),u:u("tsmcEnd","o")},
+    aaplEnd:{o:c("aaplEnd","o"),u:u("aaplEnd","o")},
+    noteB1:{o:c("noteB1","o"),u:u("noteB1","o")}, planB1:{o:c("planB1","o"),u:u("planB1","o")},
+    pcGrid:{o:c("pcGrid","o")}, lead:{o:c("lead","o")}, pcLine:{o:c("pcLine","o")},
+    peak:{o:c("peak","o")}, peakRing:{o:c("peakRing","o")},
+    hero2:{o:c("hero2","o"),u:u("hero2","o")}, badge:{o:c("badge","o"),u:u("badge","o")},
+    noteA8:{o:c("noteA8","o"),u:u("noteA8","o")}, noteUn:{o:c("noteUn","o"),u:u("noteUn","o")},
+    pcFall:{o:c("pcFall","o")}, fallDot:{o:c("fallDot","o")}, fallLbl:{o:c("fallLbl","o")},
+    fallSub:{o:c("fallSub","o")}, nvDot:{o:c("nvDot","o")},
+    noteNv:{o:c("noteNv","o"),u:u("noteNv","o")}, tally5:{o:c("tally5","o"),u:u("tally5","o")},
+    qLane:{o:c("qLane","o")},
+    qS:[], qR:[],
+    qFirst:{o:c("qFirst","o"),u:u("qFirst","o")},
+    note3a:{o:c("note3a","o"),u:u("note3a","o")}, note3b:{o:c("note3b","o"),u:u("note3b","o")},
+    qBehind:{o:c("qBehind","o"),u:u("qBehind","o")},
+    fabBar:{o:c("fabBar","o"),gr:c("fabBar","gr")}, fabWhisk:{o:c("fabWhisk","o")},
+    capBar:{o:c("capBar","o"),gr:c("capBar","gr")},
+    planBar:{o:c("planBar","o"),gr:c("planBar","gr")}, planWhisk:{o:c("planWhisk","o")},
+    zeroTick:{o:c("zeroTick","o"),u:u("zeroTick","o")}, noteB4:{o:c("noteB4","o"),u:u("noteB4","o")},
+    macBase:{o:c("macBase","o")}, macIntel:{o:c("macIntel","o")}, macIntelL:{o:c("macIntelL","o")},
+    macAS:{o:c("macAS","o")}, macASL:{o:c("macASL","o")},
+    noteM1a:{o:c("noteM1a","o"),u:u("noteM1a","o")}, noteM1b:{o:c("noteM1b","o"),u:u("noteM1b","o")},
+    noteM1c:{o:c("noteM1c","o"),u:u("noteM1c","o")}, dieLblM:{o:c("dieLblM","o")},
+    T:[],C:[]};
+  var i;
+  for(i=0;i<6;i++)st.fpB.push(cv(s1.fpB[i],s2.fpB[i],t));
+  for(i=0;i<7;i++){st.qS.push(cv(s1.qS[i],s2.qS[i],t));st.qR.push(cv(s1.qR[i],s2.qR[i],t));}
+  for(i=0;i<7;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function clamp01b(x){return x<0?0:x;}
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  A.wafer.setAttribute("transform","translate("+st.wafer.x.toFixed(1)+" "+st.wafer.y.toFixed(1)+") scale("+st.wafer.k.toFixed(3)+")");
+  var wg=clamp(st.wafer.wg);
+  A.wedge.setAttribute("d",sector(Math.max(.5,93.6*wg)));
+  setO(A.wedge,wg>0.02?1:0);
+  setO(A.die,st.wafer.die);
+  setO(A.dieLblA,st.dieLblA.o);
+  setO(A.fpLink,st.fpLink.o);
+  dashTo(A.fpLink,300,beat===0?eo(w(.26,.4)):1);
+  setO(A.fpTop,st.fpTop.o);
+  setO(A.fpCard,st.fpCard.o);
+  A.fpBlocks.forEach(function(g,i){setO(g,st.fpB[i]);});
+  setO(A.fpSub,st.fpSub.o);
+  setO(A.noteB0,st.noteB0.o); rise(A.noteB0,st.noteB0.u);
+  setO(A.cxGrid,st.cxGrid.o);
+  setO(A.tsmcArea,st.tsmcArea.o);
+  setO(A.tsmcLine,st.tsmcLine.o);
+  dashTo(A.tsmcLine,TSLEN,beat===1?eo(w(.3,.56)):1);
+  setO(A.aaplLine,st.aaplLine.o);
+  dashTo(A.aaplLine,APLEN,beat===1?eo(w(.18,.4)):1);
+  setO(A.tsmcEnd,st.tsmcEnd.o); rise(A.tsmcEnd,st.tsmcEnd.u);
+  setO(A.aaplEnd,st.aaplEnd.o); rise(A.aaplEnd,st.aaplEnd.u);
+  setO(A.noteB1,st.noteB1.o); rise(A.noteB1,st.noteB1.u);
+  setO(A.planB1,st.planB1.o); rise(A.planB1,st.planB1.u);
+  setO(A.pcGrid,st.pcGrid.o);
+  setO(A.lead,st.lead.o);
+  setO(A.pcLine,st.pcLine.o);
+  dashTo(A.pcLine,PCLEN,beat===2?eo(w(.24,.55)):1);
+  setO(A.peak,st.peak.o);
+  setO(A.peakRing,st.peakRing.o);
+  dashTo(A.peakRing,PKLEN,beat===2?w(.58,.68):1);
+  setO(A.hero2,st.hero2.o); rise(A.hero2,st.hero2.u);
+  setO(A.badge,st.badge.o); rise(A.badge,st.badge.u);
+  setO(A.noteA8,st.noteA8.o); rise(A.noteA8,st.noteA8.u);
+  setO(A.noteUn,st.noteUn.o); rise(A.noteUn,st.noteUn.u);
+  setO(A.pcFall,st.pcFall.o);
+  dashTo(A.pcFall,PFLEN,beat===5?eo(w(.3,.46)):1);
+  setO(A.fallDot,st.fallDot.o);
+  setO(A.fallLbl,st.fallLbl.o);
+  setO(A.fallSub,st.fallSub.o);
+  setO(A.nvDot,st.nvDot.o);
+  setO(A.noteNv,st.noteNv.o); rise(A.noteNv,st.noteNv.u);
+  setO(A.tally5,st.tally5.o); rise(A.tally5,st.tally5.u);
+  setO(A.qLane,st.qLane.o);
+  A.qSt.forEach(function(g,i){setO(g,st.qS[i]);});
+  A.qRings.forEach(function(r,i){if(r)setO(r,st.qR[i]);});
+  setO(A.qFirst,st.qFirst.o); rise(A.qFirst,st.qFirst.u);
+  setO(A.note3a,st.note3a.o); rise(A.note3a,st.note3a.u);
+  setO(A.note3b,st.note3b.o); rise(A.note3b,st.note3b.u);
+  setO(A.qBehind,st.qBehind.o);
+  [["fabBar",A.fabBar],["capBar",A.capBar],["planBar",A.planBar]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.style.transform="scaleY("+clamp01b(s.gr).toFixed(3)+")";});
+  setO(A.fabWhisk,st.fabWhisk.o);
+  setO(A.planWhisk,st.planWhisk.o);
+  setO(A.zeroTick,st.zeroTick.o); rise(A.zeroTick,st.zeroTick.u);
+  setO(A.noteB4,st.noteB4.o); rise(A.noteB4,st.noteB4.u);
+  setO(A.macBase,st.macBase.o);
+  setO(A.macIntel,st.macIntel.o);
+  setO(A.macIntelL,st.macIntelL.o);
+  setO(A.macAS,st.macAS.o);
+  setO(A.macASL,st.macASL.o);
+  setO(A.noteM1a,st.noteM1a.o); rise(A.noteM1a,st.noteM1a.u);
+  setO(A.noteM1b,st.noteM1b.o); rise(A.noteM1b,st.noteM1b.u);
+  setO(A.noteM1c,st.noteM1c.o); rise(A.noteM1c,st.noteM1c.u);
+  setO(A.dieLblM,st.dieLblM.o);
+  for(var i=0;i<7;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:7};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("silicon")<0){x.push("silicon");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>

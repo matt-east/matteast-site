@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The $4 Hole · MFi / Lightning · The Interface Playbook</title>
+<meta name="description" content="Apple owned the hole in the bottom of the device and taxed everything that fit it: 10% of retail, then a reported $4 a connector. No competitor broke the toll. The EU legislated it away.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The Epitaph Play</p>
+  <h1>The $4 hole.</h1>
+  <div class="sub">For eleven years, nearly every plug that fit an iPhone paid Apple <strong>a reported $4 at the factory door</strong>. No competitor ever broke the toll. <strong>It took an act of the European Union</strong>—the only play in this book a regulator has fully killed.</div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="MFi and Lightning: the connector toll, the disclosure void, and the EU kill"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">Own the hole in the <span class="it">bottom</span>.</h2><p class="body">In 2003 Apple replaced the iPod's industry-standard FireWire port with a connector of its own: thirty pins, proprietary, licensed. From that day, every cable, dock, alarm clock, and car kit that wanted to reach the device had to pass through a hole only Apple controlled. The bottom of the iPod, then of the iPhone, became leased real estate.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Toll</p><h2 class="h-big">Ten percent of retail. Then <span class="it">$4 a plug</span>.</h2><p class="body">When the Made for iPod license launched in 2005, the press called the reported terms a tax: 10% of an accessory's retail price, or $10 per device, whichever was greater. The rates were never official; Apple keeps them under NDA to this day. Reporting tracked them down to between 1.5% and 8% of retail, and the Lightning era settled at about <span class="b">$4 per connector</span>—$8 if power passed through. Inside every licensed plug, an Apple authentication chip did the collecting: no chip, no handshake.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Scale Nobody Knows</p><h2 class="h-big">An economy with <span class="it">no ledger</span>.</h2><p class="body">The base under that toll was enormous. By 2006 there were roughly 2,000 iPod accessories, and US sales were running from $850 million toward more than $1 billion a year; NPD figured a dollar spent on add-ons for every three spent on iPods. What Apple collected on all of it is a number that does not exist in public. The royalty schedule is under NDA. The licensee list is under NDA. In twenty years, Apple has never reported a dollar of MFi revenue—<span class="b">the one published price is the $99 a year it costs to join</span>.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Kill</p><h2 class="h-big">The universal port returns, <span class="it">by law</span>.</h2><p class="body">For twenty years the bottom of the device stayed proprietary while the rest of the industry converged on USB. Then the law moved. In October 2022 the European Parliament approved the common charger 602-13; Directive 2022/2380 entered into force that December, and phones sold in the EU must charge by USB-C from December 28, 2024. Apple didn't wait out the deadline—<span class="b">the iPhone 15 shipped with USB-C in September 2023</span>, and the $4 hole closed for good.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">Eleven years. Zero rivals. <span class="it">One statute</span>.</h2><p class="body">Phil Schiller introduced Lightning as "a modern connector for the next decade." It got eleven years, and in all of them not one rival connector, cable maker, or standards body ever broke the toll—of the fourteen plays in this book, this is <span class="b">the only one a regulator has fully killed</span>. That is the epitaph, and it is also the proof: the position never lost to competition, because it never had any. The books it kept stay sealed.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The play that died still proves the playbook.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="mfi">
+    <a id="exitnext" href="play-apple-pay.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">Apple Pay <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: Made for iPod program launch, Macworld Expo, Jan 11, 2005 (iLounge). Initial royalty as reported, never confirmed by Apple: ~10% of an accessory's retail price, described in the press as a "tax" (CNET, Mar 16, 2005; Engadget, Mar 18, 2005) [R]. Fee history per AppleInsider (Feb 7, 2014) [R/E]: originally rumored ~$10 per device or 10% of retail, whichever was greater; later reduced to 1.5-8% of retail; settling at a flat ~$4 per Lightning connector, with pass-through connectors paying two $4 fees; Apple pared fees again in Jan 2014 by an undisclosed amount. Apple's MFi pages, 2026 [D]: royalty terms "available under NDA"; the authorized-manufacturer list requires an NDA to view; membership $99/yr; USB-C charging accessories are excluded from the program. Apple has never disclosed MFi program revenue; totals here are charted as undisclosed, not estimated (per the project's sources policy). iPod accessory market [R]: ~2,000 products; US sales $850M (2005) trending past $1B (2006); roughly $1 of accessories per $3 of iPod (NPD, via Feb 2006 reports). Enforcement: authentication chips in Lightning (2012 teardowns); <em>Apple v. Mobile Star LLC</em> (N.D. Cal., filed Oct 17, 2016): of 100+ Apple-branded chargers and cables bought on Amazon over nine months, ~90% were counterfeit [R, court filing]. Timeline [D]: 30-pin dock connector debuts with the third-generation iPod, April 2003; Lightning with iPhone 5, Sept 12, 2012 (Schiller: "a modern connector for the next decade"); European Parliament common-charger vote 602-13, Oct 4, 2022; Directive (EU) 2022/2380 in force Dec 27, 2022 (EUR-Lex); USB-C required on phones sold in the EU from Dec 28, 2024 (laptops, Apr 28, 2026); iPhone 15 ships with USB-C, Sept 22, 2023 (Apple). <a href="competition-is-for-losers-sources.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The $4 Hole: engine v2 (play-search lineage). Actors created once; beats are target states
+   with per-actor timing windows. Exits complete by .35, entrances run .22-.75; all windows
+   end by .75 so the last quarter of every beat is a poster frame. Binary rest at p=1. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);}
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+function lerpC(a,b,t){t=clamp(t);
+  function h(x){return [parseInt(x.substr(1,2),16),parseInt(x.substr(3,2),16),parseInt(x.substr(5,2),16)];}
+  var A=h(a),B=h(b);
+  function q(i){var v=Math.round(lerp(A[i],B[i],t));v=v<0?0:v>255?255:v;var s=v.toString(16);return s.length<2?"0"+s:s;}
+  return "#"+q(0)+q(1)+q(2);}
+function lerpPath(d1,d2,t){
+  var a=d1.match(/-?[\d.]+/g).map(Number), b=d2.match(/-?[\d.]+/g).map(Number);
+  if(a.length!==b.length)return t<.5?d1:d2;
+  var toks=d1.match(/[A-Z]|-?[\d.]+/g), out="", ai=0;
+  toks.forEach(function(tok){ out+=/[A-Z]/.test(tok)?(" "+tok+" "):(lerp(a[ai],b[ai],t).toFixed(2)+" "),ai+=/[A-Z]/.test(tok)?0:1; });
+  return out;}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ the era timeline (persistent spine): x = 150 + (year-2003)*33.1818 ============ */
+/* 2003=150 · Sept 2012=472 · Oct 4 2022=805.6 · Sept 22 2023=837.7 · Dec 28 2024=879.6 · 2025=880 */
+A.tl=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.tl);
+[[150,"2003"],[315.9,"2008"],[472,"2012"],[647.7,"2018"],[837.7,"2023"]].forEach(function(d){
+  E("line",{x1:d[0],y1:470,x2:d[0],y2:476,stroke:LINE,"stroke-width":1},A.tl);
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.tl);
+});
+A.band30=E("rect",{x:150,y:457,width:0,height:13,rx:3,fill:"#c9c9cf",opacity:0},cam);
+A.lbl30=T(311,450,"30-pin",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},cam);
+A.bandLT=E("rect",{x:472,y:457,width:0,height:13,rx:3,fill:BLUE,opacity:0},cam);
+A.lblLT=T(655,450,"Lightning",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},cam);
+A.bandUC=E("rect",{x:838,y:457,width:42,height:13,rx:3,fill:"none",stroke:INK,"stroke-width":1.5,opacity:0},cam);
+A.lblUC=T(859,450,"USB-C",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},cam);
+A.capLT=E("line",{x1:838,y1:453,x2:838,y2:473,stroke:RED,"stroke-width":2.5,opacity:0},cam);
+
+/* ============ BEAT 0: the device bottom, the slot, the queue ============ */
+A.dev=E("g",{opacity:0},cam);
+E("path",{d:"M 290 120 L 290 174 A 36 36 0 0 0 326 210 L 674 210 A 36 36 0 0 0 710 174 L 710 120",fill:"#fff",stroke:INK,"stroke-width":2.5},A.dev);
+E("rect",{x:435,y:204.5,width:130,height:11,rx:5.5,fill:INK},A.dev);
+A.queue=E("g",{opacity:1},cam);
+A.q0=E("g",{opacity:0},A.queue);
+E("rect",{x:308,y:330,width:24,height:14,rx:3,fill:"none",stroke:GRAPH,"stroke-width":2},A.q0);
+E("line",{x1:320,y1:344,x2:320,y2:368,stroke:GRAPH,"stroke-width":2},A.q0);
+T(320,388,"every cable",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.q0);
+A.q1=E("g",{opacity:0},A.queue);
+E("path",{d:"M 478 360 L 522 360 L 514 344 L 486 344 Z",fill:"none",stroke:GRAPH,"stroke-width":2,"stroke-linejoin":"round"},A.q1);
+E("line",{x1:492,y1:352,x2:508,y2:352,stroke:GRAPH,"stroke-width":2},A.q1);
+T(500,388,"every dock",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.q1);
+A.q2=E("g",{opacity:0},A.queue);
+E("rect",{x:664,y:330,width:32,height:32,rx:4,fill:"none",stroke:GRAPH,"stroke-width":2},A.q2);
+E("circle",{cx:680,cy:346,r:8,fill:"none",stroke:GRAPH,"stroke-width":2},A.q2);
+T(680,388,"every speaker",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.q2);
+A.noteB0=note(565,213,700,262,["the only licensed way in:","Apple's port, Apple's protocol"]);
+
+/* ============ the connector (persistent, morphing): 30-pin -> Lightning -> USB-C ============ */
+var P30="M -113 -18 L 113 -18 A 7 7 0 0 1 120 -11 L 120 11 A 7 7 0 0 1 113 18 L -113 18 A 7 7 0 0 1 -120 11 L -120 -11 A 7 7 0 0 1 -113 -18 Z";
+var PLT="M -43 -13 L 43 -13 A 11 11 0 0 1 54 -2 L 54 2 A 11 11 0 0 1 43 13 L -43 13 A 11 11 0 0 1 -54 2 L -54 -2 A 11 11 0 0 1 -43 -13 Z";
+var PUC="M -46.5 -18 L 46.5 -18 A 17.5 17.5 0 0 1 64 -0.5 L 64 0.5 A 17.5 17.5 0 0 1 46.5 18 L -46.5 18 A 17.5 17.5 0 0 1 -64 0.5 L -64 -0.5 A 17.5 17.5 0 0 1 -46.5 -18 Z";
+A.conn=E("g",{opacity:0},cam);
+A.connOut=E("path",{d:P30,fill:"#fff",stroke:INK,"stroke-width":2.5},A.conn);
+A.pins30=E("g",{opacity:1},A.conn);
+for(var pi=0;pi<13;pi++){E("rect",{x:-96+pi*16-2,y:-7,width:4,height:14,rx:1,fill:"#c9c9cf"},A.pins30);}
+A.padsLT=E("g",{opacity:0},A.conn);
+for(var qi=0;qi<6;qi++){E("rect",{x:-36.75+qi*10.5-3.5,y:-3,width:7,height:6,rx:1,fill:"#a1a1a6"},A.padsLT);}
+A.tongueUC=E("rect",{x:-48,y:-7,width:96,height:14,rx:7,fill:"none",stroke:MUT,"stroke-width":1.5,opacity:0},A.conn);
+A.chip=E("rect",{x:26,y:-7,width:14,height:14,rx:3,fill:BLUE,opacity:0},A.conn);
+A.cl=E("g",{},cam);
+A.cl30=T(0,0,"30-pin dock connector (2003)",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle",opacity:0},HALO),A.cl);
+A.clLT=T(0,0,"Lightning (2012)",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle",opacity:0},HALO),A.cl);
+A.clUC=T(0,0,"USB-C (2023)",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle",opacity:0},HALO),A.cl);
+
+/* ============ BEAT 1: the toll regimes + the chip ============ */
+function card(cx,top,w,h,val,valC,subs){
+  var g=E("g",{opacity:0},cam);
+  E("rect",{x:cx-w/2,y:top,width:w,height:h,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},g);
+  T(cx,top+30,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  subs.forEach(function(s,i){T(cx,top+50+i*17,s,{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},g);});
+  return g;
+}
+A.rg0=card(345,116,176,80,"10% of retail",INK,["or $10 per device,","whichever greater. 2005 [R]"]);
+A.rg1=card(516,150,156,64,"1.5%-8% of retail",INK,["reported later range [R]"]);
+A.rg2=card(700,108,196,92,"$4 per connector",BLUE,["pass-through: two fees, $8","Lightning era, 2012 on [R/E]"]);
+A.rb0=E("g",{opacity:0},cam);
+A.rb0p=E("path",{d:"M 218 436 L 218 444 M 218 440 L 472 440 M 472 436 L 472 444",fill:"none",stroke:MUT,"stroke-width":1.5},A.rb0);
+E("line",{x1:345,y1:200,x2:345,y2:434,stroke:MUT,"stroke-width":1,"stroke-dasharray":"2 5"},A.rb0);
+A.rb2=E("g",{opacity:0},cam);
+A.rb2p=E("path",{d:"M 472 436 L 472 444 M 472 440 L 880 440 M 880 436 L 880 444",fill:"none",stroke:MUT,"stroke-width":1.5},A.rb2);
+E("line",{x1:700,y1:204,x2:700,y2:434,stroke:MUT,"stroke-width":1,"stroke-dasharray":"2 5"},A.rb2);
+A.chipNote=note(549,325,250,264,["authentication chip:","no chip, no handshake"]);
+A.fakeNote=note(440,352,320,372,["the chip was cloned anyway:","Apple's 2016 Amazon sweep","found ~90% fake [R, court]"]);
+
+/* ============ BEAT 2: the known scale vs the disclosure void ============ */
+A.known=E("g",{opacity:0},cam);
+T(150,150,"what the world could count [R]",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.known);
+A.kr=[["~2,000","iPod accessories on the market, 2006",185],
+      ["$850M, then $1B+","US accessory sales, 2005 to 2006 (NPD)",232],
+      ["$1 per $3","accessory spend per iPod spend (NPD)",279]].map(function(d){
+  var g=E("g",{opacity:0},A.known);
+  E("circle",{cx:156,cy:d[2]-5,r:2.6,fill:BLUE},g);
+  T(170,d[2],d[0],Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),g);
+  T(170,d[2]+18,d[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;});
+A.ndaH=T(150,340,"what Apple publishes [D]",{fill:INK,"font-size":FS(13),"font-weight":"600",opacity:0},cam);
+function nda(y,lbl,bw){
+  var g=E("g",{opacity:0},cam);
+  T(150,y,lbl,{fill:INK,"font-size":FS(13),"font-weight":"600"},g);
+  var r=E("rect",{x:300,y:y-11,width:bw,height:13,rx:3,fill:INK},g);
+  return {g:g,bar:r,w:bw};
+}
+A.nda0=nda(368,"royalty schedule",100);
+A.nda1=nda(394,"licensee list",120);
+A.nda2=nda(420,"20-year program total",110);
+A.ndaSub=T(150,436,"no numbers, ever",{fill:MUT,"font-size":FS(12),opacity:0},cam);
+A.voidF=E("g",{opacity:0},cam);
+E("rect",{x:460,y:120,width:420,height:310,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.voidF);
+T(478,150,"MFi program revenue, as reported by Apple",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.voidF);
+E("line",{x1:490,y1:180,x2:490,y2:388,stroke:LINE,"stroke-width":1.5},A.voidF);
+E("line",{x1:490,y1:388,x2:856,y2:388,stroke:LINE,"stroke-width":1.5},A.voidF);
+[232,284,336].forEach(function(y){E("line",{x1:484,y1:y,x2:490,y2:y,stroke:LINE,"stroke-width":1.5},A.voidF);});
+[[490,"2005"],[673,"2015"],[856,"2025"]].forEach(function(d){
+  T(d[0],408,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.voidF);
+});
+A.voidLbl=E("g",{opacity:0},cam);
+T(673,270,"no figure, in twenty years",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO),A.voidLbl);
+T(673,290,"Apple has never reported MFi revenue",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.voidLbl);
+A.note99=T(673,368,"the one published price: $99 a year to join [D]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},cam);
+
+/* ============ BEAT 3: the statute stamps + the morph to USB-C ============ */
+A.quoteEU=E("g",{opacity:0},cam);
+E("rect",{x:220,y:138,width:560,height:64,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.quoteEU);
+T(500,166,"'are equipped with the USB Type-C receptacle'",{fill:INK,"font-size":FS(15),"font-weight":"600","font-style":"italic","text-anchor":"middle"},A.quoteEU);
+T(500,188,"Directive (EU) 2022/2380, Annex Ia [D]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.quoteEU);
+A.stampEU=E("g",{opacity:0},cam);
+A.stampEUl=E("line",{x1:805.6,y1:470,x2:805.6,y2:362,stroke:RED,"stroke-width":2},A.stampEU);
+T(798,336,"Directive (EU) 2022/2380",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"end"},HALO),A.stampEU);
+T(798,354,"EP vote 602-13; in force Dec 27, 2022",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.stampEU);
+A.stampIP=E("g",{opacity:0},cam);
+A.stampIPl=E("line",{x1:837.7,y1:470,x2:837.7,y2:262,stroke:BLUE,"stroke-width":2},A.stampIP);
+T(830,236,"iPhone 15 ships USB-C",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"end"},HALO),A.stampIP);
+T(830,254,"Sept 22, 2023 [D]",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.stampIP);
+A.stampDL=E("g",{opacity:0},cam);
+A.stampDLl=E("line",{x1:879.6,y1:470,x2:879.6,y2:402,stroke:RED,"stroke-width":2,"stroke-dasharray":"4 4"},A.stampDL);
+T(880,512,"the EU deadline",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.stampDL);
+T(880,528,"Dec 28, 2024",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle",style:TNUM},HALO),A.stampDL);
+
+/* ============ BEAT 4: the epitaph ============ */
+A.brkt=E("g",{opacity:0},cam);
+A.brktP=E("path",{d:"M 472 446 L 472 438 L 838 438 L 838 446",fill:"none",stroke:INK,"stroke-width":1.5},A.brkt);
+A.brkLbl=E("g",{opacity:0},cam);
+T(520,430,"Sept 2012 to Sept 2023",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},HALO),A.brkLbl);
+A.epi=E("g",{opacity:0},cam);
+T(500,96,"Schiller, Sept 12, 2012: 'a modern connector for the next decade.'",{fill:INK,"font-size":FS(13),"font-weight":"600","font-style":"italic","text-anchor":"middle"},A.epi);
+T(500,114,"it got eleven years; the twelfth belonged to the EU",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.epi);
+A.tell0=E("g",{opacity:0},cam);
+E("line",{x1:290,y1:350,x2:710,y2:350,stroke:LINE,"stroke-width":1.5},A.tell0);
+E("line",{x1:390,y1:342,x2:390,y2:350,stroke:INK,"stroke-width":2.5},A.tell0);
+E("circle",{cx:390,cy:346,r:13,fill:"none",stroke:RED,"stroke-width":2},A.tell0);
+T(390,308,"0",Object.assign({fill:INK,"font-size":FS(40),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.tell0);
+T(390,372,"broken by rivals",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.tell0);
+T(390,388,"in eleven years",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.tell0);
+A.tell1=E("g",{opacity:0},cam);
+A.tell1b=E("rect",{x:565,y:230,width:110,height:120,rx:3,fill:RED},A.tell1);
+A.tell1b.style.transformOrigin="620px 350px"; A.tell1b.style.transform="scaleY(0)";
+T(620,216,"1",Object.assign({fill:RED,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.tell1);
+T(620,372,"ended by statute",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.tell1);
+T(620,388,"Directive 2022/2380",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.tell1);
+
+/* ============ furniture ============ */
+var TITLES=["Apple's port, 2003: proprietary by design","The toll: reported MFi royalty rates",
+  "MFi, as disclosed by Apple, 2005-2025","The kill: Directive (EU) 2022/2380","Lightning, 2012-2023"];
+var CAPS=[
+ ["The 30-pin dock connector debuts with the third-generation iPod, April 2003 [D].",
+  "From 2003 on, wired accessories reach the device only through Apple's licensed port."],
+ ["Rates as reported, never confirmed by Apple: 10% of retail or $10, whichever greater (CNET,",
+  "Engadget, 2005); later 1.5-8%; ~$4 per Lightning connector, $8 pass-through (AppleInsider, 2014)."],
+ ["Market scale [R]: ~2,000 iPod accessories; US sales $850M (2005) toward $1B+ (NPD, 2006).",
+  "Apple's MFi site, 2026 [D]: royalty terms under NDA; licensee list under NDA; $99/yr to join."],
+ ["Directive (EU) 2022/2380 [D]: EP vote 602-13 (Oct 4, 2022); in force Dec 27, 2022;",
+  "USB-C required on EU phones from Dec 28, 2024. iPhone 15 ships USB-C Sept 22, 2023."],
+ ["Lightning ran Sept 12, 2012 to Sept 22, 2023. No rival connector displaced it; a statute did.",
+  "MFi continues (CarPlay, HomeKit, Find My), but the connector toll is gone. Totals: never disclosed."]];
+A.titles=TITLES.map(function(s,i){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0,"font-style":i===4?"italic":"normal"},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  tl:{o:0},
+  dev:{o:0}, q0:{o:0}, q1:{o:0}, q2:{o:0}, noteB0:{o:0},
+  conn:{o:1,x:500,y:300,k:1,f:0,pin:1,pad:0,tng:0}, chip:{o:0},
+  cl:{x:500,y:278,o30:0,oLT:0,oUC:0},
+  band30:{o:0,w:1}, lbl30:{o:0}, bandLT:{o:0,w:408}, lblLT:{o:0},
+  bandUC:{o:0}, lblUC:{o:0}, capLT:{o:0},
+  rg0:{o:0,u:1}, rg1:{o:0,u:1}, rg2:{o:0,u:1}, rb0:{o:0}, rb2:{o:0},
+  chipNote:{o:0,u:1}, fakeNote:{o:0,u:1},
+  known:{o:0,r0:0,r1:0,r2:0}, ndaH:{o:0},
+  nda0:{o:0,g:0}, nda1:{o:0,g:0}, nda2:{o:0,g:0}, ndaSub:{o:0},
+  voidF:{o:0}, voidLbl:{o:0,u:1}, note99:{o:0,u:1},
+  quoteEU:{o:0,u:1}, stampEU:{o:0}, stampIP:{o:0}, stampDL:{o:0},
+  brkt:{o:0}, brkLbl:{o:0,u:1}, epi:{o:0,u:1}, tell0:{o:0,u:1}, tell1:{o:0,gr:0},
+  T:[0,0,0,0,0], C:[0,0,0,0,0]};}
+var Z=base();
+Z.conn={o:0,x:500,y:300,k:1,f:0,pin:1,pad:0,tng:0};
+Z.band30={o:0,w:0};
+Z.bandLT={o:0,w:0};
+var S=[];
+S[0]=Object.assign(base(),{
+  tl:{o:{v:1,win:[.1,.2]}},
+  dev:{o:{v:1,win:[.12,.24]}},
+  conn:{o:{v:1,win:[.22,.32]},x:500,y:{v:232,win:[.34,.52]},k:1,f:0,pin:1,pad:0,tng:0},
+  cl:{x:500,y:278,o30:{v:1,win:[.3,.4]},oLT:0,oUC:0},
+  band30:{o:{v:1,win:[.42,.5]},w:{v:1,win:[.42,.6]}},
+  lbl30:{o:{v:1,win:[.58,.66]}},
+  q0:{o:{v:1,win:[.5,.58]}}, q1:{o:{v:1,win:[.54,.62]}}, q2:{o:{v:1,win:[.58,.66]}},
+  noteB0:{o:{v:1,win:[.64,.74]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  tl:{o:1}, band30:{o:1,w:1}, lbl30:{o:1},
+  conn:{o:1,x:500,y:{v:335,win:[.22,.38]},k:{v:1.5,win:[.22,.38]},f:{v:1,win:[.54,.68]},pin:{v:0,win:[.52,.6]},pad:{v:1,win:[.66,.72]},tng:0},
+  chip:{o:{v:1,win:[.68,.74]}},
+  cl:{x:500,y:{v:384,win:[.22,.38]},o30:{v:0,win:[.5,.58]},oLT:{v:1,win:[.68,.74]},oUC:0},
+  rg0:{o:{v:1,win:[.22,.3]},u:{v:1,win:[.22,.3]}},
+  rb0:{o:{v:1,win:[.26,.32]}},
+  rg1:{o:{v:1,win:[.32,.4]},u:{v:1,win:[.32,.4]}},
+  rg2:{o:{v:1,win:[.4,.48]},u:{v:1,win:[.4,.48]}},
+  rb2:{o:{v:1,win:[.44,.5]}},
+  bandLT:{o:{v:1,win:[.46,.54]},w:{v:408,win:[.46,.6]}},
+  lblLT:{o:{v:1,win:[.56,.64]}},
+  chipNote:{o:{v:1,win:[.7,.75]},u:{v:1,win:[.7,.75]}},
+  fakeNote:{o:{v:1,win:[.72,.75]},u:{v:1,win:[.72,.75]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  tl:{o:1}, band30:{o:1,w:1}, lbl30:{o:1}, bandLT:{o:1,w:408}, lblLT:{o:1},
+  conn:{o:1,x:{v:845,win:[.06,.24]},y:{v:82,win:[.06,.24]},k:{v:.65,win:[.06,.24]},f:1,pin:0,pad:1,tng:0},
+  cl:{x:845,y:384,o30:0,oLT:0,oUC:0},
+  known:{o:{v:1,win:[.22,.28]},r0:{v:1,win:[.26,.34]},r1:{v:1,win:[.32,.4]},r2:{v:1,win:[.38,.46]}},
+  voidF:{o:{v:1,win:[.3,.42]}},
+  voidLbl:{o:{v:1,win:[.5,.58]},u:{v:1,win:[.5,.58]}},
+  ndaH:{o:{v:1,win:[.44,.5]}},
+  nda0:{o:{v:1,win:[.5,.56]},g:{v:1,win:[.5,.6]}},
+  nda1:{o:{v:1,win:[.56,.62]},g:{v:1,win:[.56,.66]}},
+  nda2:{o:{v:1,win:[.62,.68]},g:{v:1,win:[.62,.72]}},
+  ndaSub:{o:{v:1,win:[.68,.74]}},
+  note99:{o:{v:1,win:[.7,.75]},u:{v:1,win:[.7,.75]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  tl:{o:1}, band30:{o:1,w:1}, lbl30:{o:1}, lblLT:{o:1},
+  conn:{o:1,x:{v:500,win:[.06,.26]},y:{v:300,win:[.06,.26]},k:{v:1.6,win:[.06,.26]},f:{v:2,win:[.64,.75]},pin:0,pad:{v:0,win:[.6,.68]},tng:{v:1,win:[.72,.75]}},
+  cl:{x:500,y:{v:352,win:[.06,.26]},o30:0,oLT:0,oUC:{v:1,win:[.72,.75]}},
+  quoteEU:{o:{v:1,win:[.28,.36]},u:{v:1,win:[.28,.36]}},
+  stampEU:{o:{v:1,win:[.36,.44]}},
+  stampIP:{o:{v:1,win:[.44,.52]}},
+  bandLT:{o:1,w:{v:366,win:[.5,.58]}},
+  capLT:{o:{v:1,win:[.56,.62]}},
+  stampDL:{o:{v:1,win:[.58,.64]}},
+  bandUC:{o:{v:1,win:[.66,.72]}},
+  lblUC:{o:{v:1,win:[.72,.75]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  tl:{o:1}, band30:{o:1,w:1}, lbl30:{o:1}, bandLT:{o:1,w:366}, lblLT:{o:1},
+  bandUC:{o:1}, lblUC:{o:1}, capLT:{o:1},
+  conn:{o:1,x:500,y:{v:150,win:[.06,.24]},k:{v:1,win:[.06,.24]},f:2,pin:0,pad:0,tng:1},
+  cl:{x:500,y:{v:192,win:[.06,.24]},o30:0,oLT:0,oUC:1},
+  brkt:{o:{v:1,win:[.22,.3]}},
+  brkLbl:{o:{v:1,win:[.34,.42]},u:{v:1,win:[.34,.42]}},
+  epi:{o:{v:1,win:[.4,.5]},u:{v:1,win:[.4,.5]}},
+  tell0:{o:{v:1,win:[.52,.62]},u:{v:1,win:[.52,.62]}},
+  tell1:{o:{v:1,win:[.6,.68]},gr:{v:1,win:[.6,.72],e:"back"}},
+  T:onehot(4), C:onehot(4)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+function mix(s1,s2,t){
+  function c(ak,ck){return cv(s1[ak][ck],s2[ak][ck],t);}
+  function u(ak,ck){return cu(s1[ak][ck],s2[ak][ck],t);}
+  var st={
+    tl:{o:c("tl","o")},
+    dev:{o:c("dev","o")},
+    q0:{o:c("q0","o")}, q1:{o:c("q1","o")}, q2:{o:c("q2","o")},
+    noteB0:{o:c("noteB0","o"),u:u("noteB0","o")},
+    conn:{o:c("conn","o"),x:c("conn","x"),y:c("conn","y"),k:c("conn","k"),f:c("conn","f"),pin:c("conn","pin"),pad:c("conn","pad"),tng:c("conn","tng")},
+    chip:{o:c("chip","o")},
+    cl:{x:c("cl","x"),y:c("cl","y"),o30:c("cl","o30"),oLT:c("cl","oLT"),oUC:c("cl","oUC")},
+    band30:{o:c("band30","o"),w:c("band30","w")}, lbl30:{o:c("lbl30","o")},
+    bandLT:{o:c("bandLT","o"),w:c("bandLT","w")}, lblLT:{o:c("lblLT","o")},
+    bandUC:{o:c("bandUC","o")}, lblUC:{o:c("lblUC","o")}, capLT:{o:c("capLT","o")},
+    rg0:{o:c("rg0","o"),u:u("rg0","o")},
+    rg1:{o:c("rg1","o"),u:u("rg1","o")},
+    rg2:{o:c("rg2","o"),u:u("rg2","o")},
+    rb0:{o:c("rb0","o")}, rb2:{o:c("rb2","o")},
+    chipNote:{o:c("chipNote","o"),u:u("chipNote","o")},
+    fakeNote:{o:c("fakeNote","o"),u:u("fakeNote","o")},
+    known:{o:c("known","o"),r0:c("known","r0"),r1:c("known","r1"),r2:c("known","r2")},
+    ndaH:{o:c("ndaH","o")},
+    nda0:{o:c("nda0","o"),g:c("nda0","g")},
+    nda1:{o:c("nda1","o"),g:c("nda1","g")},
+    nda2:{o:c("nda2","o"),g:c("nda2","g")},
+    ndaSub:{o:c("ndaSub","o")},
+    voidF:{o:c("voidF","o")},
+    voidLbl:{o:c("voidLbl","o"),u:u("voidLbl","o")},
+    note99:{o:c("note99","o"),u:u("note99","o")},
+    quoteEU:{o:c("quoteEU","o"),u:u("quoteEU","o")},
+    stampEU:{o:c("stampEU","o")}, stampIP:{o:c("stampIP","o")}, stampDL:{o:c("stampDL","o")},
+    brkt:{o:c("brkt","o")},
+    brkLbl:{o:c("brkLbl","o"),u:u("brkLbl","o")},
+    epi:{o:c("epi","o"),u:u("epi","o")},
+    tell0:{o:c("tell0","o"),u:u("tell0","o")},
+    tell1:{o:c("tell1","o"),gr:c("tell1","gr")},
+    T:[],C:[]};
+  for(var i=0;i<5;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function clampLo(x){return x<0?0:x;}
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  setO(A.tl,st.tl.o);
+  setO(A.dev,st.dev.o);
+  setO(A.q0,st.q0.o); setO(A.q1,st.q1.o); setO(A.q2,st.q2.o);
+  setO(A.noteB0,st.noteB0.o); rise(A.noteB0,st.noteB0.u);
+  A.conn.setAttribute("transform","translate("+st.conn.x.toFixed(1)+" "+st.conn.y.toFixed(1)+") scale("+st.conn.k.toFixed(3)+")");
+  setO(A.conn,st.conn.o);
+  var f=st.conn.f;
+  A.connOut.setAttribute("d",f<=1?lerpPath(P30,PLT,f):lerpPath(PLT,PUC,f-1));
+  setO(A.pins30,st.conn.pin); setO(A.padsLT,st.conn.pad); setO(A.tongueUC,st.conn.tng);
+  setO(A.chip,st.chip.o);
+  A.cl.setAttribute("transform","translate("+(st.cl.x-500).toFixed(1)+" "+(st.cl.y-278).toFixed(1)+")");
+  A.cl30.setAttribute("x",500);A.cl30.setAttribute("y",278);
+  A.clLT.setAttribute("x",500);A.clLT.setAttribute("y",278);
+  A.clUC.setAttribute("x",500);A.clUC.setAttribute("y",278);
+  setO(A.cl30,st.cl.o30); setO(A.clLT,st.cl.oLT); setO(A.clUC,st.cl.oUC);
+  setO(A.band30,st.band30.o); A.band30.setAttribute("width",(322*clamp(st.band30.w)).toFixed(1));
+  setO(A.lbl30,st.lbl30.o);
+  setO(A.bandLT,st.bandLT.o); A.bandLT.setAttribute("width",clampLo(st.bandLT.w).toFixed(1));
+  setO(A.lblLT,st.lblLT.o);
+  setO(A.bandUC,st.bandUC.o); setO(A.lblUC,st.lblUC.o); setO(A.capLT,st.capLT.o);
+  setO(A.rg0,st.rg0.o); rise(A.rg0,st.rg0.u);
+  setO(A.rg1,st.rg1.o); rise(A.rg1,st.rg1.u);
+  setO(A.rg2,st.rg2.o); rise(A.rg2,st.rg2.u);
+  setO(A.rb0,st.rb0.o); dashTo(A.rb0p,560,beat===1?eo(w(.26,.4)):1);
+  setO(A.rb2,st.rb2.o); dashTo(A.rb2p,800,beat===1?eo(w(.44,.58)):1);
+  setO(A.chipNote,st.chipNote.o); rise(A.chipNote,st.chipNote.u);
+  setO(A.fakeNote,st.fakeNote.o); rise(A.fakeNote,st.fakeNote.u);
+  setO(A.known,st.known.o);
+  setO(A.kr[0],st.known.r0); setO(A.kr[1],st.known.r1); setO(A.kr[2],st.known.r2);
+  setO(A.ndaH,st.ndaH.o);
+  [["nda0",A.nda0],["nda1",A.nda1],["nda2",A.nda2]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.setAttribute("width",(d[1].w*clamp(s.g)).toFixed(1));});
+  setO(A.ndaSub,st.ndaSub.o);
+  setO(A.voidF,st.voidF.o);
+  setO(A.voidLbl,st.voidLbl.o); rise(A.voidLbl,st.voidLbl.u);
+  setO(A.note99,st.note99.o); rise(A.note99,st.note99.u);
+  setO(A.quoteEU,st.quoteEU.o); rise(A.quoteEU,st.quoteEU.u);
+  setO(A.stampEU,st.stampEU.o); dashTo(A.stampEUl,108,beat===3?eo(w(.36,.48)):1);
+  setO(A.stampIP,st.stampIP.o); dashTo(A.stampIPl,208,beat===3?eo(w(.44,.56)):1);
+  setO(A.stampDL,st.stampDL.o);
+  setO(A.brkt,st.brkt.o); dashTo(A.brktP,382,beat===4?eo(w(.22,.36)):1);
+  setO(A.brkLbl,st.brkLbl.o); rise(A.brkLbl,st.brkLbl.u);
+  setO(A.epi,st.epi.o); rise(A.epi,st.epi.u);
+  setO(A.tell0,st.tell0.o); rise(A.tell0,st.tell0.u);
+  setO(A.tell1,st.tell1.o); A.tell1b.style.transform="scaleY("+clampLo(st.tell1.gr).toFixed(3)+")";
+  for(var i=0;i<5;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:5};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("mfi")<0){x.push("mfi");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+<!-- mfi build 4 -->
+</body>
+</html>

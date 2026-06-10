@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Eviction · Maps · The Interface Playbook</title>
+<meta name="description" content="Apple shipped a map so bad the CEO apologized in public. It beat the best map ever built anyway, because it was the default.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The 2012 Play</p>
+  <h1>The worse product that won.</h1>
+  <div class="sub">On September 19, 2012, Apple evicted the best map ever built from the iPhone and shipped a famously broken one in its place. The CEO apologized within nine days. <strong>It won anyway, because it was the default.</strong></div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="Apple Maps: the eviction, the apology, the capture, and the disclosure gap"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">One <span class="it">update</span>.</h2><p class="body">For five years the iPhone's built-in Maps app ran on Google's data: Google's map was simply where every finger landed. iOS 6 ended that with a software update. On <span class="b">September 19, 2012</span>, Apple Maps became the pre-installed map on every iPhone, and Google's own app wasn't even in the App Store for another three months. Nothing about the product had to be better—the distribution was the decision.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Faceplant</p><h2 class="h-big">"We fell short."</h2><p class="body">The new map was a famous disaster: melted bridges, misplaced towns, a museum in a river. On <span class="b">September 28, 2012</span>, Tim Cook published an apology and pointed customers to Bing, MapQuest, Waze, even Google. Read the strategic fine print, though: by the day of the apology, more than 100 million iOS devices already ran the new Maps. The product had failed. The position hadn't moved an inch.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Capture</p><h2 class="h-big">Minus 22 <span class="it">million</span>.</h2><p class="body">comScore counted the damage. In September 2012, <span class="b">81.1 million</span> Americans on iPhone and Android used Google Maps, about 78% of all of them. A year later: 58.7 million, even as US smartphones grew by 33 million. On the iPhone the eviction was near-total: 35 million people used Apple Maps that September, while Google's app kept roughly 6 million. The worse product outnumbered the better one almost six to one.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Comparison</p><h2 class="h-big">Seven years vs. <span class="it">one keynote</span>.</h2><p class="body">Google had been building the world's best map since 2005: Street View cars over <span class="b">99% of US public roads</span>, a billion users by June 2012. Apple took the iPhone's map surface with a single iOS update, announced in one keynote. Building the infrastructure took the better part of a decade. Owning the interface took a default setting. Thiel's line was never about products—it's about positions.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Ledger</p><h2 class="h-big">The grind after the apology.</h2><p class="body">Apple didn't fix the map so much as out-wait everyone with it. Justin O'Beirne photographed both maps monthly through 2016 and 2017 and found Apple's essentially unchanged while Google's transformed. Then Apple rebuilt its map from scratch, vans and all, finishing the US in January 2020. Today <span class="b">a quarter of US drivers</span> say they use Apple Maps [R, 2024 survey], and roughly half of US iPhone users open it monthly [E]. The default held the door open for a decade while the product caught up.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">The silence is the score.</h2><p class="body">Google brags in billions: a billion users by 2012, more than two billion by 2025. Apple has <span class="b">never once said how many people use Apple Maps</span>. One ratio in 2015 ("used 3.5x more than the next most used mapping app" on iOS), one "hundreds of millions" in 2020, then nothing. It doesn't have to tell you, because it doesn't have to win you. Google pays roughly $20 billion a year to remain a default on Apple's shelf; Apple's map rides its own shelf free—and per Bloomberg, it's now preparing to sell search ads on that surface.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The play that proved the playbook.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="maps">
+    <a id="exitnext" href="play-mfi.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">MFi / Lightning <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: iOS 6 shipped Sept 19, 2012, replacing the Google-backed built-in map with Apple Maps [D]; Google Maps returned to iOS as a downloadable app Dec 13, 2012 [D]. Tim Cook open letter, Sept 28, 2012 [D]: "we fell short on this commitment"; "we are extremely sorry for the frustration this has caused our customers"; alternatives named (Bing, MapQuest, Waze, Google); "more than 100 million iOS devices" already on the new Maps. comScore US panel via The Guardian (Nov 11, 2013) [R]: Google Maps used by 81.1 million of 103.6M US iPhone+Android owners (Sept 2012) falling to 58.7 million of 136.7M (Sept 2013); Google Maps on iPhone ~35M to ~6.3M; Apple Maps 35 million of 60.1M US iPhone users (TIME / comScore, Nov 2013). Google Maps history: launched Feb 2005; Street View from 2007; ~99% of US public roads driven by 2014 (Wired) [R]; 1B users (June 2012) [D]; back above 1B by 2015 [R]; 2B+ monthly users (Jan 2025, CNBC) [R]. Iteration & rebuild: Justin O'Beirne, "A Year of Google & Apple Maps" (2017) [R]; Apple's ground-up rebuild rolled out from Sept 2018, US-complete Jan 30, 2020 (Apple Newsroom) [D]; Apple's survey vans on the road from 2015 [R]. Current use: MarketWatch Guides survey, 2024, 1,000 US drivers, multi-select [R]: Google Maps 70%, Waze 27%, Apple Maps 25%; ~54-58% of US adult iPhone users use Apple Maps monthly [E, O'Beirne 2021]. Apple's only usage statements: WWDC (June 2015): Apple Maps "used 3.5x more than the next most used mapping app" on iOS [R]; >5B map-related requests/week (Dec 2015) [R]; "hundreds of millions" of users (Jan 2020) [D]; no user count disclosed since. Maps ads: Bloomberg/Gurman reporting Aug 2022 (engineering underway), Oct 2025 (moving ahead), Mar 2026 (search ads as early as this summer) [R]. Search default toll ~$20B/yr [E, Bernstein]. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Eviction: engine v2 (ported from play-search). Actors created once; beats are target
+   states with per-actor timing windows. Exits complete by .35; entrances run .22-.75; all
+   windows end by .75 so the last quarter of every beat is a poster frame. Binary rest at p=1. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015",BG="#f5f5f7";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);} /* mobile type bump ~1.4x at engine init */
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+function lerpC(a,b,t){t=clamp(t);
+  function h(x){return [parseInt(x.substr(1,2),16),parseInt(x.substr(3,2),16),parseInt(x.substr(5,2),16)];}
+  var A=h(a),B=h(b);
+  function q(i){var v=Math.round(lerp(A[i],B[i],t));v=v<0?0:v>255?255:v;var s=v.toString(16);return s.length<2?"0"+s:s;}
+  return "#"+q(0)+q(1)+q(2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:BG,"stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+/* growth bar: rect scales, labels stay put */
+function mkbar(attrs,ox,oy,p){
+  var r=E("rect",attrs,p);
+  r.style.transformOrigin=ox+"px "+oy+"px"; r.style.transform="scaleX(0)";
+  return r;
+}
+
+/* ============ BEAT 0: the default seat (card swap + tenure timeline) ============ */
+A.cardM=E("g",{opacity:0},cam);
+E("rect",{x:-210,y:-36,width:420,height:72,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.cardM);
+T(-190,6,"iPhone - the built-in Maps app",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.cardM);
+A.glG=T(190,6,"Google",{fill:GRAPH,"font-size":FS(15),"font-weight":"700","text-anchor":"end"},A.cardM);
+A.apG=T(190,6,"Apple Maps",{fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"end",opacity:0},A.cardM);
+
+A.tl0=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:430,x2:880,y2:430,stroke:LINE,"stroke-width":1.5},A.tl0);
+[[150,"2007"],[369.6,"2012"],[880,"today"]].forEach(function(d){
+  E("line",{x1:d[0],y1:430,x2:d[0],y2:437,stroke:LINE,"stroke-width":1.5},A.tl0);
+  T(d[0],456,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.tl0);
+});
+A.segG={g:E("g",{opacity:0},cam)};
+A.segG.bar=mkbar({x:150,y:410,width:219.6,height:20,rx:3,fill:GRAPH},150,420,A.segG.g);
+A.vG=E("g",{opacity:0},cam);
+T(260,396,"Five years as the default",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO),A.vG);
+A.segB={g:E("g",{opacity:0},cam)};
+A.segB.bar=mkbar({x:369.6,y:410,width:510.4,height:20,rx:3,fill:BLUE},369.6,420,A.segB.g);
+A.vA=E("g",{opacity:0},cam);
+T(625,396,"Thirteen years and counting",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO),A.vA);
+A.evict=E("g",{opacity:0},cam);
+E("line",{x1:369.6,y1:398,x2:369.6,y2:446,stroke:INK,"stroke-width":2},A.evict);
+A.noteEv=note(369.6,404,470,300,["Sept 19, 2012: iOS 6 ships -","the built-in map swapped"]);
+
+/* ============ BEAT 1: the apology as the crafted object ============ */
+A.letter=E("g",{opacity:0},cam);
+E("rect",{x:270,y:150,width:460,height:290,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.letter);
+A.lhead=E("g",{opacity:0},cam);
+T(300,192,"To our customers,",{fill:INK,"font-size":FS(15),"font-weight":"700"},A.lhead);
+T(700,192,"Sept 28, 2012",{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.lhead);
+var LQ=["\"At Apple, we strive to make world-class","products ... With the launch of our new","Maps last week, we fell short on this","commitment.\""];
+A.lq0=T(300,228,LQ[0],{fill:INK,"font-size":FS(15),"font-weight":"600",opacity:0},cam);
+A.lq1=T(300,253,LQ[1],{fill:INK,"font-size":FS(15),"font-weight":"600",opacity:0},cam);
+A.lq2=T(300,278,LQ[2],{fill:INK,"font-size":FS(15),"font-weight":"600",opacity:0},cam);
+A.lq3=T(300,303,LQ[3],{fill:INK,"font-size":FS(15),"font-weight":"600",opacity:0},cam);
+A.lsorry=E("g",{opacity:0},cam);
+T(300,336,"\"We are extremely sorry for the frustration",{fill:MUT,"font-size":FS(13),"font-weight":"600"},A.lsorry);
+T(300,354,"this has caused our customers.\"",{fill:MUT,"font-size":FS(13),"font-weight":"600"},A.lsorry);
+A.lrivals=E("g",{opacity:0},cam);
+E("line",{x1:300,y1:380,x2:700,y2:380,stroke:LINE,"stroke-width":1},A.lrivals);
+T(300,406,"He pointed customers to rivals, by name:",{fill:MUT,"font-size":FS(12)},A.lrivals);
+T(300,426,"Bing - MapQuest - Waze - Google",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.lrivals);
+A.note100=note(730,300,790,256,["nine days in, 100M+ iOS","devices already ran the","new Maps [D, the letter]"]);
+
+/* ============ BEAT 2: the comScore collapse, one scale (millions of US users) ============ */
+A.grid2=E("g",{opacity:0},cam);
+[[395,"25M"],[320,"50M"],[245,"75M"],[170,"100M"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid2);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid2);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid2);
+T(150,492,"Sept 2012",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.grid2);
+T(880,492,"Sept 2013",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.grid2);
+A.gAll=E("path",{d:"M 150 226.7 L 880 293.9",fill:"none",stroke:INK,"stroke-width":3.5,"stroke-linecap":"round",opacity:0},cam);
+var GA_LEN=740;
+A.gAllS=E("g",{opacity:0},cam);
+E("circle",{cx:150,cy:226.7,r:4,fill:INK},A.gAllS);
+T(160,212,"81.1M",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.gAllS);
+A.gAllN=T(340,228,"Google Maps - all US smartphones",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.gAllE=E("g",{opacity:0},cam);
+E("circle",{cx:880,cy:293.9,r:5,fill:INK},A.gAllE);
+T(870,282,"58.7M",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.gAllE);
+A.hero22=E("g",{opacity:0},cam);
+T(700,212,"-22M",Object.assign({fill:RED,"font-size":FS(40),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.hero22);
+T(700,236,"Google Maps users lost in 12 months [R]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.hero22);
+A.gIph=E("path",{d:"M 150 365 L 880 451.1",fill:"none",stroke:GRAPH,"stroke-width":3,"stroke-linecap":"round",opacity:0},cam);
+var GI_LEN=740;
+A.gIphS=E("g",{opacity:0},cam);
+E("circle",{cx:150,cy:365,r:4,fill:GRAPH},A.gIphS);
+T(160,352,"35M",Object.assign({fill:GRAPH,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.gIphS);
+A.gIphN=T(340,372,"Google Maps app - iPhone",Object.assign({fill:GRAPH,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.gIphE=E("g",{opacity:0},cam);
+E("circle",{cx:880,cy:451.1,r:5,fill:GRAPH},A.gIphE);
+T(870,444,"6.3M",Object.assign({fill:GRAPH,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.gIphE);
+A.ring63=E("g",{opacity:0},cam);
+E("circle",{cx:880,cy:451.1,r:11,fill:"none",stroke:BG,"stroke-width":4},A.ring63);
+A.ring63b=E("circle",{cx:880,cy:451.1,r:11,fill:"none",stroke:RED,"stroke-width":2},A.ring63);
+var RG_LEN=72;
+A.aIph=E("path",{d:"M 150 470 L 880 365",fill:"none",stroke:BLUE,"stroke-width":3.5,"stroke-linecap":"round",opacity:0},cam);
+var AI_LEN=740;
+A.aIphN=T(340,410,"Apple Maps",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.aIphE=E("g",{opacity:0},cam);
+E("circle",{cx:880,cy:365,r:5,fill:BLUE},A.aIphE);
+T(870,356,"35M",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.aIphE);
+
+/* ============ BEAT 3: time spent building (length = time) ============ */
+A.ax3=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.ax3);
+[[223,"2005"],[442,"2008"],[661,"2011"],[880,"2014"]].forEach(function(d){
+  E("line",{x1:d[0],y1:470,x2:d[0],y2:477,stroke:LINE,"stroke-width":1.5},A.ax3);
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.ax3);
+});
+A.gbar={g:E("g",{opacity:0},cam)};
+A.gbar.bar=mkbar({x:229,y:252,width:557.3,height:26,rx:3,fill:GRAPH},229,265,A.gbar.g);
+A.gbarL=E("g",{opacity:0},cam);
+T(229,234,"Google: seven years building the map",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700"},HALO),A.gbarL);
+A.noteSV=note(372,278,300,350,["2007: Street View","cars start driving"]);
+A.note1B=note(766.9,252,640,180,["June 2012: one billion users [D]"]);
+A.atick=E("g",{opacity:0},cam);
+E("line",{x1:786.3,y1:346,x2:786.3,y2:398,stroke:BLUE,"stroke-width":3},A.atick);
+A.atickL=T(786.3,330,"Apple: one keynote",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.noteKey=note(786.3,398,700,438,["Sept 19, 2012: the default flips;","35M US users in 12 months [R]"]);
+
+/* ============ BEAT 4: who navigates America (2024 survey) + the persistence strip ============ */
+A.grid4=E("g",{opacity:0},cam);
+[[150,"0"],[300,"25"],[450,"50"],[600,"75"],[750,"100%"]].forEach(function(d){
+  E("line",{x1:d[0],y1:175,x2:d[0],y2:345,stroke:LINE,"stroke-width":d[0]===150?1.5:1},A.grid4);
+  T(d[0],368,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.grid4);
+});
+function hbar(yC,w,c,val,valC,name){
+  var o={g:E("g",{opacity:0},cam)};
+  T(150,yC-26,name,{fill:INK,"font-size":FS(13),"font-weight":"600"},o.g);
+  o.bar=mkbar({x:150,y:yC-17,width:w,height:34,rx:3,fill:c},150,yC,o.g);
+  T(150+w+12,yC+5,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),o.g);
+  return o;
+}
+A.sb0=hbar(200,420,GRAPH,"70%",INK,"Google Maps");
+A.sb1=hbar(260,162,GRAPH,"27%",INK,"Waze");
+A.sb2=hbar(320,150,BLUE,"25%",BLUE,"Apple Maps");
+A.quoteJB=E("g",{opacity:0},cam);
+T(640,132,"\"See the difference? I don't either.\"",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.quoteJB);
+T(640,150,"- Justin O'Beirne, after 13 months of",{fill:MUT,"font-size":FS(12)},A.quoteJB);
+T(640,168,"screenshots of Apple's map (2017)",{fill:MUT,"font-size":FS(12)},A.quoteJB);
+A.strip=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.strip);
+[150,306,463,567,776].forEach(function(x){
+  E("line",{x1:x,y1:464,x2:x,y2:476,stroke:MUT,"stroke-width":1.5},A.strip);
+});
+T(150,494,"2012",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.strip);
+T(306,494,"2015: Apple's vans start driving",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.strip);
+T(463,514,"2018: ground-up rebuild begins",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.strip);
+T(567,494,"Jan 2020: new map across the US [D]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.strip);
+T(776,514,"2024: a quarter of US drivers [R]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.strip);
+
+/* ============ BEAT 5: the disclosure gap, 2012-2026 ============ */
+A.lanes=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:250,x2:880,y2:250,stroke:LINE,"stroke-width":1},A.lanes);
+E("line",{x1:150,y1:380,x2:880,y2:380,stroke:LINE,"stroke-width":1},A.lanes);
+T(140,254,"Google",{fill:GRAPH,"font-size":FS(13),"font-weight":"600","text-anchor":"end"},A.lanes);
+T(140,384,"Apple",{fill:BLUE,"font-size":FS(13),"font-weight":"600","text-anchor":"end"},A.lanes);
+function gdot(x,val,date){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:x,cy:250,r:5,fill:GRAPH},g);
+  T(x,228,val,Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  T(x,276,date,{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},g);
+  return g;
+}
+A.gd0=gdot(173,"1B users [D]","June 2012");
+A.gd1=gdot(301,"back above 1B [R]","2015");
+A.gd2=gdot(806,"2B+ monthly [D]","Jan 2025");
+A.m15=E("circle",{cx:323,cy:380,r:6,fill:BG,stroke:GRAPH,"stroke-width":2,opacity:0},cam);
+A.n15=note(323,380,250,312,["WWDC 2015: 'used 3.5x more than","the next most used app' - a ratio,","never a number [R]"]);
+A.m20=E("circle",{cx:557,cy:380,r:6,fill:BG,stroke:GRAPH,"stroke-width":2,opacity:0},cam);
+A.n20=note(557,380,470,438,["Jan 2020: 'hundreds of millions' [D] -","the only sizing Apple has ever given"]);
+A.sil=E("path",{d:"M 572 380 L 852 380",fill:"none",stroke:RED,"stroke-width":2.5,"stroke-dasharray":"3 6",opacity:0},cam);
+A.silL=T(705,360,"then six years of silence",Object.assign({fill:RED,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO,{opacity:0}),cam);
+A.ads=E("circle",{cx:865,cy:380,r:5,fill:BLUE,opacity:0},cam);
+A.nAds=note(865,380,800,310,["Mar 2026: set to sell search","ads in Maps [R, Bloomberg]"]);
+A.inv1=T(515,512,"Google pays ~$20B a year to remain a default on Apple's shelf [E]",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle",opacity:0},cam);
+A.inv2=T(515,540,"Apple's map pays $0 - it owns the shelf",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},HALO,{opacity:0}),cam);
+
+/* ============ furniture: scene titles (top-left) + captions (bottom-left) ============ */
+var TITLES=["The default seat, 2007-2026","The apology, nine days in","US map users after the eviction, 2012-2013",
+  "Time spent building, 2004-2014","Navigation apps US drivers use, 2024","Who tells you their numbers, 2012-2026"];
+var CAPS=[
+ ["The iPhone shipped with Google's map built in from 2007; iOS 6 (Sept 19, 2012) replaced it",
+  "with Apple Maps as the preinstalled default. Google's own app returned only in Dec 2012."],
+ ["Tim Cook, open letter, Sept 28, 2012 [D]; quotes verbatim. The same letter recommended",
+  "Bing, MapQuest, Waze and Google - and noted 100M+ devices already on the new Maps."],
+ ["comScore via The Guardian, Nov 2013 [R]: US monthly users. All-smartphone line: 81.1M of",
+  "103.6M (Sept 2012) to 58.7M of 136.7M (Sept 2013). iPhone split, Sept 2013: 35M vs 6.3M."],
+ ["Bar length = time. Google Maps: launched Feb 2005; Street View 2007; 1B users June 2012 [D];",
+  "99% of US public roads driven by 2014 [R]. Apple: the default flipped in one iOS update."],
+ ["Survey: MarketWatch Guides, 2024, 1,000 US drivers [R]; multi-select, shares sum past 100.",
+  "O'Beirne (2021) [E]: roughly 54-58% of US adult iPhone users use Apple Maps monthly."],
+ ["Google: 1B (June 2012) [D], above 1B again by 2015 [R], 2B+ monthly (Jan 2025) [R]. Apple:",
+  "one ratio (2015), one 'hundreds of millions' (Jan 2020) [D], no user count ever. Ads: [R]."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  cardM:{o:0,x:500,y:166,k:1,sw:0},
+  tl0:{o:0}, segG:{o:0,gr:0}, vG:{o:0}, segB:{o:0,gr:0}, vA:{o:0}, evict:{o:0}, noteEv:{o:0},
+  letter:{o:0}, lhead:{o:0}, lq0:{o:0}, lq1:{o:0}, lq2:{o:0}, lq3:{o:0}, lsorry:{o:0}, lrivals:{o:0}, note100:{o:0},
+  grid2:{o:0}, gAll:{o:0}, gAllS:{o:0}, gAllN:{o:0}, gAllE:{o:0}, hero22:{o:0},
+  gIph:{o:0}, gIphS:{o:0}, gIphN:{o:0}, gIphE:{o:0}, ring63:{o:0},
+  aIph:{o:0}, aIphN:{o:0}, aIphE:{o:0},
+  ax3:{o:0}, gbar:{o:0,gr:0}, gbarL:{o:0}, noteSV:{o:0}, note1B:{o:0}, atick:{o:0}, atickL:{o:0}, noteKey:{o:0},
+  grid4:{o:0}, sb0:{o:0,gr:0}, sb1:{o:0,gr:0}, sb2:{o:0,gr:0}, quoteJB:{o:0}, strip:{o:0},
+  lanes:{o:0}, gd0:{o:0}, gd1:{o:0}, gd2:{o:0}, m15:{o:0}, n15:{o:0}, m20:{o:0}, n20:{o:0},
+  sil:{o:0}, silL:{o:0}, ads:{o:0}, nAds:{o:0}, inv1:{o:0}, inv2:{o:0},
+  T:[0,0,0,0,0,0], C:[0,0,0,0,0,0]};}
+var Z=base();
+var PARK={o:1,x:805,y:96,k:.55,sw:1};
+var S=[];
+S[0]=Object.assign(base(),{
+  cardM:{o:{v:1,win:[.1,.2]},x:500,y:166,k:1,sw:{v:1,win:[.46,.58]}},
+  tl0:{o:{v:1,win:[.12,.2]}},
+  segG:{o:{v:1,win:[.15,.22]},gr:{v:1,win:[.18,.4]}},
+  vG:{o:{v:1,win:[.34,.42]}},
+  evict:{o:{v:1,win:[.44,.52]}},
+  noteEv:{o:{v:1,win:[.5,.62]}},
+  segB:{o:{v:1,win:[.52,.58]},gr:{v:1,win:[.52,.7]}},
+  vA:{o:{v:1,win:[.64,.72]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  cardM:{o:1,x:{v:805,win:[.18,.4]},y:{v:96,win:[.18,.4]},k:{v:.55,win:[.18,.4]},sw:1},
+  letter:{o:{v:1,win:[.2,.3]}},
+  lhead:{o:{v:1,win:[.26,.34]}},
+  lq0:{o:{v:1,win:[.3,.38]}}, lq1:{o:{v:1,win:[.34,.42]}},
+  lq2:{o:{v:1,win:[.38,.46]}}, lq3:{o:{v:1,win:[.42,.5]}},
+  lsorry:{o:{v:1,win:[.5,.58]}},
+  lrivals:{o:{v:1,win:[.56,.66]}},
+  note100:{o:{v:1,win:[.62,.74]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  cardM:PARK,
+  grid2:{o:{v:1,win:[.12,.2]}},
+  gAll:{o:{v:1,win:[.14,.2]}},
+  gAllS:{o:{v:1,win:[.18,.26]}},
+  gAllN:{o:{v:1,win:[.22,.3]}},
+  gAllE:{o:{v:1,win:[.4,.48]}},
+  hero22:{o:{v:1,win:[.46,.56]}},
+  gIph:{o:{v:1,win:[.46,.52]}},
+  gIphS:{o:{v:1,win:[.5,.58]}},
+  gIphN:{o:{v:1,win:[.52,.6]}},
+  gIphE:{o:{v:1,win:[.62,.68]}},
+  ring63:{o:{v:1,win:[.64,.7]}},
+  aIph:{o:{v:1,win:[.5,.56]}},
+  aIphN:{o:{v:1,win:[.56,.64]}},
+  aIphE:{o:{v:1,win:[.66,.72]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  cardM:PARK,
+  ax3:{o:{v:1,win:[.12,.2]}},
+  gbar:{o:{v:1,win:[.14,.2]},gr:{v:1,win:[.16,.46]}},
+  gbarL:{o:{v:1,win:[.2,.28]}},
+  noteSV:{o:{v:1,win:[.34,.44]}},
+  note1B:{o:{v:1,win:[.44,.54]}},
+  atick:{o:{v:1,win:[.54,.6]}},
+  atickL:{o:{v:1,win:[.58,.66]}},
+  noteKey:{o:{v:1,win:[.64,.74]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  cardM:PARK,
+  grid4:{o:{v:1,win:[.12,.2]}},
+  sb0:{o:{v:1,win:[.16,.22]},gr:{v:1,win:[.18,.38],e:"back"}},
+  sb1:{o:{v:1,win:[.24,.3]},gr:{v:1,win:[.26,.46],e:"back"}},
+  sb2:{o:{v:1,win:[.32,.38]},gr:{v:1,win:[.34,.54],e:"back"}},
+  quoteJB:{o:{v:1,win:[.5,.6]}},
+  strip:{o:{v:1,win:[.6,.72]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  cardM:PARK,
+  lanes:{o:{v:1,win:[.12,.2]}},
+  gd0:{o:{v:1,win:[.18,.26]}}, gd1:{o:{v:1,win:[.24,.32]}}, gd2:{o:{v:1,win:[.3,.38]}},
+  m15:{o:{v:1,win:[.34,.4]}}, n15:{o:{v:1,win:[.36,.46]}},
+  m20:{o:{v:1,win:[.44,.5]}}, n20:{o:{v:1,win:[.46,.56]}},
+  sil:{o:{v:1,win:[.54,.62]}}, silL:{o:{v:1,win:[.58,.66]}},
+  ads:{o:{v:1,win:[.62,.68]}}, nAds:{o:{v:1,win:[.64,.72]}},
+  inv1:{o:{v:1,win:[.66,.74]}}, inv2:{o:{v:1,win:[.7,.75]}},
+  T:onehot(5), C:onehot(5)});
+
+/* ============ interpolation (generic over the actor table) ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){ /* entrance progress for the 12px rise */
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){ /* furniture: out by .18, in .22-.34 */
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+function mix(s1,s2,t){
+  var st={T:[],C:[]};
+  for(var k in s2){
+    if(k==="T"||k==="C")continue;
+    var o1=s1[k],o2=s2[k],r={};
+    for(var ch in o2){if(ch==="e"||ch==="win")continue;r[ch]=cv(o1[ch],o2[ch],t);}
+    r.u=cu(o1.o,o2.o,t);
+    st[k]=r;
+  }
+  for(var i=0;i<6;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function nneg(x){return (x<0?0:x).toFixed(3);} /* easeOutBack may exceed 1; keep overshoot, floor at 0 */
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  A.cardM.setAttribute("transform","translate("+st.cardM.x.toFixed(1)+" "+st.cardM.y.toFixed(1)+") scale("+st.cardM.k.toFixed(3)+")");
+  setO(A.cardM,st.cardM.o);
+  A.glG.setAttribute("opacity",(1-clamp(st.cardM.sw)).toFixed(3));
+  A.apG.setAttribute("opacity",clamp(st.cardM.sw).toFixed(3));
+  setO(A.tl0,st.tl0.o);
+  setO(A.segG.g,st.segG.o); A.segG.bar.style.transform="scaleX("+nneg(st.segG.gr)+")";
+  setO(A.vG,st.vG.o); rise(A.vG,st.vG.u);
+  setO(A.segB.g,st.segB.o); A.segB.bar.style.transform="scaleX("+nneg(st.segB.gr)+")";
+  setO(A.vA,st.vA.o); rise(A.vA,st.vA.u);
+  setO(A.evict,st.evict.o);
+  setO(A.noteEv,st.noteEv.o); rise(A.noteEv,st.noteEv.u);
+  setO(A.letter,st.letter.o); rise(A.letter,st.letter.u);
+  setO(A.lhead,st.lhead.o);
+  setO(A.lq0,st.lq0.o); setO(A.lq1,st.lq1.o); setO(A.lq2,st.lq2.o); setO(A.lq3,st.lq3.o);
+  setO(A.lsorry,st.lsorry.o); rise(A.lsorry,st.lsorry.u);
+  setO(A.lrivals,st.lrivals.o); rise(A.lrivals,st.lrivals.u);
+  setO(A.note100,st.note100.o); rise(A.note100,st.note100.u);
+  setO(A.grid2,st.grid2.o);
+  setO(A.gAll,st.gAll.o); dashTo(A.gAll,GA_LEN,beat===2?eo(w(.16,.4)):1);
+  setO(A.gAllS,st.gAllS.o); setO(A.gAllN,st.gAllN.o);
+  setO(A.gAllE,st.gAllE.o);
+  setO(A.hero22,st.hero22.o); rise(A.hero22,st.hero22.u);
+  setO(A.gIph,st.gIph.o); dashTo(A.gIph,GI_LEN,beat===2?eo(w(.48,.62)):1);
+  setO(A.gIphS,st.gIphS.o); setO(A.gIphN,st.gIphN.o); setO(A.gIphE,st.gIphE.o);
+  setO(A.ring63,st.ring63.o); dashTo(A.ring63b,RG_LEN,beat===2?w(.64,.72):1);
+  setO(A.aIph,st.aIph.o); dashTo(A.aIph,AI_LEN,beat===2?eo(w(.52,.66)):1);
+  setO(A.aIphN,st.aIphN.o); setO(A.aIphE,st.aIphE.o);
+  setO(A.ax3,st.ax3.o);
+  setO(A.gbar.g,st.gbar.o); A.gbar.bar.style.transform="scaleX("+nneg(st.gbar.gr)+")";
+  setO(A.gbarL,st.gbarL.o); rise(A.gbarL,st.gbarL.u);
+  setO(A.noteSV,st.noteSV.o); rise(A.noteSV,st.noteSV.u);
+  setO(A.note1B,st.note1B.o); rise(A.note1B,st.note1B.u);
+  setO(A.atick,st.atick.o);
+  setO(A.atickL,st.atickL.o);
+  setO(A.noteKey,st.noteKey.o); rise(A.noteKey,st.noteKey.u);
+  setO(A.grid4,st.grid4.o);
+  [["sb0",A.sb0],["sb1",A.sb1],["sb2",A.sb2]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.style.transform="scaleX("+nneg(s.gr)+")";});
+  setO(A.quoteJB,st.quoteJB.o); rise(A.quoteJB,st.quoteJB.u);
+  setO(A.strip,st.strip.o);
+  setO(A.lanes,st.lanes.o);
+  setO(A.gd0,st.gd0.o); rise(A.gd0,st.gd0.u);
+  setO(A.gd1,st.gd1.o); rise(A.gd1,st.gd1.u);
+  setO(A.gd2,st.gd2.o); rise(A.gd2,st.gd2.u);
+  setO(A.m15,st.m15.o); setO(A.n15,st.n15.o); rise(A.n15,st.n15.u);
+  setO(A.m20,st.m20.o); setO(A.n20,st.n20.o); rise(A.n20,st.n20.u);
+  setO(A.sil,st.sil.o); /* dashed pattern: window-faded, not dash-drawn */
+  setO(A.silL,st.silL.o);
+  setO(A.ads,st.ads.o);
+  setO(A.nAds,st.nAds.o); rise(A.nAds,st.nAds.u);
+  setO(A.inv1,st.inv1.o); rise(A.inv1,st.inv1.u);
+  setO(A.inv2,st.inv2.o); rise(A.inv2,st.inv2.u);
+  for(var i=0;i<6;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:6};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("maps")<0){x.push("maps");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>

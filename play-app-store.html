@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Gate · the App Store · The Interface Playbook</title>
+<meta name="description" content="Every iPhone app enters through one door Apple owns. The implied toll: roughly $30 billion a year, at a margin Apple told a court it cannot compute. Only the state ever pried it open.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The Software Play</p>
+  <h1>The only door.</h1>
+  <div class="sub">Every iPhone app ever installed has entered through one store Apple owns. Developers have earned <strong>$550 billion</strong> through that door&mdash;and Apple's implied toll now runs <strong>roughly $30 billion a year</strong>, at a margin it told a federal court it cannot compute.</div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="The App Store: one install path, the payout ledger, the margin exhibits, and the crack"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">One <span class="it">door</span>.</h2><p class="body">A Mac runs software from anywhere: the web, a rival store, a USB stick. Android ships with a store and tolerates others. The iPhone has offered exactly one way in since July 10, 2008&mdash;<span class="b">Apple's App Store</span>, which opened with 500 apps and a standard 30% commission. Some two million apps later, the US storefront still has no second entrance. Own the only door onto the device, and you never have to win an argument about price.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Capture</p><h2 class="h-big">Half a trillion, <span class="it">differenced</span>.</h2><p class="body">Apple discloses the store's economics one number at a time: cumulative payouts to developers, most Januaries. String the press releases together and take the differences, and the annual flow appears: about <span class="b">$26.5 billion in 2017, roughly $77 billion a year now</span>. Developers keep 70 or 85 cents of each dollar, so the splits imply Apple's side: $14 billion to $33 billion a year. The 15% small-business rate covers 98% of developers&mdash;and under 5% of the money. The blend sits near the top.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Reframe</p><h2 class="h-big">A trillion dollars of <span class="it">other people's</span> commerce.</h2><p class="body">Apple's preferred number is bigger: the App Store ecosystem "facilitated" <span class="b">$1.4 trillion</span> in 2025, per a study Apple commissioned. Decompose it. $1.1 trillion is physical goods and services: DoorDash orders, Amazon carts, plane tickets. Apple collects nothing on those. Another $151 billion is in-app advertising; also uncommissioned. The slice the commission actually touches is the $149 billion of digital goods. More than 90% of the headline pays Apple zero&mdash;the study says so itself. The trillion is real. The implication is not.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Margin</p><h2 class="h-big">Chart the <span class="it">refusal</span>.</h2><p class="body">What does the gate earn? Apple's internal planning documents, produced from Tim Cook's own files in <span class="it">Epic v. Apple</span>, put App Store operating margins at <span class="b">74.9% in fiscal 2018 and 77.8% in 2019</span>. Apple called the math "simply wrong" and supplied no number of its own; Cook testified you can't "push a button" and get an App Store P&amp;L. The whole company earned about 25 cents on the dollar that year. The store, on the exhibits, earned three times that&mdash;and the defense is not that the margin is lower. It's that nobody computed one.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Comparison</p><h2 class="h-big">A toll on software Apple <span class="it">didn't write</span>.</h2><p class="body">Call the implied commission <span class="b">roughly $30 billion a year</span>. That nearly equals Apple's entire R&amp;D budget and runs about two and a half times its capital spend. Now look at who earns it: of 2024's ten most-downloaded iPhone apps, on Apple's own year-end chart, Apple made zero. Temu, TikTok, ChatGPT, Gmail. Other companies fund the engineering; the door collects on the way through.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Ledger</p><h2 class="h-big">The ecosystem triples. The sliver <span class="it">holds</span>.</h2><p class="body">Run the Apple-commissioned series: <span class="b">$519 billion in 2019 to $1.4 trillion in 2025</span>. Nearly tripled, exactly as Apple says. Now watch the floor of the chart: the commissioned base of digital goods grows from $61 billion to just $149 billion&mdash;about a tenth of the headline, the whole way across. The story is an economy. The business is a toll on its smallest, stickiest lane.</p></div></div>
+    <div class="step" data-step="6"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">Nobody ever <span class="it">outcompeted</span> the door.</h2><p class="body">Seventeen years, two million apps, and no rival store ever forced the gate. What finally moved it: a federal anti-steering injunction (September 2021, which Apple then spent years evading); the European Commission (<span class="b">&euro;500 million on April 23, 2025</span>, the first fine ever issued under the DMA); and the same federal judge again on April 30, 2025&mdash;a contempt ruling that found Apple willfully violated her order, with one executive referred for criminal prosecution. Every name on that list carries subpoena power. That is the tell: competition never reached the door. Only the state did.</p></div></div>
+    <div class="step" data-step="7"><div class="copy"><p class="kicker">The Crack</p><h2 class="h-big">The first <span class="it">leak</span>.</h2><p class="body">On May 1, 2025, the US App Store changed: apps may link out to the web for purchases, <span class="b">commission-free</span>. Spotify shipped within a day. Kindle's buy button returned after fourteen years. Patreon followed. It is the first lane through the gate Apple cannot toll&mdash;for now. The Ninth Circuit upheld the contempt finding in December but will let Apple charge a cost-based link fee it must justify in court; the Supreme Court declined to pause any of it in May. Watch the fee, the cert petition, and Brussels. The door still stands. For the first time, it is not the only way through.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The toll keeps losing in court&mdash;and keeps collecting.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="appstore">
+    <a id="exitnext" href="play-icloud.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">iCloud <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: Apple newsroom, cumulative developer payouts (Jan 2017: &gt;$60B; Jan 2018: &gt;$86B; Jan 2019: $120B; Jan 2020: $155B; Jan 2021: $200B; Jan 2022: $260B; Jan 2023: $320B; Jan 2026: $550B; no figures published for 2023&ndash;24) [D]; annual flow and implied commission are differences and split-structure arithmetic on those disclosures [derived]. App Store ecosystem billings: Analysis Group studies commissioned by Apple (2019 $519B; 2020 $643B; 2021 $868B; 2022 $1.1T; 2024 $1.3T; 2025 $1.4T = $1.1T physical goods + $151B in-app ads + $149B digital goods; "more than 90%" of billings pay no commission; no global study covered 2023) [R]. Margins: <em>Epic v. Apple</em> trial exhibits&mdash;Ned Barnes testimony from Apple corporate FP&amp;A documents (App Store operating margin 74.9% FY2018, 77.8% FY2019); Apple disputed the calculations as "simply wrong"; Tim Cook testimony that Apple cannot "push a button" to produce an App Store P&amp;L [R/court]. Apple company-wide operating margin FY2019 (24.6%), R&amp;D FY2025 ($34.55B), capex FY2025 ($12.72B): Apple 10-Ks [D]. Small Business Program (15% under $1M, Jan 2021): ~98% of developers qualify, under 5% of commission revenue affected (Sensor Tower / CNBC, 2021) [E]. Consumer in-app spend cross-check: ~$150B across iOS + Google Play, 2024 (Sensor Tower) [E]. Most-downloaded iPhone apps of 2024: Apple year-end charts (Temu, Threads, TikTok, ChatGPT, Google, Instagram, WhatsApp, CapCut, YouTube, Gmail) [D]. Legal timeline: anti-steering injunction (US District Court, N.D. Cal., Sept 2021); European Commission &euro;500M DMA non-compliance fine (Apr 23, 2025, under appeal); contempt order with criminal referral and zero-commission external links (Apr 30, 2025); Spotify, Kindle, Patreon external purchase links (May 2025); Ninth Circuit affirms contempt, narrows remedy to a cost-justified fee (Dec 11, 2025); Supreme Court stay denied (May 2026), cert petition pending [R/court]. EU iPhones gained alternative marketplaces under the DMA in 2024; the US storefront remains single-door. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Gate: engine v2 (per design-system v2). Actors created once; beats are target states
+   with per-actor timing windows {v, win:[a,b], e}. Exits complete by .35 (fallback), all
+   windows end by .75: the last quarter of every beat is a poster frame. Binary rest:
+   at p=1 every opacity is 0 or 1 (no ghosts used on this page). */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015";
+var PALE2="#cfcfd6",PALE3="#b4b4bd",GRAY3="#9a9aa2";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);} /* mobile type bump ~1.4x at engine init */
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+function eio(t){t=clamp(t);return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ BEAT 0: install paths by platform ============ */
+var COLX=[230,480,730];
+A.hdr0=E("g",{opacity:0},cam);
+[["Mac / PC",0],["Android",1],["iPhone",2]].forEach(function(d){
+  T(COLX[d[1]],150,d[0],{fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},A.hdr0);
+});
+[[0,"the web, rival stores,","direct installs"],[1,"Google Play, rival stores,","sideloading"],[2,"the web, rival stores,","the App Store"]].forEach(function(d){
+  T(COLX[d[0]],176,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.hdr0);
+  T(COLX[d[0]],192,d[2],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.hdr0);
+});
+function pathCol(ci,p){
+  var g=E("g",{opacity:0},cam), cx=COLX[ci];
+  [-65,0,65].forEach(function(dx){
+    E("line",{x1:cx+dx,y1:208,x2:cx+dx,y2:424,stroke:GRAPH,"stroke-width":2},g);
+    E("polygon",{points:(cx+dx-5)+",424 "+(cx+dx+5)+",424 "+(cx+dx)+",432",fill:GRAPH},g);
+  });
+  E("rect",{x:cx-90,y:440,width:180,height:26,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},g);
+  T(cx,457,p,{fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},g);
+  return g;
+}
+A.arrPC=pathCol(0,"any Mac");
+A.arrAND=pathCol(1,"any Android phone");
+A.arrIPH=E("g",{opacity:0},cam);
+A.iphL=E("line",{x1:665,y1:208,x2:665,y2:424,stroke:GRAPH,"stroke-width":2},A.arrIPH);
+A.iphR=E("line",{x1:795,y1:208,x2:795,y2:424,stroke:GRAPH,"stroke-width":2},A.arrIPH);
+A.iphLh=E("polygon",{points:"660,424 670,424 665,432",fill:GRAPH},A.arrIPH);
+A.iphRh=E("polygon",{points:"790,424 800,424 795,432",fill:GRAPH},A.arrIPH);
+E("line",{x1:730,y1:208,x2:730,y2:330,stroke:GRAPH,"stroke-width":2},A.arrIPH);
+E("polygon",{points:"725,330 735,330 730,338",fill:GRAPH},A.arrIPH);
+E("rect",{x:640,y:440,width:180,height:26,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.arrIPH);
+T(730,457,"every iPhone",{fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},A.arrIPH);
+A.blocked=E("g",{opacity:0},cam);
+E("line",{x1:658,y1:318,x2:672,y2:318,stroke:GRAPH,"stroke-width":2.5},A.blocked);
+E("line",{x1:788,y1:318,x2:802,y2:318,stroke:GRAPH,"stroke-width":2.5},A.blocked);
+A.counts=E("g",{opacity:0},cam);
+T(230,498,"three ways in",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.counts);
+T(480,498,"three ways in",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.counts);
+T(730,500,"one.",{fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},A.counts);
+A.noteB0=note(756,402,818,330,["one way in, since","July 10, 2008"]);
+
+/* ============ BEAT 1: cumulative payouts (top) -> annual flow (bottom), with the commission cap ============ */
+/* x(yr)=150+(yr-2008)*730/17; cum y=300-v*0.236 (0..550B); flow bars: baseline 470, 1.4px/$B */
+A.axisB1=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.axisB1);
+[[150,"2008"],[321.8,"2012"],[493.6,"2016"],[665.3,"2020"],[880,"2025"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.axisB1);
+});
+A.cumBase=E("line",{x1:150,y1:300,x2:880,y2:300,stroke:LINE,"stroke-width":1,opacity:0},cam);
+A.cumLblL=T(152,266,"cumulative disclosures [D]",{fill:MUT,"font-size":FS(12),opacity:0},cam);
+var D_CUM="M 150 300 L 364.7 296.5 L 407.6 294.1 L 493.6 285.8 L 536.5 279.6 L 579.4 271.7 L 622.4 263.4 L 665.3 252.8 L 708.2 238.6 L 751.2 224.4";
+A.cumG=E("path",{d:D_CUM,fill:"none",stroke:INK,"stroke-width":3,"stroke-linejoin":"round",opacity:0},cam);
+var CLEN=620;
+A.gapC=E("line",{x1:751.2,y1:224.4,x2:880,y2:170.2,stroke:INK,"stroke-width":2,"stroke-dasharray":"5 6",opacity:0},cam);
+A.dots=E("g",{opacity:0},cam);
+[[493.6,285.8],[536.5,279.6],[579.4,271.7],[622.4,263.4],[665.3,252.8],[708.2,238.6],[751.2,224.4],[880,170.2]].forEach(function(d){
+  E("circle",{cx:d[0],cy:d[1],r:3.5,fill:INK},A.dots);
+});
+A.dotLbls=E("g",{opacity:0},cam);
+T(493.6,271.8,"$60B",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle",style:TNUM},HALO),A.dotLbls);
+T(751.2,210.4,"$320B",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle",style:TNUM},HALO),A.dotLbls);
+T(886,168,"$550B",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.dotLbls);
+T(886,186,"by Jan 2026 [D]",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.dotLbls);
+A.flowLblL=T(152,352,"annual flow = the differences [derived]",{fill:MUT,"font-size":FS(12),opacity:0},cam);
+A.gridFlow=E("g",{opacity:0},cam);
+[[435,"$25B"],[400,"$50B"],[365,"$75B"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.gridFlow);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.gridFlow);
+});
+var FLOWB=[[536.5,37.1,GRAPH],[579.4,46.9,GRAPH],[622.4,49,GRAPH],[665.3,63,GRAPH],[708.2,84,GRAPH],[751.2,84,GRAPH],[794.1,107.4,GRAY3],[837.1,107.4,GRAY3],[880,107.4,GRAY3]];
+A.bars=E("g",{opacity:0},cam);
+A.barEls=FLOWB.map(function(d){
+  var r=E("rect",{x:d[0]-12,y:470-d[1],width:24,height:d[1],rx:3,fill:d[2]},A.bars);
+  r.style.transformOrigin=d[0]+"px 470px"; r.style.transform="scaleY(0)";
+  return r;
+});
+A.barLbls=E("g",{opacity:0},cam);
+T(536.5,420.9,"$26.5B",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle",style:TNUM},HALO),A.barLbls);
+T(665.3,395,"$45B",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle",style:TNUM},HALO),A.barLbls);
+T(751.2,374,"$60B",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle",style:TNUM},HALO),A.barLbls);
+A.avgLbl=E("g",{opacity:0},cam);
+T(790,334,"~$77B/yr",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle",style:TNUM},HALO),A.avgLbl);
+T(790,350,"[derived avg, 2023-25]",Object.assign({fill:MUT,"font-size":FS(11),"text-anchor":"middle"},HALO),A.avgLbl);
+A.cap25=E("g",{opacity:0},cam);
+A.capEl=E("rect",{x:868,y:316.4,width:24,height:46.2,rx:3,fill:BLUE},A.cap25);
+A.capEl.style.transformOrigin="880px 362.6px"; A.capEl.style.transform="scaleY(0)";
+A.floorTick=E("line",{x1:864,y1:343.7,x2:896,y2:343.7,stroke:INK,"stroke-width":1.5,"stroke-dasharray":"3 3",opacity:0},cam);
+A.corNote=note(880,318,700,132,["Apple's side, implied by","the splits: $14-33B/yr;","the blend sits near $30B"]);
+
+/* ============ BEAT 2: the $1.4T decomposed ============ */
+/* scale .2286 px/$B; stacked at x180 w120 -> columns w110 at 425/585/745 */
+function seg(c){var r=E("rect",{x:180,y:150,width:120,height:10,rx:3,fill:c,opacity:0},cam);return r;}
+A.segPhys=seg(GRAPH); A.segAds=seg("#7d7d87"); A.segDig=seg(BLUE);
+var SEGS={
+  segPhys:{x0:180,y0:218.6,w0:120,h:251.4,x1:425,y1:218.6,w1:110},
+  segAds:{x0:180,y0:184.1,w0:120,h:34.5,x1:585,y1:435.5,w1:110},
+  segDig:{x0:180,y0:150,w0:120,h:34.1,x1:745,y1:435.9,w1:110}};
+A.hero2=E("g",{opacity:0},cam);
+T(150,116,"$1.4T",Object.assign({fill:INK,"font-size":FS(40),"font-weight":"700",style:TNUM},HALO),A.hero2);
+T(150,138,"what the App Store \"facilitated\" in 2025 [R, Apple-commissioned]",{fill:MUT,"font-size":FS(12)},A.hero2);
+A.segLbls=E("g",{opacity:0},cam);
+[[480,"$1.1T","physical goods & services","no commission",GRAPH],[640,"$151B","in-app advertising","no commission",GRAPH],[800,"$149B","digital goods & services","commissioned",BLUE]].forEach(function(d){
+  T(d[0],494,d[1],Object.assign({fill:d[4]===BLUE?BLUE:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.segLbls);
+  T(d[0],512,d[2],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.segLbls);
+  T(d[0],530,d[3],{fill:d[4],"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},A.segLbls);
+});
+A.brktNC=E("g",{opacity:0},cam);
+E("path",{d:"M 425 211 L 425 204 L 695 204 L 695 211",fill:"none",stroke:INK,"stroke-width":2},A.brktNC);
+T(560,190,"pays Apple no commission: more than 90%",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},HALO),A.brktNC);
+A.noteDig=note(800,433,740,386,["the commissioned tenth:","it funds the whole toll"]);
+
+/* ============ BEAT 3: the margin exhibits + the refusal ============ */
+A.grid3=E("g",{opacity:0},cam);
+[[395,"25%"],[320,"50%"],[245,"75%"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid3);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid3);
+});
+E("line",{x1:150,y1:170,x2:880,y2:170,stroke:LINE,"stroke-width":1,"stroke-dasharray":"3 6"},A.grid3);
+T(138,174,"100%",{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid3);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid3);
+function mbar(cx,h,c,val,valC,s1,s2){
+  var g=E("g",{opacity:0},cam);
+  var r=E("rect",{x:cx-55,y:470-h,width:110,height:h,rx:3,fill:c},g);
+  r.style.transformOrigin=cx+"px 470px"; r.style.transform="scaleY(0)";
+  T(cx,470-h-12,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  T(cx,494,s1,{fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},g);
+  T(cx,512,s2,{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},g);
+  return {g:g,bar:r};
+}
+A.mb18=mbar(250,224.7,BLUE,"74.9%",BLUE,"App Store, FY2018","Epic exhibit [R/court]");
+A.mb19=mbar(400,233.4,BLUE,"77.8%",BLUE,"App Store, FY2019","Epic exhibit [R/court]");
+A.mbCo=mbar(550,73.8,GRAPH,"24.6%",INK,"Apple, company-wide","FY2019 10-K [D]");
+A.refusal=E("g",{opacity:0},cam);
+A.refRect=E("rect",{x:645,y:236.6,width:110,height:233.4,rx:3,fill:"none",stroke:MUT,"stroke-width":1.5,"stroke-dasharray":"5 6"},A.refusal);
+var RFLEN=690;
+T(700,494,"Apple's own figure",{fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},A.refusal);
+T(700,512,"never published",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.refusal);
+A.refTxt=E("g",{opacity:0},cam);
+T(700,345,"not",{fill:MUT,"font-size":FS(13),"text-anchor":"middle"},A.refTxt);
+T(700,363,"published",{fill:MUT,"font-size":FS(13),"text-anchor":"middle"},A.refTxt);
+T(700,226,"Apple: \"simply wrong\"",Object.assign({fill:MUT,"font-size":FS(12),"font-style":"italic","text-anchor":"middle"},HALO),A.refTxt);
+A.cookNote=note(652,248,560,150,["Cook: you can't \"push a","button\" and get an App","Store P&L [trial, 2021]"]);
+
+/* ============ BEAT 4: the toll vs. what Apple builds ============ */
+A.grid4=E("g",{opacity:0},cam);
+[[400,"$10B"],[330,"$20B"],[260,"$30B"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid4);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid4);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid4);
+A.cb0=mbar(240,210,BLUE,"~$30B",BLUE,"implied commission","[derived/E], latest yr");
+A.cb1=mbar(400,241.9,GRAPH,"$34.6B",INK,"Apple R&D","FY2025 10-K [D]");
+A.cb2=mbar(560,89,GRAPH,"$12.7B",INK,"Apple capex","FY2025 10-K [D]");
+A.appList=E("g",{opacity:0},cam);
+T(690,238,"2024's ten most-downloaded",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.appList);
+T(690,256,"iPhone apps [D, Apple]:",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.appList);
+["Temu, Threads, TikTok,","ChatGPT, Google, Instagram,","WhatsApp, CapCut,","YouTube, Gmail"].forEach(function(s,i){
+  T(690,282+i*18,s,{fill:MUT,"font-size":FS(12)},A.appList);
+});
+var zt=T(690,372,"made by Apple: ",{fill:INK,"font-size":FS(15),"font-weight":"700"},A.appList);
+var zs=E("tspan",{fill:BLUE},zt); zs.textContent="zero";
+A.noteB4=note(262,262,318,172,["the toll on other people's","software nearly equals","Apple's whole R&D line"]);
+
+/* ============ BEAT 5: billings vs. the commissioned slice ============ */
+/* x(yr)=150+(yr-2019)*730/6; y=470-v*0.2286 */
+A.grid5=E("g",{opacity:0},cam);
+[[355.7,"$500B"],[241.4,"$1T"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid5);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid5);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid5);
+[[150,"2019"],[271.7,"2020"],[393.3,"2021"],[515,"2022"],[636.7,"2023"],[758.3,"2024"],[880,"2025"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.grid5);
+});
+A.billArea=E("path",{d:"M 150 470 L 150 351.4 L 271.7 323.1 L 393.3 271.6 L 515 213.3 L 758.3 172.9 L 880 150 L 880 470 Z",fill:PALE,opacity:0},cam);
+A.lineA=E("path",{d:"M 150 351.4 L 271.7 323.1 L 393.3 271.6 L 515 213.3",fill:"none",stroke:GRAPH,"stroke-width":3,"stroke-linejoin":"round",opacity:0},cam);
+var L5A=400;
+A.lineGap=E("line",{x1:515,y1:213.3,x2:758.3,y2:172.9,stroke:GRAPH,"stroke-width":2,"stroke-dasharray":"5 6",opacity:0},cam);
+A.lineB=E("line",{x1:758.3,y1:172.9,x2:880,y2:150,stroke:GRAPH,"stroke-width":3,opacity:0},cam);
+A.digArea=E("path",{d:"M 150 470 L 150 456.1 L 515 446.2 L 758.3 440.1 L 880 435.9 L 880 470 Z",fill:BLUE,opacity:0},cam);
+A.digDots=E("g",{opacity:0},cam);
+[[150,456.1],[515,446.2],[758.3,440.1],[880,435.9]].forEach(function(d){
+  E("circle",{cx:d[0],cy:d[1],r:3,fill:BLUE,stroke:"#f5f5f7","stroke-width":1.5},A.digDots);
+});
+A.endLbls=E("g",{opacity:0},cam);
+T(884,154,"$1.4T",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.endLbls);
+T(884,172,"billings [R]",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.endLbls);
+T(884,428,"$149B",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.endLbls);
+T(884,446,"commissioned",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.endLbls);
+A.noteB5=note(700,441,600,396,["the commissioned base:","a tenth, the whole way"]);
+
+/* ============ the GATE (persistent device) ============ */
+A.gate=E("g",{opacity:0},cam);
+E("rect",{x:-85,y:-62,width:170,height:112,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.gate);
+E("path",{d:"M -30 34 L -30 -10 A 30 30 0 0 1 30 -10 L 30 34",fill:"none",stroke:INK,"stroke-width":2.5},A.gate);
+E("line",{x1:-30,y1:12,x2:30,y2:12,stroke:BLUE,"stroke-width":3},A.gate);
+T(0,46,"App Store",{fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},A.gate);
+A.ck1=E("path",{d:"M -62 -55 L -50 -30 L -64 -12",fill:"none",stroke:RED,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},A.gate);
+A.ck2=E("path",{d:"M 62 -55 L 50 -28 L 66 -8",fill:"none",stroke:RED,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},A.gate);
+A.ck3=E("path",{d:"M -8 -60 L 2 -38 L -6 -20",fill:"none",stroke:RED,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},A.gate);
+var CKLEN=70;
+A.gSide=E("g",{opacity:0},A.gate);
+E("path",{d:"M 48 34 L 48 16 A 12 12 0 0 1 72 16 L 72 34",fill:"none",stroke:BLUE,"stroke-width":2,"stroke-dasharray":"4 4"},A.gSide);
+T(60,48,"link out",{fill:MUT,"font-size":FS(10),"text-anchor":"middle"},A.gSide);
+A.gLeak=E("g",{opacity:0},A.gate);
+E("path",{d:"M 0 6 C 24 22 44 28 60 20 C 78 12 100 26 126 44 L 126 52 C 100 34 80 24 62 30 C 46 36 26 32 0 16 Z",fill:GRAPH},A.gLeak);
+E("polygon",{points:"122,40 136,52 118,56",fill:GRAPH},A.gLeak);
+
+/* ============ BEAT 6: the pry bars ============ */
+function evChip(y,d1,d2,d3){
+  var g=E("g",{opacity:0},cam);
+  E("rect",{x:70,y:y,width:288,height:78,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},g);
+  T(90,y+26,d1,{fill:MUT,"font-size":FS(12),style:TNUM},g);
+  T(90,y+46,d2,{fill:INK,"font-size":FS(13),"font-weight":"600"},g);
+  T(90,y+64,d3,{fill:MUT,"font-size":FS(12)},g);
+  return g;
+}
+A.ev1=evChip(170,"September 2021","Anti-steering injunction issued","US District Court, Epic v. Apple");
+A.ev2=evChip(272,"April 23, 2025","EUR 500M fine, first under the DMA","European Commission");
+A.ev3=evChip(374,"April 30, 2025","Contempt: zero-commission links","US District Court; criminal referral");
+A.tellNote=note(500,332,640,408,["every pry bar is a court","or a regulator; rival","stores on the list: zero"]);
+
+/* ============ BEAT 7: the crack ============ */
+A.compChips=E("g",{opacity:0},cam);
+[[164,"Spotify","external checkout live May 2, 2025"],[216,"Kindle","buy button back, first since 2011"],[268,"Patreon","web payments enabled, May 2025"]].forEach(function(d){
+  T(680,d[0],d[1],{fill:INK,"font-size":FS(13),"font-weight":"600"},A.compChips);
+  T(680,d[0]+18,d[2],{fill:MUT,"font-size":FS(12)},A.compChips);
+});
+A.statusNote=note(705,318,742,360,["US external links, today:","commission-free [R/court]"]);
+A.watch=E("g",{opacity:0},cam);
+T(70,386,"What to watch",{fill:INK,"font-size":FS(13),"font-weight":"700"},A.watch);
+["1. The \"cost-based\" link fee the Ninth Circuit allowed (Dec 11, 2025); the rate is not yet set",
+ "2. Apple's Supreme Court petition; the stay was denied in May 2026",
+ "3. Whether the EU's 500M euro fine forces the same door open at DMA scale"].forEach(function(s,i){
+  T(70,410+i*20,s,{fill:MUT,"font-size":FS(12)},A.watch);
+});
+
+/* ============ furniture: scene titles + captions ============ */
+var TITLES=["Install paths, by platform","What Apple paid developers, 2008-2025","The $1.4T headline, taken apart",
+  "App Store operating margin: the exhibits","The toll vs. what Apple builds",
+  "Ecosystem billings vs. the commissioned slice","The pry bars, 2021-2025","The US App Store, after April 30, 2025"];
+var CAPS=[
+ ["Install paths: macOS/Windows allow the web, rival stores, direct installs; Android allows sideloading.",
+  "iPhone, US storefront: the App Store only. EU iPhones gained rival marketplaces in 2024 (DMA)."],
+ ["Cumulative payouts: Apple newsroom, Jan 2017-Jan 2026 [D]. Annual flow: year-over-year differences [derived].",
+  "2023-24 never disclosed; last three bars average the $230B gap. Blue cap: implied commission at 30/70; tick: the 85/15 floor."],
+ ["Analysis Group study, commissioned by Apple (June 2026, covering 2025) [R]: $1.1T physical + $151B ads + $149B digital.",
+  "Apple's own framing: for more than 90% of the headline, developers paid Apple no commission at all."],
+ ["Margins: Epic v. Apple exhibits, from Apple corporate FP&A documents (Barnes testimony) [R/court]. Apple disputes them.",
+  "Company-wide margin: Apple 10-K FY2019 [D]. Apple has never published an App Store profit-and-loss statement."],
+ ["Commission: implied from the payout flow and the 70/30-85/15 split structure [derived/E]. R&D, capex: Apple 10-K FY2025 [D].",
+  "Downloads: Apple's 2024 year-end charts [D]. The 15% small-business rate: ~98% of developers, under 5% of the money [E]."],
+ ["Billings: Analysis Group studies, 2019-2025 [R, Apple-commissioned]; no global study covered 2023 (dashed).",
+  "Digital goods, the commissioned base: $61B (2019), $104B (2022), $131B (2024), $149B (2025). Physical and ads: uncommissioned."],
+ ["Injunction: US District Court, N.D. Cal., Sept 2021. Fine: European Commission, Apr 23, 2025, under the DMA.",
+  "Contempt: Apr 30, 2025; external-link purchases ordered commission-free; one executive referred for criminal contempt."],
+ ["Links shipped May 2025: Spotify, Kindle, Patreon [R]. Ninth Circuit, Dec 11, 2025: contempt affirmed; zero-fee narrowed.",
+  "A cost-based link fee must be negotiated and court-approved; Apple's Supreme Court stay was denied May 2026. EU fine on appeal."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  hdr0:{o:0}, arrPC:{o:0}, arrAND:{o:0}, arrIPH:{o:0,ret:1}, blocked:{o:0}, counts:{o:0}, noteB0:{o:0},
+  axisB1:{o:0}, cumBase:{o:0}, cumLblL:{o:0}, cumG:{o:0}, gapC:{o:0}, dots:{o:0}, dotLbls:{o:0},
+  flowLblL:{o:0}, gridFlow:{o:0}, bars:{o:0,gr:1}, barLbls:{o:0}, avgLbl:{o:0}, cap25:{o:0,gr:1}, floorTick:{o:0}, corNote:{o:0},
+  segPhys:{o:0,m:1}, segAds:{o:0,m:1}, segDig:{o:0,m:1}, hero2:{o:0}, segLbls:{o:0}, brktNC:{o:0}, noteDig:{o:0},
+  grid3:{o:0}, mb18:{o:0,gr:1}, mb19:{o:0,gr:1}, mbCo:{o:0,gr:1}, refusal:{o:0}, refTxt:{o:0}, cookNote:{o:0},
+  grid4:{o:0}, cb0:{o:0,gr:1}, cb1:{o:0,gr:1}, cb2:{o:0,gr:1}, appList:{o:0}, noteB4:{o:0},
+  grid5:{o:0}, billArea:{o:0}, lineA:{o:0}, lineGap:{o:0}, lineB:{o:0}, digArea:{o:0}, digDots:{o:0}, endLbls:{o:0}, noteB5:{o:0},
+  gate:{o:1,x:824,y:88,k:.5,ck1:0,ck2:0,ck3:0,side:0,leak:0},
+  ev1:{o:0}, ev2:{o:0}, ev3:{o:0}, tellNote:{o:0},
+  compChips:{o:0}, statusNote:{o:0}, watch:{o:0},
+  T:[0,0,0,0,0,0,0,0], C:[0,0,0,0,0,0,0,0]};}
+var Z=base();
+Z.gate={o:0,x:730,y:390,k:.78,ck1:0,ck2:0,ck3:0,side:0,leak:0};
+Z.arrIPH={o:0,ret:0};
+var S=[];
+S[0]=Object.assign(base(),{
+  hdr0:{o:{v:1,win:[.06,.16]}},
+  arrPC:{o:{v:1,win:[.12,.24]}},
+  arrAND:{o:{v:1,win:[.18,.3]}},
+  arrIPH:{o:{v:1,win:[.24,.36]},ret:{v:1,win:[.44,.58]}},
+  gate:{o:{v:1,win:[.5,.6]},x:730,y:390,k:.78,ck1:0,ck2:0,ck3:0,side:0,leak:0},
+  blocked:{o:{v:1,win:[.56,.64]}},
+  counts:{o:{v:1,win:[.62,.7]}},
+  noteB0:{o:{v:1,win:[.68,.75]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  gate:{o:1,x:{v:824,win:[.06,.26]},y:{v:88,win:[.06,.26]},k:{v:.5,win:[.06,.26]},ck1:0,ck2:0,ck3:0,side:0,leak:0},
+  axisB1:{o:{v:1,win:[.08,.16]}}, cumBase:{o:{v:1,win:[.08,.16]}},
+  cumLblL:{o:{v:1,win:[.1,.18]}},
+  cumG:{o:{v:1,win:[.1,.16]}},
+  gapC:{o:{v:1,win:[.4,.48]}},
+  dots:{o:{v:1,win:[.42,.52]}},
+  dotLbls:{o:{v:1,win:[.46,.56]}},
+  flowLblL:{o:{v:1,win:[.5,.58]}},
+  gridFlow:{o:{v:1,win:[.5,.58]}},
+  bars:{o:{v:1,win:[.52,.6]},gr:{v:1,win:[.52,.7]}},
+  barLbls:{o:{v:1,win:[.62,.7]}},
+  avgLbl:{o:{v:1,win:[.62,.7]}},
+  cap25:{o:{v:1,win:[.66,.72]},gr:{v:1,win:[.66,.74],e:"back"}},
+  floorTick:{o:{v:1,win:[.72,.75]}},
+  corNote:{o:{v:1,win:[.7,.75]}},
+  segPhys:{o:0,m:0}, segAds:{o:0,m:0}, segDig:{o:0,m:0},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  hero2:{o:{v:1,win:[.08,.18]}},
+  segPhys:{o:{v:1,win:[.1,.2]},m:{v:1,win:[.3,.55],e:"io"}},
+  segAds:{o:{v:1,win:[.14,.24]},m:{v:1,win:[.3,.55],e:"io"}},
+  segDig:{o:{v:1,win:[.18,.28]},m:{v:1,win:[.3,.55],e:"io"}},
+  segLbls:{o:{v:1,win:[.56,.66]}},
+  brktNC:{o:{v:1,win:[.6,.7]}},
+  noteDig:{o:{v:1,win:[.68,.75]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  grid3:{o:{v:1,win:[.1,.2]}},
+  mb18:{o:{v:1,win:[.2,.28]},gr:{v:1,win:[.2,.4],e:"back"}},
+  mb19:{o:{v:1,win:[.28,.36]},gr:{v:1,win:[.28,.48],e:"back"}},
+  mbCo:{o:{v:1,win:[.36,.44]},gr:{v:1,win:[.36,.56],e:"back"}},
+  refusal:{o:{v:1,win:[.5,.58]}},
+  refTxt:{o:{v:1,win:[.6,.68]}},
+  cookNote:{o:{v:1,win:[.68,.75]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  grid4:{o:{v:1,win:[.08,.16]}},
+  cb0:{o:{v:1,win:[.18,.26]},gr:{v:1,win:[.18,.38],e:"back"}},
+  cb1:{o:{v:1,win:[.26,.34]},gr:{v:1,win:[.26,.46],e:"back"}},
+  cb2:{o:{v:1,win:[.34,.42]},gr:{v:1,win:[.34,.54],e:"back"}},
+  appList:{o:{v:1,win:[.55,.65]}},
+  noteB4:{o:{v:1,win:[.68,.75]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  grid5:{o:{v:1,win:[.08,.18]}},
+  billArea:{o:{v:1,win:[.3,.42]}},
+  lineA:{o:{v:1,win:[.16,.22]}},
+  lineGap:{o:{v:1,win:[.42,.5]}},
+  lineB:{o:{v:1,win:[.5,.58]}},
+  digArea:{o:{v:1,win:[.46,.58]}},
+  digDots:{o:{v:1,win:[.56,.66]}},
+  endLbls:{o:{v:1,win:[.6,.7]}},
+  noteB5:{o:{v:1,win:[.68,.75]}},
+  T:onehot(5), C:onehot(5)});
+S[6]=Object.assign(base(),{
+  gate:{o:1,x:{v:500,win:[.06,.26]},y:{v:250,win:[.06,.26]},k:{v:1.6,win:[.06,.26]},
+    ck1:{v:1,win:[.3,.4]},ck3:{v:1,win:[.46,.56]},ck2:{v:1,win:[.62,.7]},side:0,leak:0},
+  ev1:{o:{v:1,win:[.2,.3]}},
+  ev2:{o:{v:1,win:[.36,.46]}},
+  ev3:{o:{v:1,win:[.52,.62]}},
+  tellNote:{o:{v:1,win:[.68,.75]}},
+  T:onehot(6), C:onehot(6)});
+S[7]=Object.assign(base(),{
+  gate:{o:1,x:500,y:{v:235,win:[.06,.18]},k:1.6,ck1:1,ck2:1,ck3:1,
+    side:{v:1,win:[.2,.3]},leak:{v:1,win:[.3,.45]}},
+  compChips:{o:{v:1,win:[.45,.6]}},
+  statusNote:{o:{v:1,win:[.58,.68]}},
+  watch:{o:{v:1,win:[.66,.75]}},
+  T:onehot(7), C:onehot(7)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:(o2&&typeof o2==="object"&&o2.e==="io")?eio:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+function mix(s1,s2,t){
+  var st={};
+  for(var k in s1){
+    if(k==="T"||k==="C"){st[k]=[];for(var i=0;i<8;i++)st[k].push(fw(s1[k][i],s2[k][i],t));continue;}
+    var o1=s1[k],o2=s2[k],r={};
+    for(var c in o1){if(c==="m0")continue;r[c]=cv(o1[c],o2[c],t);}
+    r.u=cu(o1.o,o2.o,t);
+    st[k]=r;
+  }
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function clamp01b(x){return x<0?0:x;}
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  /* beat 0 */
+  setO(A.hdr0,st.hdr0.o);
+  setO(A.arrPC,st.arrPC.o); rise(A.arrPC,st.arrPC.u);
+  setO(A.arrAND,st.arrAND.o); rise(A.arrAND,st.arrAND.u);
+  setO(A.arrIPH,st.arrIPH.o); rise(A.arrIPH,st.arrIPH.u);
+  var ret=clamp(st.arrIPH.ret), ry=lerp(424,318,ret);
+  A.iphL.setAttribute("y2",ry.toFixed(1)); A.iphR.setAttribute("y2",ry.toFixed(1));
+  setO(A.iphLh,ret>0.02?0:1); setO(A.iphRh,ret>0.02?0:1);
+  setO(A.blocked,st.blocked.o);
+  setO(A.counts,st.counts.o); rise(A.counts,st.counts.u);
+  setO(A.noteB0,st.noteB0.o); rise(A.noteB0,st.noteB0.u);
+  /* beat 1 */
+  setO(A.axisB1,st.axisB1.o); setO(A.cumBase,st.cumBase.o); setO(A.cumLblL,st.cumLblL.o);
+  setO(A.cumG,st.cumG.o);
+  dashTo(A.cumG,CLEN,beat===1?eo(w(.12,.4)):1);
+  setO(A.gapC,st.gapC.o);
+  setO(A.dots,st.dots.o);
+  setO(A.dotLbls,st.dotLbls.o); rise(A.dotLbls,st.dotLbls.u);
+  setO(A.flowLblL,st.flowLblL.o);
+  setO(A.gridFlow,st.gridFlow.o);
+  setO(A.bars,st.bars.o);
+  var G=clamp(st.bars.gr);
+  A.barEls.forEach(function(r,i){
+    var si=clamp((G-i*0.055)/0.5);
+    r.style.transform="scaleY("+clamp01b(eo(si)).toFixed(3)+")";
+  });
+  setO(A.barLbls,st.barLbls.o); rise(A.barLbls,st.barLbls.u);
+  setO(A.avgLbl,st.avgLbl.o); rise(A.avgLbl,st.avgLbl.u);
+  setO(A.cap25,st.cap25.o);
+  A.capEl.style.transform="scaleY("+clamp01b(st.cap25.gr).toFixed(3)+")";
+  setO(A.floorTick,st.floorTick.o);
+  setO(A.corNote,st.corNote.o); rise(A.corNote,st.corNote.u);
+  /* beat 2 */
+  [["segPhys",A.segPhys],["segAds",A.segAds],["segDig",A.segDig]].forEach(function(d){
+    var s=st[d[0]], q=SEGS[d[0]], m=clamp(s.m);
+    d[1].setAttribute("x",lerp(q.x0,q.x1,m).toFixed(1));
+    d[1].setAttribute("y",lerp(q.y0,q.y1,m).toFixed(1));
+    d[1].setAttribute("width",lerp(q.w0,q.w1,m).toFixed(1));
+    d[1].setAttribute("height",q.h);
+    setO(d[1],s.o);
+  });
+  setO(A.hero2,st.hero2.o); rise(A.hero2,st.hero2.u);
+  setO(A.segLbls,st.segLbls.o); rise(A.segLbls,st.segLbls.u);
+  setO(A.brktNC,st.brktNC.o); rise(A.brktNC,st.brktNC.u);
+  setO(A.noteDig,st.noteDig.o); rise(A.noteDig,st.noteDig.u);
+  /* beat 3 */
+  setO(A.grid3,st.grid3.o);
+  [["mb18",A.mb18],["mb19",A.mb19],["mbCo",A.mbCo],["cb0",A.cb0],["cb1",A.cb1],["cb2",A.cb2]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.style.transform="scaleY("+clamp01b(s.gr).toFixed(3)+")";});
+  setO(A.refusal,st.refusal.o);
+  dashTo(A.refRect,RFLEN,beat===3?eo(w(.5,.64)):1);
+  setO(A.refTxt,st.refTxt.o); rise(A.refTxt,st.refTxt.u);
+  setO(A.cookNote,st.cookNote.o); rise(A.cookNote,st.cookNote.u);
+  /* beat 4 */
+  setO(A.grid4,st.grid4.o);
+  setO(A.appList,st.appList.o); rise(A.appList,st.appList.u);
+  setO(A.noteB4,st.noteB4.o); rise(A.noteB4,st.noteB4.u);
+  /* beat 5 */
+  setO(A.grid5,st.grid5.o);
+  setO(A.billArea,st.billArea.o);
+  setO(A.lineA,st.lineA.o);
+  dashTo(A.lineA,L5A,beat===5?eo(w(.18,.42)):1);
+  setO(A.lineGap,st.lineGap.o);
+  setO(A.lineB,st.lineB.o);
+  setO(A.digArea,st.digArea.o);
+  setO(A.digDots,st.digDots.o);
+  setO(A.endLbls,st.endLbls.o); rise(A.endLbls,st.endLbls.u);
+  setO(A.noteB5,st.noteB5.o); rise(A.noteB5,st.noteB5.u);
+  /* the gate */
+  A.gate.setAttribute("transform","translate("+st.gate.x.toFixed(1)+" "+st.gate.y.toFixed(1)+") scale("+st.gate.k.toFixed(3)+")");
+  setO(A.gate,st.gate.o);
+  setO(A.ck1,st.gate.ck1>0.01?1:0);
+  setO(A.ck2,st.gate.ck2>0.01?1:0);
+  setO(A.ck3,st.gate.ck3>0.01?1:0);
+  dashTo(A.ck1,CKLEN,st.gate.ck1);
+  dashTo(A.ck2,CKLEN,st.gate.ck2);
+  dashTo(A.ck3,CKLEN,st.gate.ck3);
+  setO(A.gSide,st.gate.side);
+  setO(A.gLeak,st.gate.leak);
+  A.gLeak.setAttribute("transform","translate("+(8*(1-clamp(st.gate.leak))).toFixed(1)+" 0)");
+  /* beats 6-7 */
+  setO(A.ev1,st.ev1.o); rise(A.ev1,st.ev1.u);
+  setO(A.ev2,st.ev2.o); rise(A.ev2,st.ev2.u);
+  setO(A.ev3,st.ev3.o); rise(A.ev3,st.ev3.u);
+  setO(A.tellNote,st.tellNote.o); rise(A.tellNote,st.tellNote.u);
+  setO(A.compChips,st.compChips.o); rise(A.compChips,st.compChips.u);
+  setO(A.statusNote,st.statusNote.o); rise(A.statusNote,st.statusNote.u);
+  setO(A.watch,st.watch.o); rise(A.watch,st.watch.u);
+  for(var i=0;i<8;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:8};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("appstore")<0){x.push("appstore");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+<!-- build:appstore-v2 -->
+</body>
+</ht

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Green Bubble · iMessage · The Interface Playbook</title>
+<meta name="description" content="Apple's stickiest product is a color. Teen iPhone share climbed from 40% to 88% while iMessage stayed iOS-only—and Apple explained why in its own emails.">
+<!-- build:im-4 -->
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec; --green:#34c759;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The 2011 Play</p>
+  <h1>The green bubble.</h1>
+  <div class="sub">Apple's stickiest product has no price, no ads, and no disclosed revenue. iMessage is a texting app—and a color line that turned the iPhone into the phone American teenagers don't leave. In 2012, <strong>40% of US teens owned an iPhone</strong>. Today: <strong>88%</strong>.</div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="iMessage: the green bubble, the teen lock-in curve, Apple's internal memos, and the RCS concession"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">Texting, <span class="it">rebranded</span>.</h2><p class="body">June 2011: Apple unveils iMessage inside Messages, the app every iPhone opens by default. No new app, no signup, no username: it <span class="b">commandeers the phone number itself</span>. Text another iPhone and the message quietly routes through Apple's servers and turns blue. Text anyone else and it falls back to the carrier's decades-old SMS rails, in green. Apple didn't build a social network. It annexed the oldest one on the phone, the address book, and painted its territory blue.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Mechanic</p><h2 class="h-big">What green <span class="it">meant</span>.</h2><p class="body">The colors were never cosmetic. Until late 2024, one Android phone dropped an entire conversation onto the SMS rails: <span class="b">encryption gone</span>, photos and videos crushed into grainy thumbnails, no typing indicators, no read receipts, group chats that broke, reactions arriving as text. Apple engineered the gap, and teenagers turned it into a caste system. The Wall Street Journal named the phenomenon on its front page in January 2022: teens dread the green text bubble.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Spine</p><h2 class="h-big">40 to <span class="it">88</span>.</h2><p class="body">One number tracks the moat. Piper Sandler has asked thousands of US teens the same question every spring and fall for two decades. Fall 2012: <span class="b">40% owned an iPhone</span>. The line climbs for ten straight years, then saturates: <span class="b">88% by spring 2025</span>, and 88% say their next phone will be an iPhone too. Once in, almost nobody leaves; CIRP puts US iPhone retention near 94%. The survey's sample skews suburban and higher-income. Its direction has never wavered.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Memo</p><h2 class="h-big">In Apple's <span class="it">own words</span>.</h2><p class="body">None of this was drift. In 2013 Eddy Cue pushed to ship iMessage on Android, and Craig Federighi pushed back: it would "simply serve to remove [an] obstacle to iPhone families giving their kids Android phones." In 2016, answering a note that <span class="b">"iMessage amounts to serious lock-in,"</span> Phil Schiller settled the question: "moving iMessage to Android will hurt us more than help us." By 2022 the policy fit in five words from Tim Cook: "Buy your mom an iPhone."</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Tell</p><h2 class="h-big">No competitor ever <span class="it">cracked it</span>.</h2><p class="body">WhatsApp owns the planet, more than 2 billion users, and never dented America's default. Beeper Mini put blue bubbles on Android in December 2023; Apple broke it within days. What finally moved Apple wasn't a rival. Google, which pays Apple roughly <span class="b">$20 billion a year</span> to stay one default setting, spent two years publicly begging Apple to adopt RCS; EU regulators circled; China made it table stakes; the DOJ was drafting its complaint. On November 16, 2023, Apple folded. RCS shipped with iOS 18 in September 2024. The features came back. The bubbles stayed green.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Gap</p><h2 class="h-big">Then Apple stopped <span class="it">counting</span>.</h2><p class="body">Companies publish numbers that flatter them. Apple used to: <span class="b">40 billion iMessages a day</span>, Tim Cook said in 2014; a 200,000-per-second peak, Eddy Cue said in February 2016. Then a decade of silence—no volume, no users, no revenue, not one figure since. iMessage holds no line in Apple's financials; it surfaces only in court exhibits. So watch the number Apple doesn't control: the teen line, post-RCS. Fall 2024: 87%. Spring 2025: 88%. The color is still doing its work.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The moat that cost nothing to build.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="imessage">
+    <a id="exitnext" href="play-maps.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">Maps <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: iMessage announced June 6, 2011 (WWDC); shipped with iOS 5 on Oct 12, 2011 [D]. Pre-RCS SMS fallback per <em>US v. Apple</em> complaint (filed Mar 21, 2024) [court]: conversations not encrypted, videos "pixelated and grainy," no editing, no typing indicators. Internal emails surfaced in <em>Epic v. Apple</em> (2021) and quoted in the DOJ complaint: iMessage on Android "would simply serve to remove [an] obstacle to iPhone families giving their kids Android phones" (Craig Federighi, SVP Software Engineering, 2013); "moving iMessage to Android will hurt us more than help us" (Phil Schiller, 2016, replying to "iMessage amounts to serious lock-in"). Tim Cook: "Buy your mom an iPhone" (Code Conference, Sept 2022; CNBC) [R]. Teen series: Piper Jaffray / Piper Sandler "Taking Stock With Teens" semiannual surveys (samples ~5,200&ndash;9,500 US teens; skews suburban, higher-income) [R]: iPhone ownership 34% (spring 2012), 40% (fall 2012), 48% (spring 2013), 66% (spring 2015), 67% (fall 2015), 69% (spring 2016), 74% (fall 2016), 76% (spring 2017), 78% (fall 2017), 82% (spring 2018), 82% (fall 2018), 83% (spring 2019), 83% (fall 2019), 85% (spring 2020), 88% (spring 2021), 87% (spring 2022), 85% (spring 2024), 87% (fall 2024), 88% (spring 2025); 88% intend an iPhone next (spring 2025). Retention: ~94% of US iPhone buyers stay with iPhone; Android switchers were 13&ndash;17% of US iPhone buyers (CIRP, 2023&ndash;24) [R]. Volume disclosures: ~40 billion iMessages/day (Tim Cook, 2014) [R]; peak ~200,000/second (Eddy Cue, The Talk Show, Feb 2016) [R]; no public volume, user, or revenue figure since. WSJ: "Why Apple's iMessage Is Winning: Teens Dread the Green Text Bubble" (Tim Higgins, Jan 8, 2022) [R]. RCS: Google's "Get The Message" campaign (from Aug 2022) [R]; Apple statement, Nov 16, 2023: "Later next year, we will be adding support for RCS Universal Profile" [D]; Beeper Mini launched Dec 5, 2023, disabled within days [R]; EU closed its DMA probe without designating iMessage (Feb 2024) [D]; China's 5G certification reportedly requires RCS (2024) [R]; RCS shipped in iOS 18, Sept 2024 [D]; RCS conversations still render green. Search-default toll ~$20B/yr [E, Bernstein]. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Green Bubble: engine v2 (ported from play-search). Actors created once; beats are
+   target states with per-actor timing windows. Exits complete by .35; entrances run .22-.75;
+   all windows end by .75 so the last quarter of every beat is a poster frame. Binary rest at p=1. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015",GREEN="#34c759";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);} /* mobile type bump ~1.4x at engine init */
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ BEAT 0: one app, two protocols ============ */
+A.b0g=E("g",{opacity:0},cam);
+E("rect",{x:165,y:150,width:330,height:210,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.b0g);
+T(330,182,"to an iPhone",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.b0g);
+T(330,318,"routes through Apple's servers,",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.b0g);
+T(330,336,"encrypted, over data",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.b0g);
+E("rect",{x:505,y:150,width:330,height:210,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.b0g);
+T(670,182,"to an Android phone",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.b0g);
+T(670,318,"falls back to carrier SMS,",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.b0g);
+T(670,336,"the rails under texting since 1992",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.b0g);
+A.b0pun=T(500,430,"Same app. Same phone number. Two sets of rails.",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle",opacity:0},HALO),cam);
+
+/* ============ BEAT 1: the feature strip that dies when the bubble turns green ============ */
+A.hdr1=E("g",{opacity:0},cam);
+T(270,172,"iMessage",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.hdr1);
+T(730,172,"SMS fallback, pre-RCS",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.hdr1);
+var ROWS=["End-to-end encryption","Full-resolution photos and video","Typing indicators","Read receipts","Group chats stay intact","Reactions render as reactions"];
+var ROWY=[190,236,282,328,374,420];
+A.rows=E("g",{opacity:0},cam);
+ROWS.forEach(function(s,i){
+  var y=ROWY[i];
+  E("line",{x1:200,y1:y+14,x2:800,y2:y+14,stroke:LINE,"stroke-width":1},A.rows);
+  T(500,y+4,s,{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.rows);
+  E("path",{d:"M "+(270-7)+" "+y+" L "+(270-2)+" "+(y+5)+" L "+(270+8)+" "+(y-7),fill:"none",stroke:BLUE,"stroke-width":2.5,"stroke-linecap":"round","stroke-linejoin":"round"},A.rows);
+});
+A.xs=ROWY.map(function(y){
+  var g=E("g",{opacity:0},cam);
+  E("path",{d:"M "+(730-7)+" "+(y-7)+" L "+(730+7)+" "+(y+7)+" M "+(730+7)+" "+(y-7)+" L "+(730-7)+" "+(y+7),fill:"none",stroke:RED,"stroke-width":2.5,"stroke-linecap":"round"},g);
+  return g;
+});
+
+/* ============ BEAT 2: the spine - Piper teen iPhone ownership, 2012-2025 ============ */
+/* survey points [R]: spring=yr+.3, fall=yr+.8 */
+var TEEN=[[2012.3,34],[2012.8,40],[2013.3,48],[2015.3,66],[2015.8,67],[2016.3,69],[2016.8,74],
+  [2017.3,76],[2017.8,78],[2018.3,82],[2018.8,82],[2019.3,83],[2019.8,83],[2020.3,85],
+  [2021.3,88],[2022.3,87],[2024.3,85],[2024.8,87],[2025.3,88]];
+function TXX(t){return 130+(t-2012.3)/13*750;}
+function TYY(p){return 470-p*3.4;}
+A.grid2=E("g",{opacity:0},cam);
+[[470,"0"],[385,"25"],[300,"50"],[215,"75"]].forEach(function(d,i){
+  E("line",{x1:130,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":i===0?1.5:1},A.grid2);
+  T(118,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid2);
+});
+[2013,2016,2019,2022,2025].forEach(function(yr){
+  T(TXX(yr+0.3),492,String(yr),{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.grid2);
+});
+A.ceil2=E("g",{opacity:0},cam);
+E("line",{x1:130,y1:130,x2:880,y2:130,stroke:LINE,"stroke-width":1,"stroke-dasharray":"3 6"},A.ceil2);
+T(880,118,"100% = every teen in the survey",{fill:MUT,"font-size":FS(12),"text-anchor":"end"},A.ceil2);
+var TPATH=TEEN.map(function(d,i){return (i?"L ":"M ")+TXX(d[0]).toFixed(1)+" "+TYY(d[1]).toFixed(1);}).join(" ");
+var TLEN=0;
+TEEN.forEach(function(d,i){if(i){var a=TEEN[i-1];TLEN+=Math.hypot(TXX(d[0])-TXX(a[0]),TYY(d[1])-TYY(a[1]));}});
+TLEN=Math.ceil(TLEN)+2;
+A.tline=E("path",{d:TPATH,fill:"none",stroke:BLUE,"stroke-width":3,"stroke-linejoin":"round","stroke-linecap":"round",opacity:0},cam);
+A.tdots=E("g",{opacity:0},cam);
+TEEN.forEach(function(d){E("circle",{cx:TXX(d[0]).toFixed(1),cy:TYY(d[1]).toFixed(1),r:2.8,fill:BLUE},A.tdots);});
+A.note40=note(TXX(2012.8),TYY(40),255,392,["fall 2012: 40% of US teens","owned an iPhone"]);
+A.note94=note(TXX(2020.3),TYY(85),530,290,["once in, they stay: CIRP puts","US iPhone retention near 94%"]);
+A.hero2=E("g",{opacity:0},cam);
+T(888,180,"88%",Object.assign({fill:BLUE,"font-size":FS(40),"font-weight":"700",style:TNUM},HALO),A.hero2);
+T(888,202,"of US teens,",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.hero2);
+T(888,218,"spring 2025",Object.assign({fill:MUT,"font-size":FS(12)},HALO),A.hero2);
+
+/* ============ BEAT 3: the memo - three exhibits, three dates ============ */
+function qcard(y0,date,l1,l2,attr,big){
+  var g=E("g",{opacity:0},cam);
+  E("rect",{x:130,y:y0,width:740,height:128,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},g);
+  T(162,y0+52,date,{fill:BLUE,"font-size":FS(21),"font-weight":"700",style:TNUM},g);
+  T(250,y0+44,l1,{fill:INK,"font-size":FS(15),"font-weight":"600"},g);
+  T(250,y0+68,l2,{fill:INK,"font-size":FS(big?17:15),"font-weight":big?"700":"600"},g);
+  T(250,y0+100,attr,{fill:MUT,"font-size":FS(12)},g);
+  return g;
+}
+A.qc0=qcard(118,"2013",'iMessage on Android "would simply serve to remove [an] obstacle','to iPhone families giving their kids Android phones."',"Craig Federighi, Apple software chief - internal email, 2013 (Epic v. Apple exhibit)");
+A.qc1=qcard(270,"2016",'Replying to "iMessage amounts to serious lock-in":','"Moving iMessage to Android will hurt us more than help us."',"Phil Schiller, Apple marketing chief - internal email, 2016 (Epic v. Apple exhibit)");
+A.qc2=qcard(422,"2022",'Asked at a conference to fix texting to Android phones:','"Buy your mom an iPhone."',"Tim Cook, CEO - Code Conference, September 2022",true);
+
+/* ============ BEAT 4: the pressure timeline, the concession, the color ============ */
+var TL=[["Aug 2022","Google's 'Get The Message' campaign"],
+        ["Nov 16, 2023","Apple announces RCS: 'later next year'"],
+        ["Dec 2023","Beeper Mini blocked within days"],
+        ["Mar 21, 2024","US v. Apple names iMessage"],
+        ["Sept 2024","iOS 18 ships RCS support"]];
+var TLY=[160,225,290,355,420];
+A.tls=TL.map(function(d,i){
+  var g=E("g",{opacity:0},cam), y=TLY[i];
+  T(66,y,d[0],{fill:INK,"font-size":FS(13),"font-weight":"700",style:TNUM},g);
+  T(66,y+18,d[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+A.tlA=E("g",{opacity:0},cam);
+TLY.forEach(function(y){
+  E("line",{x1:332,y1:y,x2:466,y2:y,stroke:MUT,"stroke-width":1},A.tlA);
+  E("polygon",{points:"478,"+y+" 466,"+(y-5)+" 466,"+(y+5),fill:MUT},A.tlA);
+});
+A.chips=E("g",{opacity:0},cam);
+T(640,364,"restored by RCS:",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.chips);
+[[458,110,"read receipts"],[593,132,"typing indicators"],[725,104,"hi-res media"]].forEach(function(d){
+  E("rect",{x:d[0]-d[1]/2,y:378,width:d[1],height:28,rx:14,fill:"#fff",stroke:LINE,"stroke-width":1},A.chips);
+  T(d[0],396,d[2],{fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"middle"},A.chips);
+});
+A.ringG=E("g",{opacity:0},cam);
+E("rect",{x:492,y:217,width:296,height:126,rx:63,fill:"none",stroke:"#f5f5f7","stroke-width":4},A.ringG);
+A.ringB=E("rect",{x:492,y:217,width:296,height:126,rx:63,fill:"none",stroke:BLUE,"stroke-width":2},A.ringG);
+var RGLEN=740;
+A.stillG=T(640,448,"Still green.",Object.assign({fill:INK,"font-size":FS(24),"font-weight":"700","text-anchor":"middle",opacity:0},HALO),cam);
+
+/* ============ BEAT 5: the disclosure record, 2011-2026 - then the silence ============ */
+function X5(yr){return 150+(yr-2011)/15*730;}
+A.ax5=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.ax5);
+[2011,2016,2021,2026].forEach(function(yr){
+  T(X5(yr),492,String(yr),{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.ax5);
+});
+function lolli(x,ytop,name,sub,anchor,bold){
+  var g=E("g",{opacity:0},cam);
+  E("line",{x1:x,y1:470,x2:x,y2:ytop,stroke:MUT,"stroke-width":1},g);
+  E("circle",{cx:x,cy:470,r:3,fill:INK},g);
+  var ax=anchor==="start"?x-8:x;
+  T(ax,ytop-24,name,Object.assign({fill:INK,"font-size":FS(bold?15:13),"font-weight":bold?"700":"600","text-anchor":anchor||"middle",style:TNUM},HALO),g);
+  T(ax,ytop-6,sub,Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":anchor||"middle"},HALO),g);
+  return g;
+}
+A.l50=lolli(X5(2011),422,"iMessage ships with iOS 5","Oct 2011","start",false);
+A.l51=lolli(X5(2014),330,"~40 billion a day","iMessages - Tim Cook, 2014","middle",true);
+A.l52=lolli(X5(2016.1),218,"peak 200,000 per second","Eddy Cue, Feb 2016","middle",true);
+A.sil=E("rect",{x:X5(2016.1),y:434,width:0,height:32,rx:3,fill:PALE,opacity:0},cam);
+A.silB=E("rect",{x:X5(2016.1),y:434,width:481.8,height:32,rx:3,fill:"none",stroke:MUT,"stroke-width":1,"stroke-dasharray":"3 5",opacity:0},cam);
+A.silLbl=T(639,454,"a decade of silence: no volume, no users, no revenue",{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle",opacity:0},cam);
+A.watch5=E("g",{opacity:0},cam);
+T(878,150,"what to watch: the teen line, post-RCS",Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"end"},HALO),A.watch5);
+T(878,168,"fall 2024: 87% - spring 2025: 88%",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},HALO),A.watch5);
+
+/* ============ the recurring pair (created last: always on top) ============ */
+function bubble(color,txt){
+  var g=E("g",{opacity:0},cam);
+  E("path",{d:"M 48 10 C 53 20 61 26 71 27 C 59 33 47 28 41 17 Z",fill:color},g);
+  E("rect",{x:-66,y:-22,width:132,height:44,rx:22,fill:color},g);
+  T(0,5,txt,{fill:"#fff","font-size":FS(14),"font-weight":"600","text-anchor":"middle"},g);
+  return g;
+}
+A.bubB=bubble(BLUE,"On my way");
+A.bubG=bubble(GREEN,"On my way");
+
+/* ============ furniture: scene titles + captions ============ */
+var TITLES=["Messages, 2011: one app, two protocols","What dies when the bubble turns green",
+  "US teens who own an iPhone, 2012-2025","Apple on iMessage, 2013-2022",
+  "The forcing, 2022-2024","iMessage volume disclosures, 2011-2026"];
+var CAPS=[
+ ["iMessage: announced June 6, 2011; shipped with iOS 5, Oct 12, 2011 [D].",
+  "Blue = Apple's protocol, over data. Green = the carrier's SMS rails, c. 1992."],
+ ["US v. Apple complaint, Mar 21, 2024 [court]: conversations not encrypted; videos",
+  "'pixelated and grainy'; no editing, no typing indicators. WSJ front page, Jan 8, 2022."],
+ ["Piper Jaffray / Piper Sandler, Taking Stock With Teens, semiannual [R]: 19 surveys,",
+  "fall 2012 (40%) to spring 2025 (88%). Sample skews suburban, higher-income."],
+ ["Internal emails surfaced in Epic v. Apple (2021); quoted in US v. Apple (2024) [court].",
+  "Cook: Code Conference, Sept 2022, asked about videos sent to his mother [R]."],
+ ["RCS: announced Nov 16, 2023 ('later next year... RCS Universal Profile'); shipped",
+  "in iOS 18, Sept 2024 [D]. RCS texts gained features and remained green."],
+ ["Volume: ~40B/day (Cook, 2014) [R]; 200,000/sec peak (Cue, Feb 2016) [R]; none since.",
+  "Retention: ~94% of US iPhone buyers stay (CIRP, 2023) [R]. Watch the teen line."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  bubB:{o:1,x:345,y:252,k:1}, bubG:{o:1,x:670,y:252,k:1},
+  b0g:{o:0}, b0pun:{o:0},
+  hdr1:{o:0}, rows:{o:0}, x0:{o:0},x1:{o:0},x2:{o:0},x3:{o:0},x4:{o:0},x5:{o:0},
+  grid2:{o:0}, ceil2:{o:0}, tline:{o:0}, tdots:{o:0}, note40:{o:0}, note94:{o:0}, hero2:{o:0},
+  qc0:{o:0}, qc1:{o:0}, qc2:{o:0},
+  tl0:{o:0},tl1:{o:0},tl2:{o:0},tl3:{o:0},tl4:{o:0}, tlA:{o:0}, chips:{o:0}, ringG:{o:0}, stillG:{o:0},
+  ax5:{o:0}, l50:{o:0}, l51:{o:0}, l52:{o:0}, sil:{o:0,g:1}, silLbl:{o:0}, watch5:{o:0},
+  T:[0,0,0,0,0,0], C:[0,0,0,0,0,0]};}
+var Z=base();
+Z.bubB={o:0,x:345,y:252,k:1}; Z.bubG={o:0,x:670,y:252,k:1}; Z.sil={o:0,g:0};
+var S=[];
+S[0]=Object.assign(base(),{
+  b0g:{o:{v:1,win:[.1,.2]}},
+  bubB:{o:{v:1,win:[.16,.28]},x:345,y:252,k:1},
+  bubG:{o:{v:1,win:[.34,.46]},x:670,y:252,k:1},
+  b0pun:{o:{v:1,win:[.6,.72]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  bubB:{o:1,x:{v:270,win:[.06,.26]},y:{v:130,win:[.06,.26]},k:{v:.6,win:[.06,.26]}},
+  bubG:{o:1,x:{v:730,win:[.06,.26]},y:{v:130,win:[.06,.26]},k:{v:.6,win:[.06,.26]}},
+  hdr1:{o:{v:1,win:[.22,.3]}},
+  rows:{o:{v:1,win:[.24,.34]}},
+  x0:{o:{v:1,win:[.4,.46]}}, x1:{o:{v:1,win:[.45,.51]}}, x2:{o:{v:1,win:[.5,.56]}},
+  x3:{o:{v:1,win:[.55,.61]}}, x4:{o:{v:1,win:[.6,.66]}}, x5:{o:{v:1,win:[.65,.71]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  bubB:{o:1,x:{v:795,win:[.06,.24]},y:{v:84,win:[.06,.24]},k:{v:.42,win:[.06,.24]}},
+  bubG:{o:1,x:{v:872,win:[.06,.24]},y:{v:96,win:[.06,.24]},k:{v:.42,win:[.06,.24]}},
+  grid2:{o:{v:1,win:[.14,.24]}},
+  ceil2:{o:{v:1,win:[.2,.28]}},
+  tline:{o:{v:1,win:[.18,.26]}},
+  tdots:{o:{v:1,win:[.5,.62]}},
+  note40:{o:{v:1,win:[.32,.44]}},
+  note94:{o:{v:1,win:[.56,.66]}},
+  hero2:{o:{v:1,win:[.64,.74]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  bubB:{o:1,x:795,y:84,k:.42}, bubG:{o:1,x:872,y:96,k:.42},
+  qc0:{o:{v:1,win:[.22,.34]}},
+  qc1:{o:{v:1,win:[.36,.48]}},
+  qc2:{o:{v:1,win:[.5,.62]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  bubB:{o:1,x:795,y:84,k:.42},
+  bubG:{o:1,x:{v:640,win:[.08,.3]},y:{v:280,win:[.08,.3]},k:{v:1.8,win:[.08,.3]}},
+  tl0:{o:{v:1,win:[.18,.26]}}, tl1:{o:{v:1,win:[.25,.33]}}, tl2:{o:{v:1,win:[.32,.4]}},
+  tl3:{o:{v:1,win:[.39,.47]}}, tl4:{o:{v:1,win:[.46,.54]}},
+  tlA:{o:{v:1,win:[.5,.58]}},
+  chips:{o:{v:1,win:[.56,.66]}},
+  ringG:{o:{v:1,win:[.58,.64]}},
+  stillG:{o:{v:1,win:[.68,.75]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  bubB:{o:1,x:795,y:84,k:.42},
+  bubG:{o:1,x:{v:872,win:[.06,.24]},y:{v:96,win:[.06,.24]},k:{v:.42,win:[.06,.24]}},
+  ax5:{o:{v:1,win:[.14,.22]}},
+  l50:{o:{v:1,win:[.22,.3]}},
+  l51:{o:{v:1,win:[.3,.38]}},
+  l52:{o:{v:1,win:[.38,.46]}},
+  sil:{o:{v:1,win:[.5,.56]},g:{v:1,win:[.5,.66]}},
+  silLbl:{o:{v:1,win:[.64,.72]}},
+  watch5:{o:{v:1,win:[.68,.75]}},
+  T:onehot(5), C:onehot(5)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+var XKEYS=["x0","x1","x2","x3","x4","x5"];
+var TLKEYS=["tl0","tl1","tl2","tl3","tl4"];
+function mix(s1,s2,t){
+  function c(ak,ck){return cv(s1[ak][ck],s2[ak][ck],t);}
+  function u(ak,ck){return cu(s1[ak][ck],s2[ak][ck],t);}
+  var st={
+    bubB:{o:c("bubB","o"),x:c("bubB","x"),y:c("bubB","y"),k:c("bubB","k")},
+    bubG:{o:c("bubG","o"),x:c("bubG","x"),y:c("bubG","y"),k:c("bubG","k")},
+    b0g:{o:c("b0g","o")}, b0pun:{o:c("b0pun","o"),u:u("b0pun","o")},
+    hdr1:{o:c("hdr1","o")}, rows:{o:c("rows","o")},
+    grid2:{o:c("grid2","o")}, ceil2:{o:c("ceil2","o")},
+    tline:{o:c("tline","o")}, tdots:{o:c("tdots","o")},
+    note40:{o:c("note40","o"),u:u("note40","o")},
+    note94:{o:c("note94","o"),u:u("note94","o")},
+    hero2:{o:c("hero2","o"),u:u("hero2","o")},
+    qc0:{o:c("qc0","o"),u:u("qc0","o")},
+    qc1:{o:c("qc1","o"),u:u("qc1","o")},
+    qc2:{o:c("qc2","o"),u:u("qc2","o")},
+    tlA:{o:c("tlA","o")},
+    chips:{o:c("chips","o"),u:u("chips","o")},
+    ringG:{o:c("ringG","o")},
+    stillG:{o:c("stillG","o"),u:u("stillG","o")},
+    ax5:{o:c("ax5","o")},
+    l50:{o:c("l50","o"),u:u("l50","o")},
+    l51:{o:c("l51","o"),u:u("l51","o")},
+    l52:{o:c("l52","o"),u:u("l52","o")},
+    sil:{o:c("sil","o"),g:c("sil","g")},
+    silLbl:{o:c("silLbl","o")},
+    watch5:{o:c("watch5","o"),u:u("watch5","o")},
+    T:[],C:[]};
+  XKEYS.forEach(function(k){st[k]={o:c(k,"o")};});
+  TLKEYS.forEach(function(k){st[k]={o:c(k,"o"),u:u(k,"o")};});
+  for(var i=0;i<6;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  A.bubB.setAttribute("transform","translate("+st.bubB.x.toFixed(1)+" "+st.bubB.y.toFixed(1)+") scale("+st.bubB.k.toFixed(3)+")");
+  setO(A.bubB,st.bubB.o);
+  A.bubG.setAttribute("transform","translate("+st.bubG.x.toFixed(1)+" "+st.bubG.y.toFixed(1)+") scale("+st.bubG.k.toFixed(3)+")");
+  setO(A.bubG,st.bubG.o);
+  setO(A.b0g,st.b0g.o);
+  setO(A.b0pun,st.b0pun.o);
+  setO(A.hdr1,st.hdr1.o); setO(A.rows,st.rows.o);
+  A.xs.forEach(function(g,i){setO(g,st[XKEYS[i]].o);});
+  setO(A.grid2,st.grid2.o); setO(A.ceil2,st.ceil2.o);
+  setO(A.tline,st.tline.o);
+  dashTo(A.tline,TLEN,beat===2?eo(w(.22,.58)):1);
+  setO(A.tdots,st.tdots.o);
+  setO(A.note40,st.note40.o); rise(A.note40,st.note40.u);
+  setO(A.note94,st.note94.o); rise(A.note94,st.note94.u);
+  setO(A.hero2,st.hero2.o); rise(A.hero2,st.hero2.u);
+  setO(A.qc0,st.qc0.o); rise(A.qc0,st.qc0.u);
+  setO(A.qc1,st.qc1.o); rise(A.qc1,st.qc1.u);
+  setO(A.qc2,st.qc2.o); rise(A.qc2,st.qc2.u);
+  A.tls.forEach(function(g,i){var s=st[TLKEYS[i]];setO(g,s.o);rise(g,s.u);});
+  setO(A.tlA,st.tlA.o);
+  setO(A.chips,st.chips.o); rise(A.chips,st.chips.u);
+  setO(A.ringG,st.ringG.o);
+  dashTo(A.ringB,RGLEN,beat===4?eo(w(.6,.72)):1);
+  setO(A.stillG,st.stillG.o); rise(A.stillG,st.stillG.u);
+  setO(A.ax5,st.ax5.o);
+  [["l50",A.l50],["l51",A.l51],["l52",A.l52]].forEach(function(d){
+    var s=st[d[0]];setO(d[1],s.o);rise(d[1],s.u);});
+  A.sil.setAttribute("width",(481.8*clamp(st.sil.g)).toFixed(1));
+  setO(A.sil,st.sil.o);
+  setO(A.silB,Math.min(st.sil.o,st.sil.g>=1?1:0));
+  setO(A.silLbl,st.silLbl.o);
+  setO(A.watch5,st.watch5.o); rise(A.watch5,st.watch5.u);
+  for(var i=0;i<6;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:6};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("imessage")<0){x.push("imessage");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>

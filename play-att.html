@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Prompt · App Tracking Transparency · The Interface Playbook</title>
+<meta name="description" content="Apple shipped one dialog box in iOS 14.5. Most users pressed no. An industry lost on the order of $10 billion a year; Apple's own ad business quadrupled.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The Weaponized Default</p>
+  <h1>One dialog box.</h1>
+  <div class="sub">iOS 14.5 shipped a question with two answers and put the no on top. <strong>Most users pressed it.</strong> An industry lost on the order of $10 billion a year; <strong>Apple's own ad business quadrupled.</strong></div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="App Tracking Transparency: the prompt, the opt-out flip, the crater, and Apple's counter-curve"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">Apple wrote the <span class="it">question</span>.</h2><p class="body">On April 26, 2021, iOS 14.5 shipped with App Tracking Transparency. Any app that wanted to follow you across other companies' apps now had to ask first, in Apple's words, inside Apple's dialog. The developer gets one italic line to make its case. And the two answers are not symmetrical: <span class="b">"Ask App Not to Track" is listed first.</span></p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Flip</p><h2 class="h-big">Most said <span class="it">no</span>.</h2><p class="body">In the first weeks, <span class="b">11% of iOS users worldwide allowed tracking; in the US, 4%</span> (Flurry). A year in, the worldwide figure had climbed to just 25%. The most generous count anyone produced (AppsFlyer's, restricted to users actually shown the prompt) found 46% saying yes. Read it either way: most said no, and nobody changed a setting to do it. The default did the work.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Crater</p><h2 class="h-big">"On the order of <span class="it">$10 billion</span>."</h2><p class="body">Meta's own number. On the February 2, 2022 earnings call, CFO Dave Wehner put the iOS headwind at on the order of $10 billion for 2022. The next day Meta fell 26% and shed <span class="b">$232 billion of market value</span>, the largest single-day loss any US company had taken. The crash priced more than ATT; a weak forecast and the first-ever decline in daily users landed the same night. But the $10 billion was Meta's own arithmetic, and Lotame had already counted <span class="b">$9.85 billion</span> pulled from Snap, Facebook, Twitter, and YouTube in the back half of 2021 alone.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Counter-curve</p><h2 class="h-big">Apple's ads <span class="it">quadrupled</span>.</h2><p class="body">Apple ran a sleepy search-ads business worth about $1.09 billion in 2020. Then the prompt shipped: <span class="b">$3.7 billion in 2021, $4.7 billion in 2022</span> (Omdia), and an estimated $10 billion or more a year by 2025. Apple's ads run on first-party data, which its own rules leave unprompted. The crater sits on one side of the dialog box, the counter-curve on the other.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Comparison</p><h2 class="h-big">It never built a better <span class="it">ad network</span>.</h2><p class="body">The ad industry spent two decades assembling the machine below the line: device IDs, cross-app profiles, attribution, auctions. Apple built none of it. It built the question on top, defined "tracking" so that the machine needed permission and Apple's own data did not, and let a billion defaults drain the stack. <span class="b">You don't have to out-engineer the network if you own the permission it runs on.</span></p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Halo</p><h2 class="h-big">Privacy, says the prompt. The state read it <span class="it">twice</span>.</h2><p class="body">The privacy is real; so is the asymmetry. Germany's cartel office opened proceedings in June 2022 and formally objected in February 2025: Apple's dialogs steer users toward no for everyone else, while its own apps ask easier questions, or none. On March 31, 2025, France issued the first fine, <span class="b">€150 million</span>, ruling ATT's implementation "neither necessary nor proportionate." No competitor ever broke the prompt. <span class="b">Five states are trying.</span></p></div></div>
+    <div class="step" data-step="6"><div class="copy"><p class="kicker">The Pattern</p><h2 class="h-big">Own the <span class="it">question</span>.</h2><p class="body">Every play in this book rents something out: a shelf, a port, a default. ATT is the purest one. Apple charges no fee and runs no auction; it owns the sentence that stands between an app and its data, and it wrote the no on top. The toll arrived anyway: rivals out roughly $10 billion a year, Apple's ads now collecting about that much, and the only force still arguing with the dialog is the state. <span class="b">One dialog box. That's the whole play.</span></p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The newest defaults are consent screens.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="att">
+    <a id="exitnext" href="competition-is-for-losers.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">Gemini · the gateway act <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: prompt copy and ship date, Apple (iOS 14.5, April 26, 2021; "Ask App Not to Track" / "Allow"; the purpose line is the developer-written example from Apple's documentation) [D]. Opt-in rates: Flurry Analytics (worldwide ~11% in the first weeks, ~15% later in 2021, ~25% by March-April 2022; US first weeks ~4%; share of active iOS users allowing tracking) and AppsFlyer (~46% opt-in among users actually shown the prompt, March 2022) [R]; the vendors measure different denominators and are labeled on the chart. Meta guidance: Q4 2021 earnings call, February 2, 2022, CFO Dave Wehner: the iOS headwind "on the order of $10 billion" for 2022 [R]. February 3, 2022 market reaction: Meta closed down ~26%, erasing roughly $232 billion of market capitalization, the largest one-day value loss for a US company to that date (Reuters/Refinitiv); the same report included weak Q1 guidance and the first sequential decline in daily active users [D-market]. Rival impact: Lotame estimate via the Financial Times (October 2021): Snap, Facebook, Twitter, and YouTube lost ~$9.85 billion of revenue in H2 2021, ~12% of their combined ad revenue [E]. Apple Ads revenue: Omdia ($1.09B 2020 implied by its +238% growth figure; $3.7B 2021; ~$4.7B 2022) [R]; eMarketer runs higher (~$10B worldwide by 2023; US-only $6.47B 2024, $7.42B 2025F); ~$10B+ a year by 2025 is the consensus estimate [E]; Apple does not disclose ads revenue. Regulators: Bundeskartellamt, proceedings opened June 14, 2022 (Sec. 19a GWB / Art. 102 TFEU), statement of objections February 13, 2025 (Apple's consent dialogs steer users; its own apps face fewer prompts; its definition of "tracking" exempts first-party data); Autorité de la concurrence, March 31, 2025: €150 million fine, the first over ATT, finding the implementation "neither necessary nor proportionate"; similar probes pending in Italy, Romania, and Poland [R]. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Prompt: engine v2. Actors created once; beats are target states with per-actor timing
+   windows {v, win:[a,b], e}. Scalars use the global fade (exits complete by .35, entrances
+   run .22-.75). All windows end by .75: the last quarter of every beat is a poster frame.
+   Binary rest: at p=1 every opacity is 0 or 1, plus at most one context-ghost at .12. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);}
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+function lerpC(a,b,t){t=clamp(t);
+  function h(x){return [parseInt(x.substr(1,2),16),parseInt(x.substr(3,2),16),parseInt(x.substr(5,2),16)];}
+  var A=h(a),B=h(b);
+  function q(i){var v=Math.round(lerp(A[i],B[i],t));v=v<0?0:v>255?255:v;var s=v.toString(16);return s.length<2?"0"+s:s;}
+  return "#"+q(0)+q(1)+q(2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:"#f5f5f7","stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ THE CARD: a faithful iOS consent sheet (the persistent object) ============ */
+A.card=E("g",{opacity:0},cam);
+E("rect",{x:-135,y:-95,width:270,height:200,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.card);
+[["Allow \"App\" to track your",-70],["activity across other",-53],["companies' apps and",-36],["websites?",-19]].forEach(function(d){
+  T(0,d[1],d[0],{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.card);
+});
+T(0,6,"Your data will be used to",{fill:MUT,"font-size":FS(11.5),"font-style":"italic","text-anchor":"middle"},A.card);
+T(0,21,"deliver personalized ads to you.",{fill:MUT,"font-size":FS(11.5),"font-style":"italic","text-anchor":"middle"},A.card);
+E("line",{x1:-135,y1:38,x2:135,y2:38,stroke:LINE,"stroke-width":1},A.card);
+T(0,60,"Ask App Not to Track",{fill:BLUE,"font-size":FS(15),"font-weight":"600","text-anchor":"middle"},A.card);
+E("line",{x1:-135,y1:74,x2:135,y2:74,stroke:LINE,"stroke-width":1},A.card);
+T(0,95,"Allow",{fill:BLUE,"font-size":FS(15),"text-anchor":"middle"},A.card);
+
+/* ============ BEAT 0: the prompt, annotated ============ */
+A.dateLbl=T(500,392,"iOS 14.5 - April 26, 2021",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",opacity:0},cam);
+A.noteBtn=note(356,298,300,260,["the decline is","the first option"]);
+A.notePurp=note(596,241,668,196,["the developer's one","line, in italics"]);
+
+/* ============ BEAT 1: opt-in rates on the honest 0-100% ruler ============ */
+/* Flurry [R]: worldwide share of active iOS users allowing tracking: 11% (Apr 2021), ~15% (late 2021), 25% (Apr 2022) */
+A.grid1=E("g",{opacity:0},cam);
+[[387.5,"25%"],[305,"50%"],[222.5,"75%"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid1);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid1);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid1);
+[[150,"Apr 2021"],[515,"Oct 2021"],[880,"Apr 2022"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.grid1);
+});
+A.ceil1=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:140,x2:880,y2:140,stroke:LINE,"stroke-width":1,"stroke-dasharray":"3 6"},A.ceil1);
+T(154,128,"100% = every iPhone user asked",{fill:MUT,"font-size":FS(12)},A.ceil1);
+A.fl=E("path",{d:"M 150 433.7 L 515 420.5 L 880 387.5",fill:"none",stroke:GRAPH,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},cam);
+var FLLEN=740;
+A.flStart=T(142,437,"11%",{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM,opacity:0},cam);
+A.us=E("g",{opacity:0},cam);
+E("circle",{cx:175,cy:456.8,r:3,fill:GRAPH},A.us);
+A.noteUS=note(175,457,255,524,["US, first weeks: 4%"]);
+A.end1=E("g",{opacity:0},cam);
+E("circle",{cx:880,cy:387.5,r:4.5,fill:INK},A.end1);
+T(868,368,"25%",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.end1);
+A.af=E("g",{opacity:0},cam);
+E("circle",{cx:819,cy:318.2,r:4.5,fill:"#f5f5f7",stroke:BLUE,"stroke-width":2},A.af);
+A.noteAF=note(819,318,700,254,["46% of users actually shown","the prompt opt in","(AppsFlyer, Mar 2022)"]);
+A.br1=E("path",{d:"M 884 384 L 892 384 L 892 144 L 884 144",fill:"none",stroke:INK,"stroke-width":2,opacity:0},cam);
+var BR1LEN=260;
+A.brLbl=E("g",{opacity:0},cam);
+[["even at its",250],["kindest count",266],["most said no",282]].forEach(function(d){
+  T(898,d[1],d[0],Object.assign({fill:INK,"font-size":FS(13),"font-weight":"600"},HALO),A.brLbl);
+});
+
+/* ============ BEATS 2+3: the diverging ledger around one zero line ============ */
+A.zero2=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:300,x2:880,y2:300,stroke:LINE,"stroke-width":1.5},A.zero2);
+T(142,304,"$0",{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.zero2);
+A.crater=E("g",{opacity:0},cam);
+A.barM=E("rect",{x:215,y:300,width:150,height:140,rx:3,fill:GRAPH},A.crater);
+A.barM.style.transformOrigin="290px 300px"; A.barM.style.transform="scaleY(0)";
+T(290,462,"-$10B",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.crater);
+T(290,482,"Meta, FY2022 headwind",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.crater);
+T(290,500,"its own guidance [R]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.crater);
+A.barL=E("rect",{x:435,y:300,width:150,height:137.9,rx:3,fill:GRAPH},A.crater);
+A.barL.style.transformOrigin="510px 300px"; A.barL.style.transform="scaleY(0)";
+T(510,462,"-$9.85B",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.crater);
+T(510,482,"Snap+Facebook+Twitter+YouTube",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.crater);
+T(510,500,"H2 2021 alone (Lotame) [E]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.crater);
+A.inset=E("g",{opacity:0},cam);
+T(694,204,"META, Feb 2 to Feb 3",{fill:MUT,"font-size":FS(12)},A.inset);
+A.insFlat=E("path",{d:"M 700 226 L 800 230",fill:"none",stroke:GRAPH,"stroke-width":2.5,opacity:0},cam);
+var IFLEN=105;
+A.insFall=E("path",{d:"M 800 230 L 836 296",fill:"none",stroke:RED,"stroke-width":3,"stroke-linecap":"round",opacity:0},cam);
+var IFALLEN=80;
+A.insDot=E("circle",{cx:836,cy:296,r:5,fill:RED,opacity:0},cam);
+A.insRing=E("circle",{cx:836,cy:296,r:10,fill:"none",stroke:RED,"stroke-width":2,opacity:0},cam);
+A.noteIns=note(836,296,760,352,["Feb 3, 2022: -26%","-$232B in one day [D]"]);
+
+/* Apple Ads [R, Omdia]: $1.09B (2020), $3.7B (2021), $4.7B (2022); est. ~$10B+ (2025) [E]. y=300-v*14 */
+A.yrs3=E("g",{opacity:0},cam);
+[[190,"2020"],[466,"2022"],[880,"2025"]].forEach(function(d){
+  T(d[0],320,d[1],Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"middle"},HALO),A.yrs3);
+});
+A.ads=E("path",{d:"M 190 284.7 L 328 248.2 L 466 234.2",fill:"none",stroke:BLUE,"stroke-width":3,"stroke-linejoin":"round",opacity:0},cam);
+var ADSLEN=290;
+A.adsDots=[[190,284.7],[328,248.2],[466,234.2]].map(function(d){
+  return E("circle",{cx:d[0],cy:d[1],r:3.5,fill:BLUE,opacity:0},cam);
+});
+A.adsVals=E("g",{opacity:0},cam);
+[["$1.09B",190,262],["$3.7B",328,226],["$4.7B",466,264]].forEach(function(d){
+  T(d[1],d[2],d[0],Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.adsVals);
+});
+A.adsDash=E("path",{d:"M 466 234.2 L 880 160",fill:"none",stroke:BLUE,"stroke-width":2,"stroke-dasharray":"6 5",opacity:0},cam);
+A.endDot=E("circle",{cx:880,cy:160,r:5,fill:BLUE,opacity:0},cam);
+A.hero3=E("g",{opacity:0},cam);
+T(868,140,"~$10B+",Object.assign({fill:BLUE,"font-size":FS(40),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.hero3);
+T(868,158,"a year, 2025 est. [E]",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.hero3);
+A.emN=E("g",{opacity:0},cam);
+E("circle",{cx:604,cy:155.8,r:4.5,fill:"#f5f5f7",stroke:BLUE,"stroke-width":2},A.emN);
+A.noteEm=note(604,156,500,186,["eMarketer counts ~$10B","already in 2023 [E]"]);
+A.noteQuad=note(328,248,256,336,["quadrupled in two","years (Omdia) [R]"]);
+
+/* ============ BEAT 4: the prompt above, the stack below ============ */
+A.surf=E("g",{opacity:0},cam);
+E("line",{x1:230,y1:300,x2:770,y2:300,stroke:INK,"stroke-width":1.5},A.surf);
+A.surfLbl=E("g",{opacity:0},cam);
+T(238,286,"the interface",{fill:MUT,"font-size":FS(12)},A.surfLbl);
+T(238,322,"the infrastructure it re-routed",{fill:MUT,"font-size":FS(12)},A.surfLbl);
+var STACKD=[["device IDs (IDFA)",318],["cross-app profiles",370],["attribution",422],["ad auctions",474]];
+A.stack=E("g",{opacity:0},cam);
+A.blocks=[];A.blockRects=[];A.blockLbls=[];
+STACKD.forEach(function(d){
+  var g=E("g",{opacity:0},A.stack);
+  A.blockRects.push(E("rect",{x:425,y:d[1],width:150,height:40,rx:12,fill:GRAPH},g));
+  A.blockLbls.push(T(500,d[1]+25,d[0],{fill:"#ffffff","font-size":FS(12),"font-weight":"600","text-anchor":"middle"},g));
+  A.blocks.push(g);
+});
+A.noteRe=note(580,338,690,250,["needed a yes it","rarely got"]);
+
+/* ============ BEAT 5: the regulatory timeline ============ */
+A.tl=E("g",{opacity:0},cam);
+E("line",{x1:170,y1:420,x2:880,y2:420,stroke:LINE,"stroke-width":1.5},A.tl);
+[[190,"2021"],[343,"2022"],[497,"2023"],[650,"2024"],[803,"2025"]].forEach(function(d){
+  T(d[0],444,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.tl);
+});
+var TLDOTS=[[239,INK,5],[412,GRAPH,5],[822,GRAPH,5],[841,RED,6]];
+A.tlDots=TLDOTS.map(function(d){
+  return E("circle",{cx:d[0],cy:420,r:d[2],fill:d[1],opacity:0},cam);
+});
+A.n1=note(239,420,190,332,["Apr 26, 2021:","the prompt ships"]);
+A.n2=note(412,420,360,330,["Jun 14, 2022: Germany","opens proceedings"]);
+A.n3=note(822,420,700,330,["Feb 13, 2025: FCO objects:","Apple's own apps exempt"]);
+A.n4=note(841,420,730,484,["Mar 31, 2025: France fines 150M euros,","the first fine over the prompt [R]"]);
+A.tell=E("g",{opacity:0},cam);
+T(170,210,"Competitors who broke the prompt: 0",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.tell);
+T(170,236,"States contesting it: 5",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700",style:TNUM},HALO),A.tell);
+T(170,258,"France fined; Germany objected; Italy, Romania, Poland probing [R]",{fill:MUT,"font-size":FS(12)},A.tell);
+
+/* ============ BEAT 6: the pattern ============ */
+A.statA=T(500,388,"The crater: ~$10B a year, by Meta's own math [R]",Object.assign({fill:GRAPH,"font-size":FS(15),"font-weight":"600","text-anchor":"middle",style:TNUM,opacity:0},HALO),cam);
+A.statB=T(500,420,"The counter-curve: Apple Ads, ~$10B+ a year [E]",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"600","text-anchor":"middle",style:TNUM,opacity:0},HALO),cam);
+A.closer=T(500,472,"Own the question, and the default collects.",Object.assign({fill:INK,"font-size":FS(18),"font-weight":"700","text-anchor":"middle"},HALO),cam);
+A.closer.setAttribute("opacity",0);
+
+/* ============ furniture ============ */
+var TITLES=["The consent prompt, iOS 14.5","Tracking opt-in, 2021-2022","What it cost the platforms",
+  "Apple Ads revenue, 2020-2025","One prompt vs. the stack","The state arrives, 2021-2025","The pattern"];
+var CAPS=[
+ ["Prompt copy verbatim [D]: iOS 14.5, shipped April 26, 2021. Apple wrote the question;",
+  "the developer gets the one italic line. The decline is the first option listed."],
+ ["Flurry [R]: share of active iOS users allowing tracking: 11% (Apr 2021) to 25% (Apr 2022).",
+  "AppsFlyer [R] counts only users shown the prompt: ~46% (Mar 2022). Vendors differ; most say no."],
+ ["Meta CFO, Feb 2, 2022 call [R]: the iOS headwind 'on the order of $10 billion' for 2022.",
+  "Lotame [E]: four platforms lost $9.85B in H2 2021. The Feb 3 crash also priced weak guidance."],
+ ["Omdia [R]: Apple Ads $1.09B (2020), $3.7B (2021), $4.7B (2022). eMarketer [E] runs higher.",
+  "Apple discloses no ads revenue; ~$10B+ a year (2025) is the consensus estimate [E]."],
+ ["The re-routed stack: device IDs (IDFA), cross-app profiles, attribution, ad auctions.",
+  "Apple defines 'tracking' as cross-company only; its own first-party ads sit outside it (FCO) [R]."],
+ ["Germany [R]: proceedings June 14, 2022; objections Feb 13, 2025: the dialogs steer, Apple's own apps ask less.",
+  "France, Mar 31, 2025 [R]: 150M euro fine, the first over ATT: 'neither necessary nor proportionate.'"],
+ ["The crater: ~$10B (Meta, 2022, its own guidance) [R]. The counter-curve: ~$10B+ a year by 2025 [E].",
+  "Competitors who broke the prompt: 0. States contesting it: 5 [R]."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  card:{o:1,x:500,y:235,k:1.05},
+  dateLbl:{o:0}, noteBtn:{o:0}, notePurp:{o:0},
+  grid1:{o:0}, ceil1:{o:0}, fl:{o:0}, flStart:{o:0}, us:{o:0}, noteUS:{o:0}, end1:{o:0},
+  af:{o:0}, noteAF:{o:0}, br1:{o:0}, brLbl:{o:0},
+  zero2:{o:0}, crater:{o:0,gM:1,gL:1}, inset:{o:0}, insFlat:{o:0}, insFall:{o:0}, insDot:{o:0}, insRing:{o:0}, noteIns:{o:0},
+  yrs3:{o:0}, ads:{o:0}, adsDots:{o:0}, adsVals:{o:0}, adsDash:{o:0}, endDot:{o:0}, hero3:{o:0}, emN:{o:0}, noteEm:{o:0}, noteQuad:{o:0},
+  surf:{o:0}, surfLbl:{o:0}, stack:{o:0,dn:0,cd:0}, noteRe:{o:0},
+  tl:{o:0}, tlDots:{o:0}, n1:{o:0}, n2:{o:0}, n3:{o:0}, n4:{o:0}, tell:{o:0},
+  statA:{o:0}, statB:{o:0}, closer:{o:0},
+  T:[0,0,0,0,0,0,0], C:[0,0,0,0,0,0,0]};}
+var Z=base();
+Z.card={o:0,x:500,y:249,k:0.96};
+var S=[];
+S[0]=Object.assign(base(),{
+  card:{o:{v:1,win:[.12,.26]},x:500,y:{v:235,win:[.12,.3]},k:{v:1.05,win:[.12,.3],e:"back"}},
+  dateLbl:{o:{v:1,win:[.32,.44]}},
+  noteBtn:{o:{v:1,win:[.42,.56]}},
+  notePurp:{o:{v:1,win:[.55,.69]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  card:{o:1,x:500,y:{v:92,win:[.2,.4]},k:{v:0.38,win:[.2,.4]}},
+  grid1:{o:{v:1,win:[.1,.18]}},
+  ceil1:{o:{v:1,win:[.14,.22]}},
+  fl:{o:{v:1,win:[.16,.24]}}, flStart:{o:{v:1,win:[.16,.24]}},
+  us:{o:{v:1,win:[.5,.58]}}, noteUS:{o:{v:1,win:[.52,.64]}},
+  end1:{o:{v:1,win:[.54,.64]}},
+  af:{o:{v:1,win:[.58,.66]}}, noteAF:{o:{v:1,win:[.6,.72]}},
+  br1:{o:{v:1,win:[.62,.68]}}, brLbl:{o:{v:1,win:[.68,.75]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  card:{o:1,x:500,y:92,k:0.38},
+  zero2:{o:{v:1,win:[.12,.2]}},
+  crater:{o:{v:1,win:[.18,.26]},gM:{v:1,win:[.18,.38],e:"back"},gL:{v:1,win:[.28,.48],e:"back"}},
+  inset:{o:{v:1,win:[.46,.54]}},
+  insFlat:{o:{v:1,win:[.48,.54]}},
+  insFall:{o:{v:1,win:[.56,.62]}},
+  insDot:{o:{v:1,win:[.62,.68]}},
+  insRing:{o:{v:1,win:[.64,.7]}},
+  noteIns:{o:{v:1,win:[.68,.75]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  card:{o:1,x:500,y:92,k:0.38},
+  zero2:{o:1},
+  crater:{o:{v:.12,win:[0,.3]},gM:1,gL:1},
+  yrs3:{o:{v:1,win:[.14,.22]}},
+  ads:{o:{v:1,win:[.14,.22]}},
+  adsDots:{o:{v:1,win:[.2,.44]}},
+  adsVals:{o:{v:1,win:[.44,.56]}},
+  adsDash:{o:{v:1,win:[.5,.58]}},
+  endDot:{o:{v:1,win:[.6,.66]}},
+  hero3:{o:{v:1,win:[.64,.74]}},
+  emN:{o:{v:1,win:[.5,.58]}}, noteEm:{o:{v:1,win:[.52,.62]}},
+  noteQuad:{o:{v:1,win:[.56,.68]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  card:{o:1,x:500,y:{v:168,win:[.15,.4]},k:{v:0.78,win:[.15,.4]}},
+  surf:{o:{v:1,win:[.2,.28]}},
+  surfLbl:{o:{v:1,win:[.26,.34]}},
+  stack:{o:{v:1,win:[.22,.3]},dn:{v:1,win:[.56,.72]},cd:{v:1,win:[.56,.72]}},
+  noteRe:{o:{v:1,win:[.66,.75]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  card:{o:1,x:500,y:{v:92,win:[.15,.35]},k:{v:0.38,win:[.15,.35]}},
+  tl:{o:{v:1,win:[.18,.26]}},
+  tlDots:{o:{v:1,win:[.24,.56]}},
+  n1:{o:{v:1,win:[.36,.48]}},
+  n2:{o:{v:1,win:[.44,.56]}},
+  n3:{o:{v:1,win:[.52,.64]}},
+  n4:{o:{v:1,win:[.58,.7]}},
+  tell:{o:{v:1,win:[.64,.75]}},
+  T:onehot(5), C:onehot(5)});
+S[6]=Object.assign(base(),{
+  card:{o:1,x:500,y:{v:225,win:[.2,.45]},k:{v:0.95,win:[.2,.45]}},
+  statA:{o:{v:1,win:[.5,.6]}},
+  statB:{o:{v:1,win:[.56,.66]}},
+  closer:{o:{v:1,win:[.66,.75]}},
+  T:onehot(6), C:onehot(6)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+var KEYS=["card","dateLbl","noteBtn","notePurp","grid1","ceil1","fl","flStart","us","noteUS","end1",
+  "af","noteAF","br1","brLbl","zero2","crater","inset","insFlat","insFall","insDot","insRing","noteIns",
+  "yrs3","ads","adsDots","adsVals","adsDash","endDot","hero3","emN","noteEm","noteQuad",
+  "surf","surfLbl","stack","noteRe","tl","tlDots","n1","n2","n3","n4","tell","statA","statB","closer"];
+function mix(s1,s2,t){
+  var st={T:[],C:[]};
+  KEYS.forEach(function(k){
+    var o={}, a=s1[k], b=s2[k];
+    for(var ch in b){o[ch]=cv(a[ch],b[ch],t);}
+    o.u=cu(a.o,b.o,t);
+    st[k]=o;
+  });
+  for(var i=0;i<7;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+var NOTES=["noteBtn","notePurp","noteUS","noteAF","noteIns","noteEm","noteQuad","noteRe","n1","n2","n3","n4","brLbl","tell","hero3","statA","statB","closer","adsVals","dateLbl"];
+function clamp0(x){return x<0?0:x;}
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  A.card.setAttribute("transform","translate("+st.card.x.toFixed(1)+" "+st.card.y.toFixed(1)+") scale("+st.card.k.toFixed(3)+")");
+  setO(A.card,st.card.o);
+  setO(A.grid1,st.grid1.o); setO(A.ceil1,st.ceil1.o);
+  setO(A.fl,st.fl.o); dashTo(A.fl,FLLEN,beat===1?eo(w(.18,.5)):1);
+  setO(A.flStart,st.flStart.o);
+  setO(A.us,st.us.o); setO(A.end1,st.end1.o); setO(A.af,st.af.o);
+  setO(A.br1,st.br1.o); dashTo(A.br1,BR1LEN,beat===1?eo(w(.62,.72)):1);
+  setO(A.zero2,st.zero2.o);
+  setO(A.crater,st.crater.o);
+  A.barM.style.transform="scaleY("+clamp0(st.crater.gM).toFixed(3)+")";
+  A.barL.style.transform="scaleY("+clamp0(st.crater.gL).toFixed(3)+")";
+  setO(A.inset,st.inset.o);
+  setO(A.insFlat,st.insFlat.o); dashTo(A.insFlat,IFLEN,beat===2?eo(w(.48,.56)):1);
+  setO(A.insFall,st.insFall.o); dashTo(A.insFall,IFALLEN,beat===2?eo(w(.56,.64)):1);
+  setO(A.insDot,st.insDot.o); setO(A.insRing,st.insRing.o);
+  setO(A.yrs3,st.yrs3.o);
+  setO(A.ads,st.ads.o); dashTo(A.ads,ADSLEN,beat===3?eo(w(.16,.42)):1);
+  A.adsDots.forEach(function(d,i){
+    setO(d,beat===3?w(.2+.08*i,.28+.08*i):st.adsDots.o);
+  });
+  setO(A.adsDash,st.adsDash.o);
+  setO(A.endDot,st.endDot.o);
+  setO(A.emN,st.emN.o);
+  setO(A.surf,st.surf.o); setO(A.surfLbl,st.surfLbl.o);
+  setO(A.stack,st.stack.o);
+  A.stack.setAttribute("transform","translate(0 "+(14*st.stack.dn).toFixed(1)+")");
+  A.blocks.forEach(function(g,i){
+    setO(g,beat===4?w(.22+.06*i,.3+.06*i):1);
+  });
+  A.blockRects.forEach(function(r){r.setAttribute("fill",lerpC(GRAPH,"#d4d4da",st.stack.cd));});
+  A.blockLbls.forEach(function(l){l.setAttribute("fill",lerpC("#ffffff","#6e6e73",st.stack.cd));});
+  setO(A.tl,st.tl.o);
+  A.tlDots.forEach(function(d,i){
+    setO(d,beat===5?w(.24+.08*i,.32+.08*i):st.tlDots.o);
+  });
+  NOTES.forEach(function(k){setO(A[k],st[k].o); rise(A[k],st[k].u);});
+  for(var i=0;i<7;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:7};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("att")<0){x.push("att");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>

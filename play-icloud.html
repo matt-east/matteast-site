@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Squeeze · iCloud · The Interface Playbook</title>
+<meta name="description" content="iCloud's free tier has been 5 GB since 2011 while everything that fills it grew sixteen-fold. The squeeze is the strategy—and Apple rents the disks underneath.">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  :root{
+    --bg:#f5f5f7; --ink:#1d1d1f; --mut:#6e6e73; --faint:#a1a1a6; --line:#d2d2d7;
+    --blue:#0071e3; --graphite:#4a4a52; --red:#d70015; --pale:#e7e7ec;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;}
+  .kicker{color:var(--mut); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; font-weight:700; margin:0 0 14px}
+  .h-big{font-size:clamp(1.55rem,2.35vw,2.35rem); font-weight:700; letter-spacing:-.025em; line-height:1.13; margin:0; color:var(--ink)}
+  p.body{font-size:clamp(1rem,1.05vw,1.12rem); color:#42424a; margin:1em 0 0; line-height:1.55}
+  .b{color:var(--blue)} .it{font-style:italic}
+  #pbar{position:fixed; top:0; left:0; height:3px; width:100%; background:var(--blue); transform-origin:left; transform:scaleX(0); z-index:50}
+  .sitenav{position:absolute; top:22px; left:26px; z-index:10; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mut); text-decoration:none}
+  .sitenav:hover{color:var(--blue)}
+  .hero{min-height:92vh; min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:0 6vw}
+  .heroinner{display:flex; flex-direction:column; align-items:center; justify-content:center; will-change:opacity,transform}
+  .hero .play{color:var(--blue); font-weight:700; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4.4rem); font-weight:700; letter-spacing:-.035em; margin:0; line-height:1.03; max-width:16ch; color:var(--ink)}
+  .hero .sub{max-width:640px; color:var(--mut); font-size:clamp(1.02rem,1.5vw,1.26rem); margin-top:24px; line-height:1.55}
+  .hero .sub strong{color:var(--ink); font-weight:600}
+  .scrollcue{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:var(--mut); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,8px);opacity:1}}
+  .scrolly{display:grid; grid-template-columns:1.55fr 1fr; column-gap:3vw; position:relative}
+  .col-graphic{position:-webkit-sticky; position:sticky; top:0; align-self:start; height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  .col-graphic svg{width:100%; height:auto; max-height:92vh; display:block}
+  .col-text{position:relative; z-index:2}
+  .step{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:0 5vw 0 1.5vw}
+  .copy{max-width:400px}
+  .copy .body,.copy h2,.copy .kicker{opacity:.2; transform:translateY(12px); transition:opacity .55s ease, transform .55s ease}
+  .step.is-active .copy .body,.step.is-active .copy h2,.step.is-active .copy .kicker{opacity:1; transform:none}
+  text{font-family:var(--sans)}
+  .exit{padding:14vh 7vw 10vh; max-width:980px; margin:0 auto; text-align:center}
+  .exit h2{font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:700; letter-spacing:-.03em; margin:0}
+  .exit .tally{color:var(--mut); margin:14px 0 30px}
+  .exitgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; max-width:820px; margin:0 auto}
+  .exitgrid a{display:block; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px; text-decoration:none; color:var(--ink); transition:transform .18s ease, border-color .18s ease}
+  .exitgrid a:hover{transform:translateY(-3px); border-color:var(--blue)}
+  .exitgrid .lbl{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .exitgrid .nm{font-weight:700; margin-top:6px}
+  .exitgrid .nm .b{color:var(--blue)}
+  footer{border-top:1px solid var(--line); padding:40px 7vw 70px; color:var(--mut); font-size:.82rem; max-width:980px; margin:6vh auto 0; line-height:1.65}
+  footer a{color:var(--blue)} .byline{color:var(--mut); font-size:.8rem; margin-top:10px}
+  @media (max-width:820px){
+    .scrolly{display:block}
+    .col-graphic{height:46vh; height:46svh; z-index:6; background:var(--bg); border-bottom:1px solid var(--line)}
+    .col-graphic svg{max-height:42vh}
+    .col-text{z-index:1}
+    .step{min-height:74vh; min-height:74svh; align-items:flex-start; padding:6vh 7vw 0}
+    .copy{max-width:none; background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; scroll-behavior:auto!important}
+    .copy *{transition:opacity .2s linear!important}
+  }
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="pbar" aria-hidden="true"></div>
+
+<section class="hero">
+  <a class="sitenav" href="the-interface-playbook.html">← The playbook</a>
+  <div class="heroinner" id="heroInner">
+  <p class="play">The Interface Playbook · The 2011 Play</p>
+  <h1>Five gigabytes, forever.</h1>
+  <div class="sub">iCloud launched on October 12, 2011 with <strong>5 GB free</strong>. Fourteen years and fifteen iPhone generations later, the free tier is still 5 GB, while everything that fills it has grown ten to sixteen times over. <strong>The squeeze is the strategy.</strong></div>
+  <div class="scrollcue">Scroll</div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="col-graphic"><svg id="viz" viewBox="0 0 1000 620" role="img" aria-label="iCloud: the frozen free tier, the paid ladder, the funnel, and the rented disks"></svg></div>
+  <div class="col-text" id="steps">
+    <div class="step" data-step="0"><div class="copy"><p class="kicker">The Interface</p><h2 class="h-big">One <span class="it">prompt</span>.</h2><p class="body">Every iPhone backs itself up to iCloud, and every Apple Account gets 5 GB free. The moment your photos and backups cross that line, the phone raises an alert and offers the fix: <span class="b">$0.99 a month</span>. Apple has never said how often the alert fires; CIRP simply measures what it does—about two-thirds of US Apple customers now pay for storage. That makes this dialog box one of the most effective ads ever shipped inside an operating system.</p></div></div>
+    <div class="step" data-step="1"><div class="copy"><p class="kicker">The Freeze</p><h2 class="h-big">The floor never <span class="it">moved</span>.</h2><p class="body">In 2011 the base iPhone held 16 GB, and the free 5 GB covered nearly a third of it. The base iPhone 17 holds <span class="b">256 GB</span>; the free tier covers 2%. The camera went from 8 to 48 megapixels, video from 1080p to 4K, and an average photo library alone now overflows the allowance [E]. Apple repriced the paid tiers again and again across those fourteen years and touched the free one zero times. That is not neglect—a frozen floor under a growing flood is the engine of the funnel.</p></div></div>
+    <div class="step" data-step="2"><div class="copy"><p class="kicker">The Tiers</p><h2 class="h-big">Everything above the floor kept <span class="it">moving</span>.</h2><p class="body">Watch the paid ladder. Twenty dollars a year for 10 extra gigabytes in 2011; a repricing to monthly in 2014; 50 GB for <span class="b">$0.99 a month</span> by 2015; 2 TB halved to $9.99 in 2017; 6 TB and 12 TB tiers added in 2023, pitched in Apple's own press release as a perfect complement to the new 48-megapixel cameras. The top tier grew 223-fold. The free tier grew zero-fold. Generosity above the line; gravity below it.</p></div></div>
+    <div class="step" data-step="3"><div class="copy"><p class="kicker">The Funnel</p><h2 class="h-big">Two-thirds <span class="it">pay</span>.</h2><p class="body">CIRP's 2024 survey found <span class="b">64% of US Apple customers pay for iCloud storage</span>—more than subscribe to Apple Music (42%), Apple TV+ (32%), or AppleCare (17%). Storage is the most-subscribed product Apple sells, and it is sold almost entirely by that one alert. Apple crossed 1 billion paid subscriptions across all services in June 2023 and said "well over" a billion in January 2025. iCloud's share of those? Undisclosed. The funnel works; the company just never says how well.</p></div></div>
+    <div class="step" data-step="4"><div class="copy"><p class="kicker">The Inversion</p><h2 class="h-big">Own the prompt, <span class="it">rent the disks</span>.</h2><p class="body">Here is the part Apple's own security guide admits: iCloud files are encrypted into chunks and stored "using third-party storage services, such as Amazon S3 and Google Cloud Platform." Reporting puts the rent at more than <span class="b">$30 million a month</span> to AWS by 2019, and roughly $300 million a year to Google by 2021, where Apple is the largest cloud-storage customer with more than 8 exabytes parked. Amazon and Google built the infrastructure; Apple owns the dialog box that charges you to use it. The thesis in miniature.</p></div></div>
+    <div class="step" data-step="5"><div class="copy"><p class="kicker">The Gap</p><h2 class="h-big">The number Apple never <span class="it">says</span>.</h2><p class="body">Apple reports Services as one $100-billion-plus line and has never broken out iCloud. The last reported figure is 2019-era: roughly <span class="b">$2.5-3 billion</span> a year (FT/Visible Alpha). Triangulate today instead: about 1.4 billion iPhone users, a fifth to a third paying globally, a tier mix clustered at the bottom of the ladder—call it $6-12 billion a year, on storage Apple largely rents. Even the floor of that band would double the stale number. Until Apple says otherwise, its most-subscribed service has no public revenue line at all.</p></div></div>
+  </div>
+</section>
+
+<section class="exit">
+  <p class="kicker">End of the play</p>
+  <h2>The quietest toll is the one you pay monthly.</h2>
+  <p class="tally" id="tally">Plays explored: 1 of 14</p>
+  <div class="exitgrid" data-play="icloud">
+    <a id="exitnext" href="play-imessage.html"><span class="lbl" id="exitnextlbl">Next play</span><div class="nm">iMessage <span class="b">→</span></div></a>
+    <a href="the-interface-playbook.html"><span class="lbl">Choose your own path</span><div class="nm">The playbook <span class="b">→</span></div></a>
+    <a href="the-score.html"><span class="lbl">When you're ready</span><div class="nm">The score <span class="b">→</span></div></a>
+  </div>
+</section>
+<script src="playbook-nav.js"></script>
+
+<footer>
+  Figures: free tier 5 GB per Apple Account since iCloud launched Oct 12, 2011 [D/archive via contemporaneous coverage of Apple's posted pricing; unchanged on Apple's current plans page, April 2026]. Tier history as posted by Apple: 2011 annual add-ons 10/20/50 GB at $20/$40/$100 a year (TidBITS, Aug 1, 2011, citing apple.com); Sept 2014 monthly repricing 20 GB $0.99, 200 GB $3.99, 500 GB $9.99, 1 TB $19.99 (MacRumors); Sept 2015 50 GB $0.99, 200 GB $2.99, 1 TB $9.99; Aug 2016 2 TB added at $19.99 (AppleInsider); June 2017 2 TB cut to $9.99, 1 TB dropped; Sept 2021 iCloud+ branding, prices unchanged; Sept 18, 2023 6 TB $29.99 and 12 TB $59.99 added (Apple Newsroom, which pitches them as "a perfect complement" to the iPhone 15's 48MP cameras). Base iPhone flash at launch [D]: 16 GB (4S, 2011) to 256 GB (iPhone 17, 2025); cameras 8 MP (2011) to 48 MP (2023-). Average iOS photo library ~2,400 photos, roughly 5-12 GB [E, Photutorial 2023]. CIRP (Aug 2024) [E, US survey]: 64% of US Apple customers pay for iCloud storage vs Apple Music 42%, Apple TV+ 32%, AppleCare 17%. Paid subscriptions across all services [D, Apple]: 935M (Dec 2022), 975M (Mar 2023), more than 1 billion (June 2023), "well over" 1 billion (Q1 FY25 earnings call, Jan 30, 2025); iCloud's share undisclosed. Rented infrastructure: Apple iOS Security Guide (Jan 2018) [D]: iCloud chunks stored "using third-party storage services, such as Amazon S3 and Google Cloud Platform" (via TechCrunch); AWS spend more than $30 million a month plus a $1.5 billion five-year commitment [R, CNBC, Apr 2019]; Google Cloud ~$300 million in 2021, up 50% year over year, more than 8 exabytes stored, Apple the largest cloud-storage customer [R, The Information via 9to5Mac, June 2021]. Revenue: Apple has never disclosed an iCloud line; last reported estimate ~$2.5-3B/yr [R, FT/Visible Alpha, 2019-era]; the $6-12B/yr band is this project's triangulation [E]: ~1.4-1.5B iPhone users [D] x 20-30% paying globally (CIRP measures 64% in the US; global mix skews lower) x $1.50-2.50/month blended tier mix. <a href="the-interface-playbook.html">Full sources &amp; data →</a>
+  <div class="byline">By Matt East. Editorial analysis of public data; personal views; not investment advice.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* The Squeeze: engine v2 (ported from play-search). Actors created once; beats are target
+   states with per-actor timing windows. Exits complete by .35; entrances run .22-.75; all
+   windows end by .75 so the last quarter of every beat is a poster frame. Binary rest at p=1. */
+var NS="http://www.w3.org/2000/svg", svg=document.getElementById("viz");
+var INK="#1d1d1f",MUT="#6e6e73",LINE="#d2d2d7",BLUE="#0071e3",GRAPH="#4a4a52",PALE="#e7e7ec",RED="#d70015",BG="#f5f5f7";
+var REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MOB=false; try{MOB=!!(window.matchMedia&&window.matchMedia("(max-width: 820px)").matches);}catch(e){}
+function FS(n){return String(MOB?Math.round(n*14)/10:n);}
+function E(t,a,p){var e=document.createElementNS(NS,t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(x,y,s,a,p){var t=E("text",Object.assign({x:x,y:y},a||{}),p);t.textContent=s;return t;}
+function clamp(x){return x<0?0:x>1?1:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function eo(t){t=clamp(t);return 1-Math.pow(1-t,3);}
+function eb(t){t=clamp(t);var c1=0.8,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+function lerpC(a,b,t){t=clamp(t);
+  function h(x){return [parseInt(x.substr(1,2),16),parseInt(x.substr(3,2),16),parseInt(x.substr(5,2),16)];}
+  var A=h(a),B=h(b);
+  function q(i){var v=Math.round(lerp(A[i],B[i],t));v=v<0?0:v>255?255:v;var s=v.toString(16);return s.length<2?"0"+s:s;}
+  return "#"+q(0)+q(1)+q(2);}
+var TNUM="font-feature-settings:'tnum'";
+var HALO={"paint-order":"stroke",stroke:BG,"stroke-width":3.5,"stroke-linejoin":"round"};
+
+var cam=E("g",{id:"cam"},svg);
+var A={};
+
+/* one annotation helper: 2px dot at the datum, 1px elbow leader, tspan stack with halo */
+function note(ax,ay,tx,ty,lines,so){
+  var g=E("g",{opacity:0},cam);
+  E("circle",{cx:ax,cy:ay,r:2,fill:INK},g);
+  var sgn=tx>=ax?1:-1, tyc=ty+(lines.length-1)*8-4, s0=so||6;
+  E("path",{d:"M "+(ax+s0*sgn)+" "+ay+" L "+(tx-16*sgn)+" "+tyc+" L "+(tx-4*sgn)+" "+tyc,fill:"none",stroke:MUT,"stroke-width":1},g);
+  var t=E("text",Object.assign({x:tx,y:ty,fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":sgn>0?"start":"end"},HALO),g);
+  lines.forEach(function(s,i){var sp=E("tspan",{x:tx,dy:i?16:0},t);sp.textContent=s;});
+  return g;
+}
+
+/* ============ THE VESSEL (persistent device): a 5GB tank that never grows ============ */
+A.vessel=E("g",{opacity:0},cam);
+E("rect",{x:-70,y:-130,width:140,height:260,rx:14,fill:"#fff",stroke:LINE,"stroke-width":1.5},A.vessel);
+A.vFill=E("rect",{x:-62,y:122,width:124,height:0,rx:6,fill:"#c9c9cf"},A.vessel);
+A.vLbl=T(0,2,"5 GB",{fill:"#fff","font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},A.vessel);
+A.vSub=T(0,24,"free since 2011",{fill:"#fff","font-size":FS(12),"text-anchor":"middle"},A.vessel);
+
+/* photo dots pouring in (beat 0 only; positions PP-driven in apply) */
+A.dotsG=E("g",{opacity:0},cam);
+var DOTS=[];
+for(var di=0;di<12;di++){DOTS.push(E("circle",{cx:0,cy:0,r:5,fill:GRAPH,opacity:0},A.dotsG));}
+
+/* the iOS alert (the upsell surface) */
+A.alert=E("g",{opacity:0},cam);
+E("rect",{x:-190,y:-72,width:380,height:148,rx:14,fill:"#fff",stroke:LINE,"stroke-width":1},A.alert);
+T(0,-42,"iCloud Storage Is Full",{fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},A.alert);
+T(0,-18,"This iPhone cannot be backed up because",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.alert);
+T(0,-2,"there is not enough iCloud storage available.",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.alert);
+E("line",{x1:-190,y1:18,x2:190,y2:18,stroke:LINE,"stroke-width":1},A.alert);
+E("line",{x1:0,y1:18,x2:0,y2:76,stroke:LINE,"stroke-width":1},A.alert);
+T(-95,52,"Not Now",{fill:MUT,"font-size":FS(13),"text-anchor":"middle"},A.alert);
+T(95,52,"Upgrade",{fill:BLUE,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},A.alert);
+A.note0=note(595,194,700,330,["the fix: $0.99 a month;","CIRP: two-thirds of US","customers end up paying"],8);
+
+/* ============ BEAT 1: the freeze chart (device storage vs the flat free tier) ============ */
+/* x: 2011-2025 -> 150-880; y: 0-256 GB -> 470-170 (linear). Base iPhone at launch [D]. */
+A.grid1=E("g",{opacity:0},cam);
+[[395,"64 GB"],[320,"128 GB"],[245,"192 GB"],[170,"256 GB"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.grid1);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.grid1);
+});
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.grid1);
+[[150,"2011"],[358.6,"2015"],[619.3,"2020"],[880,"2025"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.grid1);
+});
+var D_DEV="M 150 451.3 L 410.7 451.3 L 410.7 432.5 L 462.9 432.5 L 462.9 395 L 671.4 395 L 671.4 320 L 854 320 L 854 170 L 880 170";
+A.devLine=E("path",{d:D_DEV,fill:"none",stroke:GRAPH,"stroke-width":2.5,"stroke-linejoin":"round",opacity:0},cam);
+var DEVLEN=1060;
+A.devEnd=E("g",{opacity:0},cam);
+T(876,150,"256 GB",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.devEnd);
+T(876,166,"base iPhone 17",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.devEnd);
+A.freeLine=E("path",{d:"M 150 464.1 L 880 464.1",fill:"none",stroke:BLUE,"stroke-width":3.5,"stroke-linecap":"round",opacity:0},cam);
+var FREELEN=740;
+A.ringFree=E("g",{opacity:0},cam);
+E("circle",{cx:880,cy:464.1,r:10,fill:"none",stroke:BG,"stroke-width":4},A.ringFree);
+A.ringFreeB=E("circle",{cx:880,cy:464.1,r:10,fill:"none",stroke:BLUE,"stroke-width":2},A.ringFree);
+var RFLEN=64;
+A.heroFive=E("g",{opacity:0},cam);
+T(872,440,"5 GB",Object.assign({fill:BLUE,"font-size":FS(40),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.heroFive);
+T(872,404,"the free tier, every year since 2011",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.heroFive);
+A.notePct=note(150,451.3,256,376,["2011: free covered 31%","of the base iPhone;","2025: it covers 2%"]);
+A.noteCam=note(671.4,320,560,250,["the camera grew too:","8 MP to 48 MP; video","1080p to 4K"]);
+
+/* ============ BEAT 2: the paid ladder, era by era (log scale; the floor is the baseline) ============ */
+var ERAX=[222,378,534,690,846];
+A.axisT=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.axisT);
+[["2011",0],["2014",1],["2015",2],["2017",3],["2023",4]].forEach(function(d){
+  T(ERAX[d[1]],492,d[0],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.axisT);
+});
+A.floorT=E("g",{opacity:0},cam);
+E("line",{x1:170,y1:470,x2:860,y2:470,stroke:BLUE,"stroke-width":3.5,"stroke-linecap":"round"},A.floorT);
+T(170,514,"free: 5 GB, every era",Object.assign({fill:BLUE,"font-size":FS(13),"font-weight":"600"},HALO),A.floorT);
+function eraCol(ci,tiers){ /* tiers: [y,label,big] */
+  var g=E("g",{opacity:0},cam), x=ERAX[ci];
+  tiers.forEach(function(t){
+    E("circle",{cx:x,cy:t[0],r:t[2]?6:4.5,fill:t[2]?BLUE:GRAPH},g);
+    T(x+12,t[0]+4,t[1],Object.assign({fill:t[2]?BLUE:MUT,"font-size":FS(t[2]?13:12),"font-weight":t[2]?"700":"400",style:TNUM},HALO),g);
+  });
+  return g;
+}
+A.maxPath=E("path",{d:"M 222 377.8 L 378 265.5 L 534 265.5 L 690 238.8 L 846 170",fill:"none",stroke:GRAPH,"stroke-width":1.5,"stroke-dasharray":"4 5",opacity:0},cam);
+A.era0=eraCol(0,[[427.8,"15 GB $20/yr",0],[408.1,"25 GB $40/yr",0],[377.8,"55 GB $100/yr",0]]);
+A.era1=eraCol(1,[[416.7,"20 GB $0.99",0],[328.2,"200 GB $3.99",0],[293,"500 GB $9.99",0],[265.5,"1 TB $19.99",0]]);
+A.era2=eraCol(2,[[381.5,"50 GB $0.99",1],[328.2,"200 GB $2.99",0],[265.5,"1 TB $9.99",0]]);
+A.era3=eraCol(3,[[381.5,"50 GB $0.99",0],[328.2,"200 GB $2.99",0],[238.8,"2 TB $9.99",0]]);
+A.era4=eraCol(4,[[381.5,"50 GB",0],[328.2,"200 GB",0],[238.8,"2 TB",0],[196.6,"6 TB $29.99",0],[170,"12 TB $59.99",1]]);
+A.maxLbl=note(846,170,700,140,["the top tier: 55 GB to","12 TB; up 223x"],10);
+A.noteEsc=note(846,381.5,770,430,["the cheapest escape:","$0.99 for 50 GB,","unchanged since 2015"],8);
+
+/* ============ BEAT 3: who pays (CIRP) + the subscriptions ledger ============ */
+function bar(cx,baseY,w,h,c,val,valC,who){
+  var g=E("g",{opacity:0},cam);
+  var r=E("rect",{x:cx-w/2,y:baseY-h,width:w,height:h,rx:3,fill:c},g);
+  r.style.transformOrigin=cx+"px "+baseY+"px"; r.style.transform="scaleY(0)";
+  T(cx,baseY-h-12,val,Object.assign({fill:valC,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),g);
+  T(cx,baseY+24,who,{fill:INK,"font-size":FS(13),"font-weight":"600","text-anchor":"middle"},g);
+  return {g:g,bar:r};
+}
+A.cirp0=bar(208,470,104,204.8,BLUE,"64%",BLUE,"iCloud storage");
+A.cirp1=bar(340,470,104,134.4,GRAPH,"42%",INK,"Apple Music");
+A.cirp2=bar(472,470,104,102.4,GRAPH,"32%",INK,"Apple TV+");
+A.cirp3=bar(604,470,104,54.4,GRAPH,"17%",INK,"AppleCare");
+A.noteCirp=note(208,265.2,300,206,["the prompt converts:","storage leads every","Apple subscription"]);
+A.subsBlock=E("g",{opacity:0},cam);
+T(742,300,"Paid subscriptions, all services [D]",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.subsBlock);
+[["935M", "Dec 2022"],["975M","Mar 2023"],["over 1B","June 2023"],["\"well over\" 1B","Jan 2025"]].forEach(function(d,i){
+  T(742,326+i*22,d[0],{fill:i>1?BLUE:MUT,"font-size":FS(13),"font-weight":i>1?"700":"400",style:TNUM},A.subsBlock);
+  T(852,326+i*22,d[1],{fill:MUT,"font-size":FS(12)},A.subsBlock);
+});
+T(742,424,"iCloud's share: undisclosed",{fill:MUT,"font-size":FS(12),"font-style":"italic"},A.subsBlock);
+
+/* ============ BEAT 4: the inversion (surface line; rented disks below) ============ */
+A.under=E("rect",{x:150,y:310,width:730,height:160,fill:PALE,opacity:0},cam);
+A.surf=E("line",{x1:150,y1:310,x2:880,y2:310,stroke:INK,"stroke-width":1.5,opacity:0},cam);
+A.surfLbl=E("g",{opacity:0},cam);
+T(876,302,"the interface (Apple's)",Object.assign({fill:INK,"font-size":FS(12),"font-weight":"600","text-anchor":"end"},HALO),A.surfLbl);
+T(876,330,"the infrastructure (rented)",Object.assign({fill:MUT,"font-size":FS(12),"font-weight":"600","text-anchor":"end"},HALO),A.surfLbl);
+A.quote=E("g",{opacity:0},cam);
+["\"...stored, without any user-identifying","information, using third-party storage","services, such as Amazon S3 and","Google Cloud Platform.\""].forEach(function(s,i){
+  T(420,108+i*19,s,{fill:INK,"font-size":FS(13),"font-style":"italic"},A.quote);
+});
+T(420,188,"Apple iOS Security Guide, Jan 2018 [D]",{fill:MUT,"font-size":FS(12)},A.quote);
+A.ribIn=E("g",{opacity:0},cam);
+E("path",{d:"M 150 114 C 166 114 176 112 196 112 L 196 132 C 176 130 166 128 150 128 Z",fill:BLUE},A.ribIn);
+E("polygon",{points:"196,106 196,138 212,122",fill:BLUE},A.ribIn);
+T(150,96,"the upsell: $0.99+ a month [E]",Object.assign({fill:BLUE,"font-size":FS(12),"font-weight":"600"},HALO),A.ribIn);
+A.ribOut=E("g",{opacity:0},cam);
+E("path",{d:"M 254 272 C 300 330 420 360 548 378 L 549 370 C 432 352 308 322 261 267 Z",fill:GRAPH},A.ribOut);
+E("polygon",{points:"546,383 548,365 564,375",fill:GRAPH},A.ribOut);
+E("path",{d:"M 267 266 C 360 348 560 374 756 380 L 757 372 C 564 366 368 334 273 260 Z",fill:GRAPH},A.ribOut);
+E("polygon",{points:"754,385 755,367 772,377",fill:GRAPH},A.ribOut);
+T(170,336,"the rent",Object.assign({fill:GRAPH,"font-size":FS(12),"font-weight":"600"},HALO),A.ribOut);
+A.blockA=E("g",{opacity:0},cam);
+E("rect",{x:470,y:386,width:180,height:74,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.blockA);
+T(560,416,"Amazon S3",{fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},A.blockA);
+T(560,438,">$30M a month [R, 2019]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle",style:TNUM},A.blockA);
+A.blockG=E("g",{opacity:0},cam);
+E("rect",{x:676,y:386,width:204,height:74,rx:12,fill:"#fff",stroke:LINE,"stroke-width":1},A.blockG);
+T(778,408,"Google Cloud",{fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle"},A.blockG);
+T(778,428,"8+ exabytes; its largest",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.blockG);
+T(778,444,"storage customer [R, 2021]",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.blockG);
+
+/* ============ BEAT 5: the gap (one stale dot; a triangulated band; the watch list) ============ */
+A.axisR=E("g",{opacity:0},cam);
+E("line",{x1:150,y1:470,x2:880,y2:470,stroke:LINE,"stroke-width":1.5},A.axisR);
+[[362.9,"$5B"],[255.7,"$10B"]].forEach(function(d){
+  E("line",{x1:150,y1:d[0],x2:880,y2:d[0],stroke:LINE,"stroke-width":1},A.axisR);
+  T(138,d[0]+4,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"end",style:TNUM},A.axisR);
+});
+[[150,"2011"],[358.6,"2015"],[567.1,"2019"],[775.7,"2023"],[880,"2025"]].forEach(function(d){
+  T(d[0],492,d[1],{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.axisR);
+});
+A.dotStale=E("g",{opacity:0},cam);
+E("circle",{cx:567.1,cy:405.7,r:5,fill:GRAPH},A.dotStale);
+T(567.1,381,"~$3B [R, dated]",Object.assign({fill:INK,"font-size":FS(15),"font-weight":"700","text-anchor":"middle",style:TNUM},HALO),A.dotStale);
+T(567.1,430,"FT/Visible Alpha, 2019",{fill:MUT,"font-size":FS(12),"text-anchor":"middle"},A.dotStale);
+A.bandG=E("g",{opacity:0},cam);
+E("rect",{x:836,y:212.9,width:44,height:128.5,rx:3,fill:"#c9ddf3"},A.bandG);
+E("path",{d:"M 886 212.9 L 894 212.9 L 894 341.4 L 886 341.4",fill:"none",stroke:BLUE,"stroke-width":2},A.bandG);
+A.bandLbl=E("g",{opacity:0},cam);
+T(830,196,"$6-12B [E, triangulated]",Object.assign({fill:BLUE,"font-size":FS(15),"font-weight":"700","text-anchor":"end",style:TNUM},HALO),A.bandLbl);
+T(830,214,"2025: a band, not a number",Object.assign({fill:MUT,"font-size":FS(12),"text-anchor":"end"},HALO),A.bandLbl);
+A.noteGap=note(700,373,640,300,["fourteen years, one stale","estimate: Apple has never","reported an iCloud line"]);
+A.watch=E("g",{opacity:0},cam);
+T(170,160,"The watch list",{fill:INK,"font-size":FS(13),"font-weight":"600"},A.watch);
+["- a forced services breakout (DOJ/EU)","- the next paid-subscriptions update","- CIRP payer-rate drift"].forEach(function(s,i){
+  T(170,184+i*20,s,{fill:MUT,"font-size":FS(12)},A.watch);
+});
+
+/* ============ furniture: scene titles + captions ============ */
+var TITLES=["The storage-full prompt","The free tier vs. the base iPhone, 2011-2025","The paid ladder, era by era",
+  "Who pays for storage","Own the prompt, rent the disks","iCloud revenue: the line Apple never drew"];
+var CAPS=[
+ ["Free tier: 5 GB per Apple Account since iCloud launched, Oct 12, 2011 [D/archive]; unchanged on Apple's",
+  "current plans page (April 2026). The alert fires when photos and backups cross the 5 GB line."],
+ ["Base iPhone flash at launch [D]: 16 GB (4S, 2011) to 256 GB (iPhone 17, 2025). Free iCloud: 5 GB throughout.",
+  "Average iOS photo library ~2,400 photos, roughly 5-12 GB [E, Photutorial 2023]: photos alone overflow the tier."],
+ ["Tiers as posted [D/archive]. 2011: add-ons of 10/20/50 GB at $20/$40/$100 a year atop 5 GB (charted as totals).",
+  "2014: monthly repricing. 2015: 50 GB at $0.99. 2017: 2 TB cut to $9.99. 2023: 6 TB and 12 TB added. Log scale."],
+ ["CIRP, Aug 2024 [E, US survey]: share of US Apple customers paying for each service; storage leads them all.",
+  "Subscriptions span all Apple and third-party services [D, Apple]; Apple stopped giving precise counts after 1B."],
+ ["The quote is Apple's own iOS Security Guide (Jan 2018) [D]. Rent reported [R]: AWS >$30M/month plus a $1.5B",
+  "five-year commitment (CNBC, 2019); Google Cloud ~$300M in 2021, +50% YoY, >8 exabytes (The Information)."],
+ ["Last reported figure [R, dated]: ~$2.5-3B a year (FT/Visible Alpha, 2019-era). Nothing disclosed since.",
+  "Band [E]: ~1.4-1.5B iPhone users [D] x 20-30% paying globally (CIRP: 64% in the US) x $1.50-2.50/month blended."]];
+A.titles=TITLES.map(function(s){
+  return T(40,54,s,{fill:INK,"font-size":FS(21),"font-weight":"700",opacity:0},cam);
+});
+A.caps=CAPS.map(function(ls){
+  var g=E("g",{opacity:0},cam);
+  T(40,574,ls[0],{fill:MUT,"font-size":FS(12)},g);
+  T(40,592,ls[1],{fill:MUT,"font-size":FS(12)},g);
+  return g;
+});
+
+/* ============ state tables ============ */
+function onehot(i){var a=[0,0,0,0,0,0];a[i]=1;return a;}
+function base(){return {
+  vessel:{o:1,x:500,y:330,k:1,f:1,c:1},
+  dotsG:{o:0}, alert:{o:0,pp:1}, note0:{o:0},
+  grid1:{o:0}, devLine:{o:0}, devEnd:{o:0}, freeLine:{o:0}, ringFree:{o:0}, heroFive:{o:0}, notePct:{o:0}, noteCam:{o:0},
+  axisT:{o:0}, floorT:{o:0}, era0:{o:0}, era1:{o:0}, era2:{o:0}, era3:{o:0}, era4:{o:0},
+  maxPath:{o:0}, maxLbl:{o:0}, noteEsc:{o:0},
+  cirp0:{o:0,gr:1}, cirp1:{o:0,gr:1}, cirp2:{o:0,gr:1}, cirp3:{o:0,gr:1}, noteCirp:{o:0}, subsBlock:{o:0},
+  under:{o:0}, surf:{o:0}, surfLbl:{o:0}, quote:{o:0}, ribIn:{o:0}, ribOut:{o:0}, blockA:{o:0}, blockG:{o:0},
+  axisR:{o:0}, dotStale:{o:0}, bandG:{o:0}, bandLbl:{o:0}, noteGap:{o:0}, watch:{o:0},
+  T:[0,0,0,0,0,0], C:[0,0,0,0,0,0]};}
+var Z=base();
+Z.vessel={o:0,x:500,y:330,k:1,f:0,c:0};
+Z.alert={o:0,pp:0};
+var S=[];
+S[0]=Object.assign(base(),{
+  vessel:{o:{v:1,win:[.06,.16]},x:500,y:330,k:1,f:{v:1,win:[.14,.5]},c:{v:1,win:[.56,.66]}},
+  dotsG:{o:{v:1,win:[.08,.14]}},
+  alert:{o:{v:1,win:[.58,.68]},pp:{v:1,win:[.58,.7],e:"back"}},
+  note0:{o:{v:1,win:[.66,.74]}},
+  T:onehot(0), C:onehot(0)});
+S[1]=Object.assign(base(),{
+  vessel:{o:1,x:{v:920,win:[.2,.4]},y:{v:104,win:[.2,.4]},k:{v:.4,win:[.2,.4]},f:1,c:1},
+  grid1:{o:{v:1,win:[.08,.18]}},
+  freeLine:{o:{v:1,win:[.16,.2]}},
+  devLine:{o:{v:1,win:[.3,.34]}},
+  devEnd:{o:{v:1,win:[.6,.68]}},
+  ringFree:{o:{v:1,win:[.58,.64]}},
+  heroFive:{o:{v:1,win:[.64,.72]}},
+  notePct:{o:{v:1,win:[.5,.6]}},
+  noteCam:{o:{v:1,win:[.66,.75]}},
+  T:onehot(1), C:onehot(1)});
+S[2]=Object.assign(base(),{
+  vessel:{o:1,x:920,y:104,k:.4,f:1,c:1},
+  axisT:{o:{v:1,win:[.1,.18]}},
+  floorT:{o:{v:1,win:[.14,.22]}},
+  era0:{o:{v:1,win:[.22,.3]}}, era1:{o:{v:1,win:[.3,.38]}}, era2:{o:{v:1,win:[.38,.46]}},
+  era3:{o:{v:1,win:[.46,.54]}}, era4:{o:{v:1,win:[.54,.62]}},
+  maxPath:{o:{v:1,win:[.6,.64]}},
+  maxLbl:{o:{v:1,win:[.68,.75]}},
+  noteEsc:{o:{v:1,win:[.64,.73]}},
+  T:onehot(2), C:onehot(2)});
+S[3]=Object.assign(base(),{
+  vessel:{o:1,x:920,y:104,k:.4,f:1,c:1},
+  cirp0:{o:{v:1,win:[.18,.26]},gr:{v:1,win:[.18,.4],e:"back"}},
+  cirp1:{o:{v:1,win:[.26,.34]},gr:{v:1,win:[.26,.46],e:"back"}},
+  cirp2:{o:{v:1,win:[.32,.4]},gr:{v:1,win:[.32,.52],e:"back"}},
+  cirp3:{o:{v:1,win:[.38,.46]},gr:{v:1,win:[.38,.58],e:"back"}},
+  noteCirp:{o:{v:1,win:[.56,.66]}},
+  subsBlock:{o:{v:1,win:[.62,.72]}},
+  T:onehot(3), C:onehot(3)});
+S[4]=Object.assign(base(),{
+  vessel:{o:1,x:{v:250,win:[.18,.4]},y:{v:190,win:[.18,.4]},k:{v:.62,win:[.18,.4]},f:1,c:1},
+  under:{o:{v:1,win:[.14,.22]}},
+  surf:{o:{v:1,win:[.12,.16]}},
+  surfLbl:{o:{v:1,win:[.3,.38]}},
+  ribIn:{o:{v:1,win:[.34,.44]}},
+  ribOut:{o:{v:1,win:[.42,.52]}},
+  blockA:{o:{v:1,win:[.46,.54]}},
+  blockG:{o:{v:1,win:[.52,.6]}},
+  quote:{o:{v:1,win:[.6,.7]}},
+  T:onehot(4), C:onehot(4)});
+S[5]=Object.assign(base(),{
+  vessel:{o:1,x:{v:920,win:[.18,.38]},y:{v:104,win:[.18,.38]},k:{v:.4,win:[.18,.38]},f:1,c:1},
+  axisR:{o:{v:1,win:[.1,.18]}},
+  dotStale:{o:{v:1,win:[.24,.34]}},
+  noteGap:{o:{v:1,win:[.4,.5]}},
+  bandG:{o:{v:1,win:[.52,.6]}},
+  bandLbl:{o:{v:1,win:[.6,.68]}},
+  watch:{o:{v:1,win:[.68,.75]}},
+  T:onehot(5), C:onehot(5)});
+
+/* ============ interpolation ============ */
+function NV(x){return (x&&typeof x==="object")?x.v:x;}
+function chWin(o2,a,b){if(o2&&typeof o2==="object"&&o2.win)return o2.win;return b<a?[0,.35]:[.22,.75];}
+function cv(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b)return b;
+  var w=chWin(o2,a,b), u=clamp((t-w[0])/(w[1]-w[0]));
+  var ez=(o2&&typeof o2==="object"&&o2.e==="back")?eb:eo;
+  return lerp(a,b,ez(u));
+}
+function cu(o1,o2,t){
+  var a=NV(o1),b=NV(o2);
+  if(a===b||b<a)return 1;
+  var w=chWin(o2,a,b);
+  return clamp((t-w[0])/(w[1]-w[0]));
+}
+function fw(a,b,t){
+  if(a===b)return b;
+  return b<a?lerp(a,b,eo(clamp(t/.18))):lerp(a,b,eo(clamp((t-.22)/.12)));
+}
+var KEYS=["dotsG","note0","grid1","devLine","devEnd","freeLine","ringFree","heroFive","notePct","noteCam",
+  "axisT","floorT","era0","era1","era2","era3","era4","maxPath","maxLbl","noteEsc",
+  "noteCirp","subsBlock","under","surf","surfLbl","quote","ribIn","ribOut","blockA","blockG",
+  "axisR","dotStale","bandG","bandLbl","noteGap","watch"];
+function mix(s1,s2,t){
+  function c(ak,ck){return cv(s1[ak][ck],s2[ak][ck],t);}
+  function u(ak,ck){return cu(s1[ak][ck],s2[ak][ck],t);}
+  var st={
+    vessel:{o:c("vessel","o"),x:c("vessel","x"),y:c("vessel","y"),k:c("vessel","k"),f:c("vessel","f"),cc:c("vessel","c")},
+    alert:{o:c("alert","o"),pp:c("alert","pp")},
+    cirp0:{o:c("cirp0","o"),gr:c("cirp0","gr")},
+    cirp1:{o:c("cirp1","o"),gr:c("cirp1","gr")},
+    cirp2:{o:c("cirp2","o"),gr:c("cirp2","gr")},
+    cirp3:{o:c("cirp3","o"),gr:c("cirp3","gr")},
+    T:[],C:[]};
+  KEYS.forEach(function(k){st[k]={o:c(k,"o"),u:u(k,"o")};});
+  for(var i=0;i<6;i++){st.T.push(fw(s1.T[i],s2.T[i],t));st.C.push(fw(s1.C[i],s2.C[i],t));}
+  return st;
+}
+
+/* ============ apply ============ */
+function setO(el,v){el.setAttribute("opacity",v);}
+function dashTo(el,len,d){el.style.strokeDasharray=len;el.style.strokeDashoffset=(len*(1-clamp(d))).toFixed(1);}
+function rise(el,uu){el.setAttribute("transform","translate(0 "+(12*(1-clamp(uu))).toFixed(1)+")");}
+function clamp01b(x){return x<0?0:x;}
+var RISERS=["note0","devEnd","heroFive","notePct","noteCam","maxLbl","noteEsc","noteCirp","subsBlock",
+  "surfLbl","quote","ribIn","ribOut","blockA","blockG","dotStale","bandLbl","noteGap","watch"];
+function apply(st,beat,p){
+  var PP=REDUCED?1:p;
+  function w(a,b){return clamp((PP-a)/(b-a));}
+  /* vessel */
+  A.vessel.setAttribute("transform","translate("+st.vessel.x.toFixed(1)+" "+st.vessel.y.toFixed(1)+") scale("+st.vessel.k.toFixed(3)+")");
+  setO(A.vessel,st.vessel.o);
+  var fh=244*clamp(st.vessel.f);
+  A.vFill.setAttribute("height",fh.toFixed(1)); A.vFill.setAttribute("y",(122-fh).toFixed(1));
+  A.vFill.setAttribute("fill",lerpC("#c9c9cf",BLUE,st.vessel.cc));
+  /* dots pour (beat 0 only) */
+  setO(A.dotsG,st.dotsG.o);
+  DOTS.forEach(function(d,i){
+    if(beat!==0){setO(d,0);return;}
+    var uu=eo(w(.1+i*.02,.32+i*.02));
+    var sx=410+(i%5)*45+(i%3)*8, sy=-26-(i%4)*22;
+    var ex=466+(i%4)*22, ey=216;
+    d.setAttribute("cx",lerp(sx,ex,uu).toFixed(1));
+    d.setAttribute("cy",lerp(sy,ey,uu).toFixed(1));
+    setO(d,uu<=0?0:(uu>.88?Math.max(0,1-(uu-.88)/.12):1).toFixed(3));
+  });
+  /* alert pop */
+  var ap=clamp01b(st.alert.pp);
+  A.alert.setAttribute("transform","translate(500 118) scale("+(0.9+0.1*ap).toFixed(3)+")");
+  setO(A.alert,st.alert.o);
+  /* groups with o (+ rise for annotation-like actors) */
+  KEYS.forEach(function(k){
+    var el=A[k]; if(!el)return;
+    setO(el,st[k].o);
+    if(RISERS.indexOf(k)>=0)rise(el,st[k].u);
+  });
+  /* beat-scoped draws */
+  dashTo(A.freeLine,FREELEN,beat===1?eo(w(.18,.34)):1);
+  dashTo(A.devLine,DEVLEN,beat===1?eo(w(.32,.62)):1);
+  dashTo(A.ringFreeB,RFLEN,beat===1?w(.6,.7):1);
+  dashTo(A.maxPath,700,beat===2?eo(w(.6,.72)):1);
+  dashTo(A.surf,730,beat===4?eo(w(.14,.3)):1);
+  /* CIRP bars */
+  [["cirp0",A.cirp0],["cirp1",A.cirp1],["cirp2",A.cirp2],["cirp3",A.cirp3]].forEach(function(d){
+    var s=st[d[0]];setO(d[1].g,s.o);d[1].bar.style.transform="scaleY("+clamp01b(s.gr).toFixed(3)+")";});
+  for(var i=0;i<6;i++){setO(A.titles[i],st.T[i]);setO(A.caps[i],st.C[i]);}
+}
+function stateAt(beat,p){
+  var t=REDUCED?1:clamp(p);
+  return mix(beat===0?Z:S[beat-1],S[beat],t);
+}
+
+/* ---------- scroll plumbing ---------- */
+var steps=Array.prototype.slice.call(document.querySelectorAll(".step"));
+var copies=steps.map(function(s){return s.querySelector(".copy");});
+var activeStep=0,ticking=false;
+function progressOf(i){var cr=copies[i].getBoundingClientRect();var vh=window.innerHeight||1;var cc=cr.top+cr.height/2;return clamp((vh-cc)/(0.5*vh));}
+var heroInner=document.getElementById("heroInner");
+function frame(){
+  ticking=false;
+  var p=REDUCED?1:progressOf(activeStep);
+  apply(stateAt(activeStep,p),activeStep,p);
+  var d=document.documentElement;
+  var sc=(window.scrollY||d.scrollTop)/((d.scrollHeight-window.innerHeight)||1);
+  document.getElementById("pbar").style.transform="scaleX("+clamp(sc)+")";
+  if(heroInner&&!REDUCED){
+    var hf=1-clamp((window.scrollY||d.scrollTop||0)/(0.55*(window.innerHeight||1)));
+    heroInner.style.opacity=hf;heroInner.style.transform="translateY("+(-(1-hf)*36).toFixed(1)+"px)";
+  }
+}
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function activate(i){activeStep=i;steps.forEach(function(s,idx){s.classList.toggle("is-active",idx===i);});frame();}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)activate(+en.target.getAttribute("data-step"));});},{rootMargin:"-48% 0px -48% 0px",threshold:0});
+steps.forEach(function(s){io.observe(s);});
+window.addEventListener("scroll",onScroll,{passive:true});
+window.addEventListener("resize",onScroll);
+activate(0);
+window.__cifl={A:A,S:S,stateAt:stateAt,apply:apply,activate:activate,beats:6};
+
+/* ---------- explored tracking + tally ---------- */
+var KEY="cifl.explored";
+function explored(){try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];}}
+try{var x=explored();if(x.indexOf("icloud")<0){x.push("icloud");localStorage.setItem(KEY,JSON.stringify(x));}
+  document.getElementById("tally").textContent="Plays explored: "+explored().length+" of 14";}catch(e){}
+})();
+</script>
+</body>
+</html>
